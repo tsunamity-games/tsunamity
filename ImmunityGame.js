@@ -163,8 +163,8 @@ class Shop {
             console.log("x: " + (this.x + this.width / 2));
             console.log("y: " + (this.y + this.height / 2));
             var cell = new this.cellType(
-                this.x + this.width / 2,
-                this.y + this.height / 2) ;
+                randomUniform(this.x, this.x + this.width),
+                randomUniform(this.y, this.y + this.height));
             cells.push(cell);
             console.log(cells);
 
