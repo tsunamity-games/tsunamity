@@ -12,7 +12,7 @@ const playableFieldStart = shopHeight + offset;
 const playableFieldHeight = fieldHeight - shopHeight;
 
 
-const bacteriaRadius = 4;
+const bacteriaRadius = 6;
 var livesLeft = 10;
 var money = 200;
 
@@ -252,7 +252,8 @@ var addEnemies = function(enemiesList, n, color){
     return enemiesList;
 };       
 
-enemies = addEnemies(enemies, 10, "green");
+var nEnemies = 60;
+enemies = addEnemies(enemies, nEnemies, "green");
 
 var boneMarrow = new Shop("#FEB2BA", 200, offset, shopHeight - 2 * offset, 200, TLymphocyte, 100);
 shops.push(boneMarrow);
