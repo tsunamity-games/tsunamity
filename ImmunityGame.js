@@ -180,13 +180,45 @@ class TLymphocyte extends MovingObject {
             this.ySpeed = 3;
         } else {
             this.xSpeed = (Math.random() - 0.5) * 2;
-            this.ySpeed = (Math.random() - 0.5) * 5;
+
+            if (enemies.length > 0) {
+                // Move to the closest enemy
+                var nearestEnemy = findNearestEnemy(this.x, this.y, enemies);
+                this.ySpeed = (nearestEnemy.y - this.y) / 10;
+            }
+            else {
+                this.ySpeed = 0;
+            }
+            
         }
     }
 
     move() {
         super.move();
         this.y = clip(this.y, this.radius, fieldHeight - this.radius);
+    }
+}
+
+var findNearestEnemy = function(x, y, enemiesList) {
+    var nearestIdx = 0;
+    var nearestEnemyDistance = 10000;
+            
+    if (enemiesList.length > 0) {
+        for(var i=0; i < enemiesList.length; i++) {
+            distance = Math.abs(
+                Math.pow(x - enemies[i].x, 2) + Math.pow(y - enemies[i].y, 2)
+            )
+
+            if (distance < nearestEnemyDistance) {
+                nearestEnemyDistance = distance;
+                nearestIdx = i;
+            }
+        }
+
+        return enemiesList[nearestIdx];
+    }
+    else {
+        return -1;
     }
 }
 
