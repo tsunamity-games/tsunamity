@@ -200,8 +200,12 @@ class TLymphocyte extends MovingObject {
                 this.ySpeed = Math.min((this.nearestEnemy.y - this.y) / 100, MAX_SPEED);
             }
             else {
+                this.xSpeed = 0;
                 this.ySpeed = 0;
             }
+
+            this.xSpeed += randomUniform(-2, 2);
+            this.ySpeed += randomUniform(-2, 2);
             
         }
     }
