@@ -25,6 +25,11 @@ function doCirclesIntersect(x1, y1, r1, x2, y2, r2) {
     return (centersDistance <= Math.pow(r1 + r2, 2));
 }
 
+function randomUniform(low, high) {
+    var u = Math.random() * (high - low);
+    return u + low;
+}
+
 function circle(x, y, radius, fillCircle){
     ctx.lineWidth = 1;
     ctx.strokeStyle = "black";
@@ -111,8 +116,8 @@ class MovingObject {
 class Enemy extends MovingObject {
     constructor(color, x, y, radius) {
         super(color, x, y, radius)
-        this.xSpeed = Math.random() * 10 - 5;
-        this.ySpeed = Math.random() * 10 - 5;
+        this.xSpeed = randomUniform(-5, 5); 
+        this.ySpeed = randomUniform(-5, 5);
         this.health = 10;
     }
 
@@ -128,8 +133,8 @@ class Enemy extends MovingObject {
     }
 
     changeDirection() {
-        this.xSpeed = Math.random() * 2 - 0.8;
-        this.ySpeed = Math.random() * 2 - 1;
+        this.xSpeed = randomUniform(-0.8, 1.2); 
+        this.ySpeed = randomUniform(-1, 1);
     }
 }
 
@@ -184,10 +189,9 @@ class TLymphocyte extends MovingObject {
     changeDirection() {
         if (this.y < shopHeight) {
             // Get away from shop
-            this.xSpeed = (Math.random() - 0.5) * 1;
+            this.xSpeed = randomUniform(-0.5, 0.5);
             this.ySpeed = 3;
         } else {
-            // this.xSpeed = (Math.random() - 0.5) * 2;
 
             if (enemies.length > 0) {
                 // Move to the closest enemy
@@ -241,8 +245,8 @@ var findNearestEnemy = function(x, y, enemiesList) {
 
 var addEnemies = function(enemiesList, n, color){
     for (var i=0; i<n; i++){
-        var y = Math.random() * playableFieldHeight + shopHeight;
-        var x = -100;
+        var y = randomUniform(shopHeight + offset, fieldHeight); 
+        var x = -10;
         enemiesList.push(new Enemy(color, x, y, bacteriaRadius));
     };
     return enemiesList;
