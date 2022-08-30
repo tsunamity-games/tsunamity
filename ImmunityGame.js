@@ -4,6 +4,7 @@ var ctx = field.getContext("2d");
 
 const offset = 10;
 const shopHeight = 200;
+const MAX_SPEED = 1;
 
 const fieldWidth = field.width;
 const fieldHeight = field.height;
@@ -18,6 +19,11 @@ var money = 200;
 var cells = [];
 var shops = [];
 var enemies = [];
+
+function doCirclesIntersect(x1, y1, r1, x2, y2, r2) {
+    centersDistance = Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);
+    return (centersDistance <= Math.pow(r1 + r2, 2));
+}
 
 function circle(x, y, radius, fillCircle){
     ctx.lineWidth = 1;
@@ -107,6 +113,7 @@ class Enemy extends MovingObject {
         super(color, x, y, radius)
         this.xSpeed = Math.random() * 10 - 5;
         this.ySpeed = Math.random() * 10 - 5;
+        this.health = 10;
     }
 
     move() {
@@ -171,6 +178,7 @@ class TLymphocyte extends MovingObject {
         super("#5EFF83", x, y, 20);
         this.xSpeed = 0;
         this.ySpeed = 0;
+        this.nearestEnemy = undefined;
     }
 
     changeDirection() {
@@ -179,12 +187,13 @@ class TLymphocyte extends MovingObject {
             this.xSpeed = (Math.random() - 0.5) * 1;
             this.ySpeed = 3;
         } else {
-            this.xSpeed = (Math.random() - 0.5) * 2;
+            // this.xSpeed = (Math.random() - 0.5) * 2;
 
             if (enemies.length > 0) {
                 // Move to the closest enemy
-                var nearestEnemy = findNearestEnemy(this.x, this.y, enemies);
-                this.ySpeed = (nearestEnemy.y - this.y) / 10;
+                this.nearestEnemy = findNearestEnemy(this.x, this.y, enemies);
+                this.xSpeed = Math.min((this.nearestEnemy.x - this.x) / 100, MAX_SPEED);
+                this.ySpeed = Math.min((this.nearestEnemy.y - this.y) / 100, MAX_SPEED);
             }
             else {
                 this.ySpeed = 0;
@@ -196,6 +205,14 @@ class TLymphocyte extends MovingObject {
     move() {
         super.move();
         this.y = clip(this.y, this.radius, fieldHeight - this.radius);
+
+        if (
+            (this.nearestEnemy !== undefined) &&
+            doCirclesIntersect(this.x, this.y, this.radius, this.nearestEnemy.x, this.nearestEnemy.y, this.nearestEnemy.radius)
+            )
+        {
+            this.nearestEnemy.health = 0;
+        }
     }
 }
 
@@ -270,7 +287,7 @@ var game = setInterval(function(){
         enemy.move();
         enemy.changeDirection();
         enemy.draw();
-        if (enemy.x < fieldWidth){
+        if ((enemy.x < fieldWidth) && (enemy.health > 0) ){
             nextTurnEnemies.push(enemy);
         }
     })
