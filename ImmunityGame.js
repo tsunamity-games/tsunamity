@@ -118,7 +118,8 @@ class Enemy extends MovingObject {
         super(color, x, y, radius)
         this.xSpeed = randomUniform(-5, 5); 
         this.ySpeed = randomUniform(-5, 5);
-        this.health = 10;
+        this.health = 100;
+        this.maxHealth = 100;
     }
 
     move() {
@@ -135,6 +136,12 @@ class Enemy extends MovingObject {
     changeDirection() {
         this.xSpeed = randomUniform(-0.8, 1.2); 
         this.ySpeed = randomUniform(-1, 1);
+    }
+
+    draw() {
+        ctx.globalAlpha = clip(this.health / this.maxHealth, 0.2, 1);
+        super.draw();
+        ctx.globalAlpha = 1;
     }
 }
 
@@ -219,7 +226,7 @@ class TLymphocyte extends MovingObject {
             doCirclesIntersect(this.x, this.y, this.radius, this.nearestEnemy.x, this.nearestEnemy.y, this.nearestEnemy.radius)
             )
         {
-            this.nearestEnemy.health = 0;
+            this.nearestEnemy.health -= 1;
         }
     }
 }
@@ -256,7 +263,7 @@ var addEnemies = function(enemiesList, n, color){
     return enemiesList;
 };       
 
-var nEnemies = 60;
+var nEnemies = 30;
 enemies = addEnemies(enemies, nEnemies, "green");
 
 var boneMarrow = new Shop("#FEB2BA", 200, offset, shopHeight - 2 * offset, 200, TLymphocyte, 100);
