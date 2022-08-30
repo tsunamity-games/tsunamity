@@ -114,12 +114,13 @@ class MovingObject {
 
 
 class Enemy extends MovingObject {
-    constructor(color, x, y, radius) {
+    constructor(color, x, y, radius, maxHealth, price) {
         super(color, x, y, radius)
         this.xSpeed = randomUniform(-5, 5); 
         this.ySpeed = randomUniform(-5, 5);
-        this.health = 100;
-        this.maxHealth = 100;
+        this.maxHealth = maxHealth;
+        this.health = maxHealth;
+        this.price = price;
     }
 
     move() {
@@ -254,18 +255,18 @@ var findNearestEnemy = function(x, y, enemiesList) {
     }
 }
 
-var addEnemies = function(enemiesList, n, color){
+var addEnemies = function(enemiesList, n, color, maxHealth, price){
     for (var i=0; i<n; i++){
         var y = randomUniform(shopHeight + offset, fieldHeight); 
         var x = -10;
-        enemiesList.push(new Enemy(color, x, y, bacteriaRadius));
+        enemiesList.push(new Enemy(color, x, y, bacteriaRadius, maxHealth, price));
     };
     return enemiesList;
 };       
 
 var nEnemies = 30;
 const ENEMY_COLOR = "#1CA63B";
-enemies = addEnemies(enemies, nEnemies, ENEMY_COLOR);
+enemies = addEnemies(enemies, nEnemies, ENEMY_COLOR, 100, 5);
 
 var boneMarrow = new Shop("#FEB2BA", 200, offset, shopHeight - 2 * offset, 200, TLymphocyte, 100);
 shops.push(boneMarrow);
@@ -306,8 +307,13 @@ var game = setInterval(function(){
         enemy.move();
         enemy.changeDirection();
         enemy.draw();
-        if ((enemy.x < fieldWidth) && (enemy.health > 0) ){
-            nextTurnEnemies.push(enemy);
+        if ((enemy.x < fieldWidth)){
+            if (enemy.health <= 0) {
+                money += enemy.price;
+                $("h1").text("Lives left: " + livesLeft + ", money left: " + money); 
+            } else{
+                nextTurnEnemies.push(enemy);
+            }
         }
     })
 
@@ -320,7 +326,7 @@ var game = setInterval(function(){
     enemies = nextTurnEnemies;
 
     if(nextTurnEnemies.length == 0) {
-        enemies = addEnemies([], nEnemies + wave * 10, ENEMY_COLOR);
+        enemies = addEnemies([], nEnemies + wave * 10, ENEMY_COLOR, 100 + wave * 30, 5 + wave * 5);
         wave += 1;
     }
 
