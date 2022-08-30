@@ -264,7 +264,8 @@ var addEnemies = function(enemiesList, n, color){
 };       
 
 var nEnemies = 30;
-enemies = addEnemies(enemies, nEnemies, "green");
+const ENEMY_COLOR = "#1CA63B";
+enemies = addEnemies(enemies, nEnemies, ENEMY_COLOR);
 
 var boneMarrow = new Shop("#FEB2BA", 200, offset, shopHeight - 2 * offset, 200, TLymphocyte, 100);
 shops.push(boneMarrow);
@@ -288,6 +289,8 @@ $("#field").click(function(event){
         }
     })
 });
+
+var wave = 1;
 
 var game = setInterval(function(){
     ctx.clearRect(0, 0, fieldWidth, fieldHeight);
@@ -315,6 +318,11 @@ var game = setInterval(function(){
     })
 
     enemies = nextTurnEnemies;
+
+    if(nextTurnEnemies.length == 0) {
+        enemies = addEnemies([], nEnemies + wave * 10, ENEMY_COLOR);
+        wave += 1;
+    }
 
     ctx.lineWidth = 1;
     ctx.strokeStyle = "black";
