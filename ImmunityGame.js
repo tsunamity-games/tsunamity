@@ -5,6 +5,9 @@ var ctx = field.getContext("2d");
 const offset = 10;
 const shopHeight = 200;
 const MAX_SPEED = 1;
+const LymphociteSpeed = 0.5;
+const maxVirusesInTissueCell = 64;
+const viralSpreadThreshold = 63;
 
 const fieldWidth = field.width;
 const fieldHeight = field.height;
@@ -12,23 +15,37 @@ const playableFieldStart = shopHeight + offset;
 const playableFieldHeight = fieldHeight - shopHeight;
 
 
+
 const bacteriaRadius = 6;
+const tissueCellSize = 30;
+const spaceBetweenTissueCells = 5;
+var EdgeCellX;
+
+const randomEnemyNumber = 10;
 var livesLeft = 10;
 var money = 200;
 
-var cells = [];
+
+
+var immunityCells = [];
 var shops = [];
 var enemies = [];
+var tissueCells = [];
+var viruses = [];
 
 function doCirclesIntersect(x1, y1, r1, x2, y2, r2) {
     centersDistance = Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);
     return (centersDistance <= Math.pow(r1 + r2, 2));
-}
+};
 
 function randomUniform(low, high) {
     var u = Math.random() * (high - low);
     return u + low;
-}
+};
+
+function randomChoice(array){
+    return array[Math.floor(Math.random()*array.length)];
+};
 
 function circle(x, y, radius, fillCircle){
     ctx.lineWidth = 1;
@@ -49,19 +66,8 @@ function square(x, y, size){
     ctx.strokeRect(x, y, size, size);
 };
 
-function drawCells(){
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "black";
-    ctx.fillStyle = "#a8dadc";
-    
-    var size = 30;
-    var space = 5;
-
-    for (var x = offset; x < fieldWidth - size - space; x += size+space){
-        for (var y = shopHeight + offset; y < fieldHeight  - size - space; y += size+space){
-            square(x, y, size);
-        }    
-    }
+function tissueCellsDistance(c1, c2){
+    return (Math.abs(c1.x - c2.x) + Math.abs(c1.y-c2.y))/(tissueCellSize + spaceBetweenTissueCells);
 };
 
 function drawBlood(){
@@ -86,7 +92,71 @@ function drawBlood(){
 
 function clip(x, min, max) {
     return Math.min(Math.max(min, x), max);
-}
+};
+
+class TissueCell{
+    constructor(x, y){
+        this.x = x;
+        this.y = y;
+        this.size = tissueCellSize;
+        this.infection = [];
+    }
+    
+    draw(){
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "black";
+        if (this.infection.length === 0){
+            ctx.fillStyle = "#a8dadc";
+        } else {
+            ctx.fillStyle = this.infection[0].color;
+            ctx.globalAlpha = (this.infection.length+this.infection.length*0.2)/(maxVirusesInTissueCell+this.infection.length*0.2);
+        }
+        square(this.x, this.y, tissueCellSize);
+        ctx.globalAlpha = 1;
+    }
+};
+
+class Virus{
+    constructor(color, doublingTime, host){
+        this.color = color;
+        this.doublingTime = doublingTime;
+        this.timeToDouble = 0;
+        if (host === null){
+            this.host = randomChoice(tissueCells.filter(function isOnEdge(cell){return cell.x === offset;}));} 
+        else {
+            this.host = host;
+        }
+        if (this.host.infection.length === 0 && this.host.x === EdgeCellX){
+            livesLeft--;
+        }
+        this.host.infection.push(this);
+    }
+    
+    grow(){
+        
+        if (++this.timeToDouble === this.doublingTime){
+            this.timeToDouble = 0;
+            
+            var virusLoad = this.host.infection.length;
+            var spreadDisease = Math.random() > viralSpreadThreshold/virusLoad;
+            var cellToInfect;
+            if (spreadDisease){
+                var me = this;
+                cellToInfect = randomChoice(tissueCells.filter(
+                    function isNeighbour(cell){
+                    return tissueCellsDistance(me.host, cell) < 1.5;
+                    }));            
+            } else {
+                cellToInfect = this.host
+            }
+            if (cellToInfect.infection.length < maxVirusesInTissueCell){
+                var newVirus = new Virus(this.color, this.doublingTime, cellToInfect);
+                viruses.push(newVirus);
+            }
+        }
+    }
+    
+};
 
 class MovingObject {
     constructor(color, x, y, radius) {
@@ -110,7 +180,7 @@ class MovingObject {
             circle(this.x, this.y, this.radius, false);
         }
     }
-}
+};
 
 
 class Enemy extends MovingObject {
@@ -144,7 +214,7 @@ class Enemy extends MovingObject {
         super.draw();
         ctx.globalAlpha = 1;
     }
-}
+};
 
 class Shop {
     constructor(color, x, y, width, height, cellType, price) {
@@ -173,8 +243,8 @@ class Shop {
             var cell = new this.cellType(
                 randomUniform(this.x, this.x + this.width),
                 randomUniform(this.y, this.y + this.height));
-            cells.push(cell);
-            console.log(cells);
+            immunityCells.push(cell);
+            console.log(immunityCells);
 
             money -= this.price;
             $("h1").text("Lives left: " + livesLeft + ", money left: " + money); 
@@ -184,17 +254,17 @@ class Shop {
     isIntersected(x, y) {
         return (x > this.x) && (x < this.x + this.width) && (y > this.y) && (y < this.y + this.height)
     }
-}
+};
 
 class TLymphocyte extends MovingObject {
     constructor(x, y) {
         super("#5EFF83", x, y, 20);
         this.xSpeed = 0;
         this.ySpeed = 0;
-        this.nearestEnemy = undefined;
+        this.targetEnemy = undefined;
     }
 
-    changeDirection() {
+    changeDirectionV1() {
         if (this.y < shopHeight) {
             // Get away from shop
             this.xSpeed = randomUniform(-0.5, 0.5);
@@ -203,9 +273,11 @@ class TLymphocyte extends MovingObject {
 
             if (enemies.length > 0) {
                 // Move to the closest enemy
-                this.nearestEnemy = findNearestEnemy(this.x, this.y, enemies);
-                this.xSpeed = Math.min((this.nearestEnemy.x - this.x) / 100, MAX_SPEED);
-                this.ySpeed = Math.min((this.nearestEnemy.y - this.y) / 100, MAX_SPEED);
+                this.targetEnemy = findTargetEnemy(this.x, this.y, enemies, 1);
+                
+                this.xSpeed = Math.min((this.targetEnemy.x - this.x) / 100, MAX_SPEED);
+                this.ySpeed = Math.min((this.targetEnemy.y - this.y) / 100, MAX_SPEED);
+                
             }
             else {
                 this.xSpeed = 0;
@@ -214,46 +286,80 @@ class TLymphocyte extends MovingObject {
 
             this.xSpeed += randomUniform(-2, 2);
             this.ySpeed += randomUniform(-2, 2);
-            
+        }
+    }
+    
+    changeDirectionV2() {
+        if (this.y < shopHeight) {
+            // Get away from shop
+            this.xSpeed = randomUniform(-0.5, 0.5);
+            this.ySpeed = 3;
+        } else {
+
+            if (enemies.length > 0) {
+                
+                // Move to the random enemy
+                if (this.targetEnemy === undefined || this.targetEnemy.health < 0 || this.targetEnemy.x > fieldWidth)  
+                {
+                    this.targetEnemy = findTargetEnemy(this.x, this.y, enemies, Math.min(randomEnemyNumber, enemies.length));
+                }
+                
+                // helper variables
+                var x_sign = (this.targetEnemy.x - this.x)/Math.abs(this.targetEnemy.x - this.x);
+                var y_sign = (this.targetEnemy.y - this.y)/Math.abs(this.targetEnemy.y - this.y);
+                var ratio =(this.targetEnemy.y - this.y)/(this.targetEnemy.x - this.x);
+                
+                // Real calculation: speed is equal to LymphociteSpeed, direction is 'to the enemy'
+                this.xSpeed = x_sign*LymphociteSpeed/Math.sqrt(ratio*ratio + 1);                
+                this.ySpeed = y_sign*Math.abs(ratio*this.xSpeed);       
+            }
+            else {
+                this.targetEnemy = null;
+                this.xSpeed = 0;
+                this.ySpeed = 0;
+            }
+
+            this.xSpeed += randomUniform(-LymphociteSpeed*2, LymphociteSpeed*2);
+            this.ySpeed += randomUniform(-LymphociteSpeed*2, LymphociteSpeed*2);
         }
     }
 
     move() {
         super.move();
         this.y = clip(this.y, this.radius, fieldHeight - this.radius);
-
+        this.x = clip(this.x, this.radius, fieldWidth - this.radius);
+        
         if (
-            (this.nearestEnemy !== undefined) &&
-            doCirclesIntersect(this.x, this.y, this.radius, this.nearestEnemy.x, this.nearestEnemy.y, this.nearestEnemy.radius)
+            (this.targetEnemy !== undefined) &&
+            doCirclesIntersect(this.x, this.y, this.radius, this.targetEnemy.x, this.targetEnemy.y, this.targetEnemy.radius)
             )
         {
-            this.nearestEnemy.health -= 1;
+            this.targetEnemy.health -= 1;
         }
     }
-}
+};
 
-var findNearestEnemy = function(x, y, enemiesList) {
-    var nearestIdx = 0;
-    var nearestEnemyDistance = 10000;
-            
-    if (enemiesList.length > 0) {
-        for(var i=0; i < enemiesList.length; i++) {
-            distance = Math.abs(
-                Math.pow(x - enemies[i].x, 2) + Math.pow(y - enemies[i].y, 2)
-            )
+var findTargetEnemy = function(x, y, enemiesList, n) {
+    if (enemiesList.length > 0){
+        var number = Math.floor(randomUniform(0, n));
+        var res = enemiesList.sort(function(a, b){
+            var da = Math.abs(Math.pow(x - a.x, 2) + Math.pow(y - a.y, 2));
+            var db = Math.abs(Math.pow(x - b.x, 2) + Math.pow(y - b.y, 2));
+            return da-db;
+        })[number]
+        return res;            
+    } else {return -1;}
+};
 
-            if (distance < nearestEnemyDistance) {
-                nearestEnemyDistance = distance;
-                nearestIdx = i;
-            }
-        }
-
-        return enemiesList[nearestIdx];
+var findRandomEnemy = function(enemiesList) {
+    if (enemiesList.length > 0){
+        var idx = Math.round(randomUniform(0, enemiesList.length));
+        return enemiesList[idx];
     }
     else {
         return -1;
     }
-}
+};
 
 var addEnemies = function(enemiesList, n, color, maxHealth, price){
     for (var i=0; i<n; i++){
@@ -264,12 +370,12 @@ var addEnemies = function(enemiesList, n, color, maxHealth, price){
     return enemiesList;
 };       
 
-var nEnemies = 30;
-const ENEMY_COLOR = "#1CA63B";
-enemies = addEnemies(enemies, nEnemies, ENEMY_COLOR, 100, 5);
-
-var boneMarrow = new Shop("#FEB2BA", 200, offset, shopHeight - 2 * offset, 200, TLymphocyte, 100);
-shops.push(boneMarrow);
+var addViruses = function(virusesList, n, color, doublingTime){
+    for (var i=0; i < n; i++){
+        virusesList.push(new Virus(color, doublingTime, null))
+    }
+    return virusesList;
+};
 
 $("#field").click(function(event){
     console.log("Page coordinates:")
@@ -291,18 +397,55 @@ $("#field").click(function(event){
     })
 });
 
+function gameOver(){
+    ctx.font = "60px Courier";
+    ctx.fillStyle = "Black";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Game over", fieldWidth/2, fieldHeight/2);
+};
+
+// Add Tissue Cells
+for (var x = offset; 
+     x < fieldWidth - tissueCellSize - spaceBetweenTissueCells; 
+     x += tissueCellSize+spaceBetweenTissueCells){
+            for (var y = shopHeight + offset; 
+                 y < fieldHeight  - tissueCellSize - spaceBetweenTissueCells; 
+                 y += tissueCellSize+spaceBetweenTissueCells){
+                    tissueCells.push(new TissueCell(x, y));
+            }
+    EdgeCellX = x;
+}
+
+
+var nEnemies = 30;
+var nViruses = 2;
+
+const ENEMY_COLOR = "#1CA63B";
+const VIRUS_COLOR = "#800080";
+const VIRUS_DOUBLING_TIME = 100;
+enemies = addEnemies(enemies, nEnemies, ENEMY_COLOR, 100, 5);
+viruses = addViruses(viruses, nViruses, VIRUS_COLOR, VIRUS_DOUBLING_TIME);
+var boneMarrow = new Shop("#FEB2BA", 200, offset, shopHeight - 2 * offset, 200, TLymphocyte, 100);
+shops.push(boneMarrow);
+
+
 var wave = 1;
+var gameOverTrue = false; 
 
 var game = setInterval(function(){
+    if (gameOverTrue){
+        gameOver();
+    }
+    else{
     ctx.clearRect(0, 0, fieldWidth, fieldHeight);
 
     shops.forEach((shop) => {shop.draw()})
 
-    drawCells();
+    tissueCells.forEach((cell) => {cell.draw()});
     drawBlood();
     
     var nextTurnEnemies = [];
-
     enemies.forEach((enemy) => {
         enemy.move();
         enemy.changeDirection();
@@ -316,21 +459,38 @@ var game = setInterval(function(){
             }
         }
     })
-
-    cells.forEach((cell) => {
-        cell.move();
-        cell.changeDirection();
-        cell.draw();
-    })
-
     enemies = nextTurnEnemies;
+    
+    viruses.forEach((virus) => {
+        virus.grow();
+    })
+        
+    if (enemies.length > 0){
+    immunityCells.forEach((cell) => {
+        cell.move();
+        cell.changeDirectionV2();
+        cell.draw();
+        
+        // Visualize target enemy
+        ctx.beginPath();
+        ctx.strokeStyle = "red";
+        ctx.moveTo(cell.x, cell.y);
+        ctx.lineTo(cell.targetEnemy.x, cell.targetEnemy.y);
+        ctx.stroke();
+    })}
 
-    if(nextTurnEnemies.length == 0) {
+    
+    if(enemies.length === 0) {
         enemies = addEnemies([], nEnemies + wave * 10, ENEMY_COLOR, 100 + wave * 30, 5 + wave * 5);
+//        viruses = addViruses([], nViruses + wave, VIRUS_COLOR, VIRUS_DOUBLING_TIME);
         wave += 1;
     }
-
+    
     ctx.lineWidth = 1;
     ctx.strokeStyle = "black";
     ctx.strokeRect(0, 0, fieldWidth, fieldHeight);
+    if (livesLeft <= 0){
+        gameOverTrue=true;
+    };
+    }
 }, 1);
