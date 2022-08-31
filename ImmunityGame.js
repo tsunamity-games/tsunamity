@@ -99,7 +99,7 @@ class TissueCell{
         this.y = y;
         this.size = tissueCellSize;
         this.infection = [];
-        this.health = 1000;
+        this.health = 100;
     }
     
     draw(){
@@ -149,7 +149,7 @@ class Virus{
             } else {
                 cellToInfect = this.host
             }
-            if (cellToInfect.infection.length < maxVirusesInTissueCell){
+            if (cellToInfect != null && cellToInfect.infection.length < maxVirusesInTissueCell){
                 var newVirus = new Virus(this.color, this.doublingTime, cellToInfect);
                 viruses.push(newVirus);
             }
@@ -334,6 +334,14 @@ class TLymphocyte extends ImmuneCell {
     constructor(x, y) {
         super("#5EFF83", x, y, 20, 0.5, 1)
     }
+
+    move() {
+        super.move();
+
+        if(this.targetEnemy != null && doCirclesIntersect(this.x, this.y, this.radius, this.targetEnemy.x, this.targetEnemy.y, tissueCellSize / 2)) {
+            this.targetEnemy.health -= this.damage;
+        }
+    }
 };
 
 class BLymphocyte extends ImmuneCell {
@@ -475,7 +483,14 @@ var game = setInterval(function(){
 
     shops.forEach((shop) => {shop.draw()})
 
-    tissueCells.forEach((cell) => {cell.draw()});
+    var nextTurnTissueCells = [];
+    tissueCells.forEach((cell) => {
+        if(cell.health > 0) {
+            cell.draw()
+            nextTurnTissueCells.push(cell);
+        }
+    });
+    tissueCells = nextTurnTissueCells;
     // drawBlood();
     
     var nextTurnEnemies = [];
