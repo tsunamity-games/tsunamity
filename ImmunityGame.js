@@ -5,7 +5,6 @@ var ctx = field.getContext("2d");
 const offset = 10;
 const shopHeight = 200;
 const MAX_SPEED = 1;
-const LymphociteSpeed = 0.5;
 const maxVirusesInTissueCell = 64;
 const viralSpreadThreshold = 63;
 
@@ -256,44 +255,20 @@ class Shop {
     }
 };
 
-class TLymphocyte extends MovingObject {
-    constructor(x, y) {
-        super("#5EFF83", x, y, 20);
+class ImmuneCell extends MovingObject {
+    constructor(color, x, y, radius, baseSpeed) {
+        super(color, x, y, radius);
         this.xSpeed = 0;
         this.ySpeed = 0;
         this.targetEnemy = undefined;
-    }
-
-    changeDirectionV1() {
-        if (this.y < shopHeight) {
-            // Get away from shop
-            this.xSpeed = randomUniform(-0.5, 0.5);
-            this.ySpeed = 3;
-        } else {
-
-            if (enemies.length > 0) {
-                // Move to the closest enemy
-                this.targetEnemy = findTargetEnemy(this.x, this.y, enemies, 1);
-                
-                this.xSpeed = Math.min((this.targetEnemy.x - this.x) / 100, MAX_SPEED);
-                this.ySpeed = Math.min((this.targetEnemy.y - this.y) / 100, MAX_SPEED);
-                
-            }
-            else {
-                this.xSpeed = 0;
-                this.ySpeed = 0;
-            }
-
-            this.xSpeed += randomUniform(-2, 2);
-            this.ySpeed += randomUniform(-2, 2);
-        }
+        this.baseSpeed = baseSpeed;
     }
     
-    changeDirectionV2() {
+    changeDirection() {
         if (this.y < shopHeight) {
             // Get away from shop
             this.xSpeed = randomUniform(-0.5, 0.5);
-            this.ySpeed = 3;
+            this.ySpeed = this.baseSpeed * 3;
         } else {
 
             if (enemies.length > 0) {
@@ -307,11 +282,11 @@ class TLymphocyte extends MovingObject {
                 // helper variables
                 var x_sign = (this.targetEnemy.x - this.x)/Math.abs(this.targetEnemy.x - this.x);
                 var y_sign = (this.targetEnemy.y - this.y)/Math.abs(this.targetEnemy.y - this.y);
-                var ratio =(this.targetEnemy.y - this.y)/(this.targetEnemy.x - this.x);
+                var ratio = (this.targetEnemy.y - this.y)/(this.targetEnemy.x - this.x);
                 
-                // Real calculation: speed is equal to LymphociteSpeed, direction is 'to the enemy'
-                this.xSpeed = x_sign*LymphociteSpeed/Math.sqrt(ratio*ratio + 1);                
-                this.ySpeed = y_sign*Math.abs(ratio*this.xSpeed);       
+                // Real calculation: speed is equal to base speed, direction is 'to the enemy'
+                this.xSpeed = x_sign * this.baseSpeed / Math.sqrt(ratio*ratio + 1);                
+                this.ySpeed = y_sign * Math.abs(ratio * this.xSpeed);       
             }
             else {
                 this.targetEnemy = null;
@@ -319,8 +294,8 @@ class TLymphocyte extends MovingObject {
                 this.ySpeed = 0;
             }
 
-            this.xSpeed += randomUniform(-LymphociteSpeed*2, LymphociteSpeed*2);
-            this.ySpeed += randomUniform(-LymphociteSpeed*2, LymphociteSpeed*2);
+            this.xSpeed += randomUniform(-this.baseSpeed * 2, this.baseSpeed * 2);
+            this.ySpeed += randomUniform(-this.baseSpeed * 2, this.baseSpeed * 2);
         }
     }
 
@@ -328,6 +303,16 @@ class TLymphocyte extends MovingObject {
         super.move();
         this.y = clip(this.y, this.radius, fieldHeight - this.radius);
         this.x = clip(this.x, this.radius, fieldWidth - this.radius);
+    }
+};
+
+class TLymphocyte extends ImmuneCell {
+    constructor(x, y) {
+        super("#5EFF83", x, y, 20, 0.5);
+    }
+
+    move() {
+        super.move();
         
         if (
             (this.targetEnemy !== undefined) &&
@@ -335,6 +320,39 @@ class TLymphocyte extends MovingObject {
             )
         {
             this.targetEnemy.health -= 1;
+        }
+    }
+};
+
+class BLymphocyte extends MovingObject {
+    constructor(x, y) {
+        super("#975AF2", x, y, 20, 0.1);
+        this.shootingRadius = 20;
+    }
+
+    move() {
+        super.move();
+        
+        if (
+            (this.targetEnemy !== undefined) &&
+            doCirclesIntersect(this.x, this.y, this.shootingRadius, this.targetEnemy.x, this.targetEnemy.y, this.targetEnemy.radius)
+            )
+        {
+            this.targetEnemy.health -= 1;
+        }
+    }
+
+    draw() {
+        ctx.fillStyle = this.color;
+
+        if (this.x > 0 && this.y > 0 && this.x < fieldWidth && this.y < fieldHeight) {
+            ctx.globalAlpha = 0.2;
+            circle(this.x, this.y, this.shootingRadius, true);
+            circle(this.x, this.y, this.shootingRadius, false);
+
+            ctx.globalAlpha = 1;
+            circle(this.x, this.y, this.radius, true);
+            circle(this.x, this.y, this.radius, false);
         }
     }
 };
