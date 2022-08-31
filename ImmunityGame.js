@@ -256,12 +256,13 @@ class Shop {
 };
 
 class ImmuneCell extends MovingObject {
-    constructor(color, x, y, radius, baseSpeed) {
+    constructor(color, x, y, radius, baseSpeed, damage) {
         super(color, x, y, radius);
         this.xSpeed = 0;
         this.ySpeed = 0;
         this.targetEnemy = undefined;
         this.baseSpeed = baseSpeed;
+        this.damage = damage;
     }
     
     changeDirection() {
@@ -307,27 +308,37 @@ class ImmuneCell extends MovingObject {
     }
 };
 
-class TLymphocyte extends ImmuneCell {
+class Macrophage extends ImmuneCell {
     constructor(x, y) {
-        super("#5EFF83", x, y, 20, 0.5);
+        super("#FB7057", x, y, 50, 0.4, 0.2);
     }
 
     move() {
         super.move();
         
-        if (
-            (this.targetEnemy !== undefined) &&
-            doCirclesIntersect(this.x, this.y, this.radius, this.targetEnemy.x, this.targetEnemy.y, this.targetEnemy.radius)
-            )
-        {
-            this.targetEnemy.health -= 1;
-        }
+        enemies.forEach((enemy) => {
+            if(doCirclesIntersect(this.x, this.y, this.radius, enemy.x, enemy.y, enemy.radius)) {
+                enemy.health -= this.damage;
+            }
+        });
+    }
+
+    draw() {
+        ctx.globalAlpha = 0.5;
+        super.draw();
+        ctx.globalAlpha = 1;
+    }
+};
+
+class TLymphocyte extends ImmuneCell {
+    constructor(x, y) {
+        super("#5EFF83", x, y, 20, 0.5, 1)
     }
 };
 
 class BLymphocyte extends ImmuneCell {
     constructor(x, y) {
-        super("#975AF2", x, y, 20, 0.3);
+        super("#975AF2", x, y, 20, 0.3, 1);
         this.shootingRadius = 40;
     }
 
@@ -336,7 +347,7 @@ class BLymphocyte extends ImmuneCell {
     
         enemies.forEach((enemy) => {
             if(doCirclesIntersect(this.x, this.y, this.shootingRadius, enemy.x, enemy.y, enemy.radius)) {
-                enemy.health -= 1;
+                enemy.health -= this.damage;
             }
         });
     }
@@ -445,8 +456,9 @@ enemies = addEnemies(enemies, nEnemies, ENEMY_COLOR, 100, 5);
 
 shops = [
     // Bone marrow parts
-    new Shop("#FEB2BA", 200, offset, shopHeight - 2 * offset, 200, TLymphocyte, 100),
-    new Shop("#C4A4F4", 2 * 200, offset, shopHeight - 2 * offset, 200, BLymphocyte, 200)
+    new Shop("#FEB2BA", 200, offset, shopHeight - 2 * offset, 200, TLymphocyte, 200),
+    new Shop("#C4A4F4", 2 * 200, offset, shopHeight - 2 * offset, 200, BLymphocyte, 200),
+    new Shop("#F2715A", 3 * 200, offset, shopHeight - 2 * offset, 200, Macrophage, 100),
 ];
 
 
