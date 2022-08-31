@@ -133,6 +133,8 @@ class Virus{
     }
     
     grow(){
+
+        this.host.health -= 0.001;
         
         if (++this.timeToDouble === this.doublingTime){
             this.timeToDouble = 0;
@@ -141,11 +143,10 @@ class Virus{
             var spreadDisease = Math.random() > viralSpreadThreshold/virusLoad;
             var cellToInfect;
             if (spreadDisease){
-                var me = this;
                 cellToInfect = randomChoice(tissueCells.filter(
                     function isNeighbour(cell){
-                    return tissueCellsDistance(me.host, cell) < 1.5;
-                    }));            
+                    return tissueCellsDistance(this.host, cell) < 1.5;
+                    }));
             } else {
                 cellToInfect = this.host
             }
@@ -281,14 +282,17 @@ class ImmuneCell extends MovingObject {
                     this.targetEnemy = findTargetEnemy(this.x, this.y, enemiesList, Math.min(randomEnemyNumber, enemies.length));
                 }
                 
-                // helper variables
-                var x_sign = (this.targetEnemy.x - this.x)/Math.abs(this.targetEnemy.x - this.x);
-                var y_sign = (this.targetEnemy.y - this.y)/Math.abs(this.targetEnemy.y - this.y);
-                var ratio = (this.targetEnemy.y - this.y)/(this.targetEnemy.x - this.x);
-                
-                // Real calculation: speed is equal to base speed, direction is 'to the enemy'
-                this.xSpeed = x_sign * this.baseSpeed / Math.sqrt(ratio*ratio + 1);                
-                this.ySpeed = y_sign * Math.abs(ratio * this.xSpeed);       
+                if (this.targetEnemy != null) {
+                    // helper variables
+                    var x_sign = (this.targetEnemy.x - this.x)/Math.abs(this.targetEnemy.x - this.x);
+                    var y_sign = (this.targetEnemy.y - this.y)/Math.abs(this.targetEnemy.y - this.y);
+                    var ratio = (this.targetEnemy.y - this.y)/(this.targetEnemy.x - this.x);
+                    
+                    // Real calculation: speed is equal to base speed, direction is 'to the enemy'
+                    this.xSpeed = x_sign * this.baseSpeed / Math.sqrt(ratio*ratio + 1);                
+                    this.ySpeed = y_sign * Math.abs(ratio * this.xSpeed);   
+                }
+                    
             }
             else {
                 this.targetEnemy = null;
@@ -488,6 +492,8 @@ var game = setInterval(function(){
         if(cell.health > 0) {
             cell.draw()
             nextTurnTissueCells.push(cell);
+        } else {
+            // TODO: delete viruses of this cell
         }
     });
     tissueCells = nextTurnTissueCells;
