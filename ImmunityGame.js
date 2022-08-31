@@ -20,7 +20,7 @@ const tissueCellSize = 30;
 const spaceBetweenTissueCells = 5;
 var EdgeCellX;
 
-const randomEnemyNumber = 10;
+const randomEnemyNumber = 5;
 var livesLeft = 10;
 var money = 200;
 
@@ -99,6 +99,7 @@ class TissueCell{
         this.y = y;
         this.size = tissueCellSize;
         this.infection = [];
+        this.health = 1000;
     }
     
     draw(){
@@ -265,20 +266,19 @@ class ImmuneCell extends MovingObject {
         this.damage = damage;
     }
     
-    changeDirection() {
+    changeDirection(enemiesList) {
         if (this.y < shopHeight) {
             // Get away from shop
             this.xSpeed = randomUniform(-0.5, 0.5);
             this.ySpeed = this.baseSpeed * 3;
         } else {
 
-            if (enemies.length > 0) {
+            if (enemiesList.length > 0) {
                 
                 // Move to the random enemy
-                if (this.targetEnemy === undefined || this.targetEnemy.health <= 0 || this.targetEnemy.x > fieldWidth)  
+                if (this.targetEnemy == null || this.targetEnemy.health <= 0 || this.targetEnemy.x > fieldWidth)  
                 {
-                    console.log("Finding new enemy for " + this);
-                    this.targetEnemy = findTargetEnemy(this.x, this.y, enemies, Math.min(randomEnemyNumber, enemies.length));
+                    this.targetEnemy = findTargetEnemy(this.x, this.y, enemiesList, Math.min(randomEnemyNumber, enemies.length));
                 }
                 
                 // helper variables
@@ -501,11 +501,20 @@ var game = setInterval(function(){
     if (enemies.length > 0){
         immunityCells.forEach((cell) => {
             cell.move();
-            cell.changeDirection();
+
+            var enemiesList;
+
+            if(cell instanceof TLymphocyte) {
+                enemiesList = tissueCells.filter((cell) => {return cell.infection.length > 0});
+            } else {
+                enemiesList = enemies;
+            }
+
+            cell.changeDirection(enemiesList);
             cell.draw();
             
             // Visualize target enemy
-            if(cell.targetEnemy !== undefined) {
+            if(cell.targetEnemy != null) {
                 ctx.beginPath();
                 ctx.strokeStyle = "red";
                 ctx.moveTo(cell.x, cell.y);
