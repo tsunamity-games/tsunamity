@@ -481,7 +481,7 @@ var game = setInterval(function(){
 
     
     if(enemies.length === 0) {
-        enemies = addEnemies([], nEnemies + wave * 10, ENEMY_COLOR, 100 + wave * 30, 5 + wave * 5);
+        enemies = addEnemies([], nEnemies + wave * 10, ENEMY_COLOR, 100 + wave * 30, 5 + wave * 2);
 //        viruses = addViruses([], nViruses + wave, VIRUS_COLOR, VIRUS_DOUBLING_TIME);
         wave += 1;
     }
