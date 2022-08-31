@@ -442,8 +442,6 @@ const ENEMY_COLOR = "#1CA63B";
 const VIRUS_COLOR = "#800080";
 const VIRUS_DOUBLING_TIME = 100;
 enemies = addEnemies(enemies, nEnemies, ENEMY_COLOR, 100, 5);
-viruses = addViruses(viruses, nViruses, VIRUS_COLOR, VIRUS_DOUBLING_TIME);
-var boneMarrow = 
 
 shops = [
     // Bone marrow parts
@@ -489,19 +487,19 @@ var game = setInterval(function(){
     })
         
     if (enemies.length > 0){
-    immunityCells.forEach((cell) => {
-        cell.move();
-        cell.changeDirection();
-        cell.draw();
-        
-        // Visualize target enemy
-        if(cell.targetEnemy !== undefined) {
-            ctx.beginPath();
-            ctx.strokeStyle = "red";
-            ctx.moveTo(cell.x, cell.y);
-            ctx.lineTo(cell.targetEnemy.x, cell.targetEnemy.y);
-            ctx.stroke();
-        }
+        immunityCells.forEach((cell) => {
+            cell.move();
+            cell.changeDirection();
+            cell.draw();
+            
+            // Visualize target enemy
+            if(cell.targetEnemy !== undefined) {
+                ctx.beginPath();
+                ctx.strokeStyle = "red";
+                ctx.moveTo(cell.x, cell.y);
+                ctx.lineTo(cell.targetEnemy.x, cell.targetEnemy.y);
+                ctx.stroke();
+            }
     })}
 
     
@@ -509,6 +507,10 @@ var game = setInterval(function(){
         enemies = addEnemies([], nEnemies + wave * 10, ENEMY_COLOR, 100 + wave * 30, 5 + wave * 2);
 //        viruses = addViruses([], nViruses + wave, VIRUS_COLOR, VIRUS_DOUBLING_TIME);
         wave += 1;
+
+        if (wave % 10 == 5) {
+            viruses = addViruses(viruses, nViruses, VIRUS_COLOR, VIRUS_DOUBLING_TIME - wave);
+        }
     }
     
     ctx.lineWidth = 1;
