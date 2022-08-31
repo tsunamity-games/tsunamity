@@ -443,7 +443,7 @@ var game = setInterval(function(){
     shops.forEach((shop) => {shop.draw()})
 
     tissueCells.forEach((cell) => {cell.draw()});
-    drawBlood();
+    // drawBlood();
     
     var nextTurnEnemies = [];
     enemies.forEach((enemy) => {
