@@ -274,8 +274,9 @@ class ImmuneCell extends MovingObject {
             if (enemies.length > 0) {
                 
                 // Move to the random enemy
-                if (this.targetEnemy === undefined || this.targetEnemy.health < 0 || this.targetEnemy.x > fieldWidth)  
+                if (this.targetEnemy === undefined || this.targetEnemy.health <= 0 || this.targetEnemy.x > fieldWidth)  
                 {
+                    console.log("Finding new enemy for " + this);
                     this.targetEnemy = findTargetEnemy(this.x, this.y, enemies, Math.min(randomEnemyNumber, enemies.length));
                 }
                 
@@ -324,22 +325,20 @@ class TLymphocyte extends ImmuneCell {
     }
 };
 
-class BLymphocyte extends MovingObject {
+class BLymphocyte extends ImmuneCell {
     constructor(x, y) {
-        super("#975AF2", x, y, 20, 0.1);
-        this.shootingRadius = 20;
+        super("#975AF2", x, y, 20, 0.3);
+        this.shootingRadius = 40;
     }
 
     move() {
         super.move();
-        
-        if (
-            (this.targetEnemy !== undefined) &&
-            doCirclesIntersect(this.x, this.y, this.shootingRadius, this.targetEnemy.x, this.targetEnemy.y, this.targetEnemy.radius)
-            )
-        {
-            this.targetEnemy.health -= 1;
-        }
+    
+        enemies.forEach((enemy) => {
+            if(doCirclesIntersect(this.x, this.y, this.shootingRadius, enemy.x, enemy.y, enemy.radius)) {
+                enemy.health -= 1;
+            }
+        });
     }
 
     draw() {
@@ -444,8 +443,14 @@ const VIRUS_COLOR = "#800080";
 const VIRUS_DOUBLING_TIME = 100;
 enemies = addEnemies(enemies, nEnemies, ENEMY_COLOR, 100, 5);
 viruses = addViruses(viruses, nViruses, VIRUS_COLOR, VIRUS_DOUBLING_TIME);
-var boneMarrow = new Shop("#FEB2BA", 200, offset, shopHeight - 2 * offset, 200, TLymphocyte, 100);
-shops.push(boneMarrow);
+var boneMarrow = 
+
+shops = [
+    // Bone marrow parts
+    new Shop("#FEB2BA", 200, offset, shopHeight - 2 * offset, 200, TLymphocyte, 100),
+    new Shop("#C4A4F4", 2 * 200, offset, shopHeight - 2 * offset, 200, BLymphocyte, 200)
+];
+
 
 
 var wave = 1;
@@ -486,15 +491,17 @@ var game = setInterval(function(){
     if (enemies.length > 0){
     immunityCells.forEach((cell) => {
         cell.move();
-        cell.changeDirectionV2();
+        cell.changeDirection();
         cell.draw();
         
         // Visualize target enemy
-        ctx.beginPath();
-        ctx.strokeStyle = "red";
-        ctx.moveTo(cell.x, cell.y);
-        ctx.lineTo(cell.targetEnemy.x, cell.targetEnemy.y);
-        ctx.stroke();
+        if(cell.targetEnemy !== undefined) {
+            ctx.beginPath();
+            ctx.strokeStyle = "red";
+            ctx.moveTo(cell.x, cell.y);
+            ctx.lineTo(cell.targetEnemy.x, cell.targetEnemy.y);
+            ctx.stroke();
+        }
     })}
 
     
