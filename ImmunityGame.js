@@ -32,7 +32,7 @@ var starting_nBacteria = 30;
 // Game parameters
 var livesLeft = 10;
 var money = 200;
-var basePrice = 0.06;
+var basePrice = 0.1;
 
 //------------RANDOM-------------
 function randomUniform(low, high) {
@@ -512,28 +512,29 @@ class Helmint {
     draw(){
         this.parts.forEach((part) => {part.draw(false)});
         // Draw a healthbar
-        var barY = this.parts.slice().sort(function(a, b){return a.y-b.y;})[0].y - this.width;
-        var barX = this.parts[this.parts.length-1].x - this.width/2;
-        var barLength = this.width*0.6*this.parts.length;
-        var barWidth = this.width/5;
-        var fillLength = barLength*this.health/this.maxHealth;
-        if (this.health/this.maxHealth > 0.7){
-            ctx.fillStyle = "#90ee90";    
-        } else if (this.health/this.maxHealth > 0.3){
-            ctx.fillStyle = "#fdfd96";
-        } else {
-            ctx.fillStyle = "#FF7F7F";
+        if (this.health > 0){
+            var barY = this.parts.slice().sort(function(a, b){return a.y-b.y;})[0].y - this.width;
+            var barX = this.parts[this.parts.length-1].x - this.width/2;
+            var barLength = this.width*0.6*this.parts.length;
+            var barWidth = this.width/5;
+            var fillLength = barLength*this.health/this.maxHealth;
+            if (this.health/this.maxHealth > 0.7){
+                ctx.fillStyle = "#90ee90";    
+            } else if (this.health/this.maxHealth > 0.3){
+                ctx.fillStyle = "#fdfd96";
+            } else {
+                ctx.fillStyle = "#FF7F7F";
+            }
+            ctx.fillRect(barX, barY, fillLength, barWidth);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(barX+fillLength, barY, barLength-fillLength, barWidth);
+            ctx.strokeRect(barX, barY, barLength, barWidth);            
         }
-        ctx.fillRect(barX, barY, fillLength, barWidth);
-        ctx.fillStyle = 'white';
-        ctx.fillRect(barX+fillLength, barY, barLength-fillLength, barWidth);
-        ctx.strokeRect(barX, barY, barLength, barWidth);
         
     }
     
     move(){
         if (++this.movingtime >= this.delay){
-            console.log(this.health);
             this.movingtime = 0;
             var segment = this.parts.pop();
             var newY = this.parts[0].y + randomUniform(-this.overlay, this.overlay);
@@ -546,8 +547,8 @@ class Helmint {
                 segment.y = newY;
                 this.parts.unshift(segment);
             } 
-            this.x = this.parts[0].x;
-            this.y = this.parts[0].y;
+            this.x = segment.x;
+            this.y = segment.y;
         }
     }
 }
@@ -683,7 +684,7 @@ var game = setInterval(function(){
         if ((helmint.parts[helmint.parts.length - 1].x < fieldWidth)){
             if (helmint.health <= 0) {
 //                money += helmint.price;
-                  garbagePiles.push(new GarbagePile(helmint.x, helmint.y, helmint.width*helmint.overlay*helmint.parts.length));
+                  garbagePiles.push(new GarbagePile(helmint.x, helmint.y, helmint.overlay*helmint.parts.length*0.5));
             } else {
                 nextTurnHelmintes.push(helmint);
             }
@@ -761,7 +762,6 @@ var game = setInterval(function(){
             helmintes = [new Helmint(-10, randomUniform(playableFieldStart + 15, playableFieldHeight-15), 1000, 1000, 100, 30, 10)];
         }
     }
-    console.log(tissueCells.filter((cell) => cell.infection.length === 0).length);
     money += basePrice * tissueCells.filter((cell) => cell.infection.length === 0).length/tissueCells.length;
     ctx.lineWidth = 1;
     ctx.strokeStyle = "black";
