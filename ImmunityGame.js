@@ -143,11 +143,12 @@ class MovingObject {
 
     changeDirection() {}
 
-    draw() {
+    draw(stroke=true) {
         ctx.fillStyle = this.color;
         if (this.x > 0 && this.y > 0 && this.x < fieldWidth && this.y < fieldHeight) {
             circle(this.x, this.y, this.radius, true);
-            circle(this.x, this.y, this.radius, false);
+            if (stroke)
+                circle(this.x, this.y, this.radius, false);
         }
     }
 }
@@ -453,7 +454,7 @@ class Helmint {
     }
     
     draw(){
-        this.parts.forEach((part) => {part.draw()})
+        this.parts.forEach((part) => {part.draw(false)});
     }
     
     move(){
@@ -544,7 +545,7 @@ var shops = [
 var bacteria = addBacteria([], starting_nBacteria, BACTERIA_COLOR, 100, 5);
 var tissueCells = addTissueCells([]);
 var viruses = [];
-var helmintes = [];//[new Helmint(-10, 400, 100, 30, 10)];
+var helmintes = [new Helmint(-10, 400, 100, 30, 10)];
 var garbagePiles = [];
 var wave = 1;
 var gameOverTrue = false; 
