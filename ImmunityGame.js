@@ -8,6 +8,23 @@ const offset = 10;
 const playableFieldStart = shopHeight + offset;
 const playableFieldHeight = fieldHeight - shopHeight;
 
+// Animation parameters
+const N_ANIMATION_FRAMES = 5;
+const ANIMATED_IMAGE_WIDTH = 100;
+const ANIMATED_IMAGE_HEIGHT = 80;
+
+const T_LYMPHOCYTES_IMAGE = new Image();
+T_LYMPHOCYTES_IMAGE.src = "./images/lymphocytes.png";
+
+const B_LYMPHOCYTES_IMAGE = new Image();
+B_LYMPHOCYTES_IMAGE.src = "./images/lymphocytes_dark.png";
+
+const MACROPHAGES_IMAGE = new Image();
+MACROPHAGES_IMAGE.src = "./images/macrophages.png";
+
+const EOSINOPHILES_IMAGE = new Image();
+EOSINOPHILES_IMAGE.src = "./images/eosinophiles.png";
+
 // Host cell parameters
 //      Tissue cells
 const tissueCellSize = 30;
@@ -248,6 +265,7 @@ class ImmuneCell extends MovingObject {
         this.damage = damage;
         this.age = 0;
         this.longevity = longevity;
+        this.iteration = 0;
     }
     
     changeDirection(targetsList, nCandidates=randomTargetNumber) {
@@ -296,10 +314,25 @@ class ImmuneCell extends MovingObject {
     live(){
         this.age++;
     }
+
+    draw() {
+        ctx.drawImage(
+            this.color,
+            ANIMATED_IMAGE_WIDTH * this.iteration,
+            0,
+            ANIMATED_IMAGE_WIDTH,
+            ANIMATED_IMAGE_HEIGHT,
+            this.x - this.radius,
+            this.y - this.radius,
+            2 * this.radius,
+            2 * this.radius)
+        this.iteration = (this.iteration + 1) % N_ANIMATION_FRAMES;
+    }
+    
 }
 class Macrophage extends ImmuneCell {
     constructor(x, y) {
-        super("#FB7057", x, y, 40, 0.4, 0.2);
+        super(MACROPHAGES_IMAGE, x, y, 40, 0.4, 0.2);
     }
 
     move() {
@@ -313,14 +346,14 @@ class Macrophage extends ImmuneCell {
     }
 
     draw() {
-        ctx.globalAlpha = 0.5;
+        ctx.globalAlpha = 0.8;
         super.draw();
         ctx.globalAlpha = 1;
     }
 }
 class Eosinophile extends ImmuneCell {
     constructor(x, y) {
-        super("#bdb76b", x, y, 10, 0.2, 0.01);
+        super(EOSINOPHILES_IMAGE, x, y, 10, 0.2, 0.01);
     } 
     move() {
         super.move();
@@ -374,7 +407,8 @@ class Eosinophile extends ImmuneCell {
 }
 class TLymphocyte extends ImmuneCell {
     constructor(x, y) {
-        super("#5EFF83", x, y, 20, 0.5, 1)
+        super(T_LYMPHOCYTES_IMAGE, x, y, 20, 0.5, 1);
+        this.iteration = 0;
     }
 
     move() {
@@ -396,8 +430,9 @@ class TLymphocyte extends ImmuneCell {
 }
 class BLymphocyte extends ImmuneCell {
     constructor(x, y) {
-        super("#975AF2", x, y, 20, 0.3, 1);
+        super(B_LYMPHOCYTES_IMAGE, x, y, 20, 0.3, 1);
         this.shootingRadius = 40;
+        this.iteration = 0;
     }
 
     move() {
@@ -417,10 +452,9 @@ class BLymphocyte extends ImmuneCell {
             ctx.globalAlpha = 0.2;
             circle(this.x, this.y, this.shootingRadius, true);
             circle(this.x, this.y, this.shootingRadius, false);
-
             ctx.globalAlpha = 1;
-            circle(this.x, this.y, this.radius, true);
-            circle(this.x, this.y, this.radius, false);
+
+            super.draw();
         }
     }
 }
