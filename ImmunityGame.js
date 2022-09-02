@@ -28,6 +28,9 @@ EOSINOPHILES_IMAGE.src = "./images/eosinophiles.png";
 const BACTERIA_IMAGE = new Image();
 BACTERIA_IMAGE.src = "./images/bacteria.png";
 
+const HELMINTH_IMAGE = new Image();
+HELMINTH_IMAGE.src = "./images/helminth.png";
+
 // Host cell parameters
 //      Tissue cells
 const tissueCellSize = 30;
@@ -545,12 +548,12 @@ class Helmint {
         this.price = price;
         this.parts = [];
         this.delay = delay;
-        this.color = "#ff69b4"
+        this.texture = HELMINTH_IMAGE;
         this.width = width;
         this.movingtime = 0;
         this.overlay = this.width*0.6; // stupid, but this is actually something inversely proportional to the overlay of the segments
         for (var i=0; i < length; i++){
-            this.parts.push(new MovingObject(this.color, this.x-i*this.overlay, this.y, this.width/2));
+            this.parts.push(new MovingObject(this.texture, this.x-i*this.overlay, this.y, this.width/2));
         }
     }
     
