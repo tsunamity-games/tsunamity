@@ -25,11 +25,17 @@ MACROPHAGES_IMAGE.src = "./images/macrophages.png";
 const EOSINOPHILES_IMAGE = new Image();
 EOSINOPHILES_IMAGE.src = "./images/eosinophiles.png";
 
+const BACTERIA_IMAGE = new Image();
+BACTERIA_IMAGE.src = "./images/bacteria.png";
+
 // Host cell parameters
 //      Tissue cells
 const tissueCellSize = 30;
 const spaceBetweenTissueCells = 5;
 var EdgeCellX;
+
+const TISSUE_CELL_COLOR = "#facdf3";
+
 //      Lymphocytes
 const randomTargetNumber = 5;
 
@@ -43,7 +49,6 @@ var starting_nViruses = 2;
 
 //      Bacteria
 const bacteriaRadius = 6;
-const BACTERIA_COLOR = "#1CA63B";
 var starting_nBacteria = 30;
 
 // Game parameters
@@ -147,11 +152,13 @@ function tissueCellsDistance(c1, c2){
 
 //--------BASIC CLASSES----------
 class MovingObject {
-    constructor(color, x, y, radius) {
-        this.color = color;
+    constructor(texture, x, y, radius) {
+        this.texture = texture;
         this.radius = radius;
         this.x = x;
         this.y = y;
+
+        this.animation_frame = 0;  // Animation frame
     }
 
     move() {
@@ -161,12 +168,19 @@ class MovingObject {
 
     changeDirection() {}
 
-    draw(stroke=true) {
-        ctx.fillStyle = this.color;
+    draw() {
         if (this.x > 0 && this.y > 0 && this.x < fieldWidth && this.y < fieldHeight) {
-            circle(this.x, this.y, this.radius, true);
-            if (stroke)
-                circle(this.x, this.y, this.radius, false);
+            ctx.drawImage(
+                this.texture,
+                ANIMATED_IMAGE_WIDTH * this.animation_frame,
+                0,
+                ANIMATED_IMAGE_WIDTH,
+                ANIMATED_IMAGE_HEIGHT,
+                this.x - this.radius,
+                this.y - this.radius,
+                2 * this.radius,
+                2 * this.radius)
+            this.animation_frame = (this.animation_frame + 1) % N_ANIMATION_FRAMES;
         }
     }
 }
@@ -245,7 +259,7 @@ class TissueCell{
         ctx.lineWidth = 1;
         ctx.strokeStyle = "black";
         if (this.infection.length === 0){
-            ctx.fillStyle = "#a8dadc";
+            ctx.fillStyle = TISSUE_CELL_COLOR;
         } else {
             ctx.fillStyle = this.infection[0].color;
             ctx.globalAlpha = (this.infection.length+this.infection.length*0.2)/(maxVirusesInTissueCell+this.infection.length*0.2);
@@ -256,8 +270,8 @@ class TissueCell{
     }
 }
 class ImmuneCell extends MovingObject {
-    constructor(color, x, y, radius, baseSpeed, damage, longevity=20000) {
-        super(color, x, y, radius);
+    constructor(texture, x, y, radius, baseSpeed, damage, longevity=20000) {
+        super(texture, x, y, radius);
         this.xSpeed = 0;
         this.ySpeed = 0;
         this.target = undefined;
@@ -313,20 +327,6 @@ class ImmuneCell extends MovingObject {
     }
     live(){
         this.age++;
-    }
-
-    draw() {
-        ctx.drawImage(
-            this.color,
-            ANIMATED_IMAGE_WIDTH * this.iteration,
-            0,
-            ANIMATED_IMAGE_WIDTH,
-            ANIMATED_IMAGE_HEIGHT,
-            this.x - this.radius,
-            this.y - this.radius,
-            2 * this.radius,
-            2 * this.radius)
-        this.iteration = (this.iteration + 1) % N_ANIMATION_FRAMES;
     }
     
 }
@@ -446,8 +446,8 @@ class BLymphocyte extends ImmuneCell {
     }
 
     draw() {
-        ctx.fillStyle = this.color;
-
+        ctx.fillStyle = "#975AF2";
+        // Visualize shooting radius
         if (this.x > 0 && this.y > 0 && this.x < fieldWidth && this.y < fieldHeight) {
             ctx.globalAlpha = 0.2;
             circle(this.x, this.y, this.shootingRadius, true);
@@ -505,8 +505,8 @@ class Virus{
     
 }
 class Bacterium extends MovingObject {
-    constructor(color, x, y, radius, maxHealth, price) {
-        super(color, x, y, radius)
+    constructor(texture, x, y, radius, maxHealth, price) {
+        super(texture, x, y, radius)
         this.xSpeed = randomUniform(-5, 5); 
         this.ySpeed = randomUniform(-5, 5);
         this.maxHealth = maxHealth;
@@ -609,11 +609,11 @@ function addTissueCells(tissueCellsList){
     EdgeCellX = x;
     return tissueCellsList;
 }
-function addBacteria(bacteriaList, n, color, maxHealth, price){
+function addBacteria(bacteriaList, n, texture, maxHealth, price){
     for (var i=0; i<n; i++){
         var y = randomUniform(shopHeight + offset, fieldHeight); 
         var x = -10;
-        bacteriaList.push(new Bacterium(color, x, y, bacteriaRadius, maxHealth, price));
+        bacteriaList.push(new Bacterium(texture, x, y, bacteriaRadius, maxHealth, price));
     };
     return bacteriaList;
 }       
@@ -669,7 +669,7 @@ var shops = [
     new Shop("#F2715A", 3 * 200, offset, shopHeight - 2 * offset, 200, Macrophage, 100),
     new Shop("#AFEEEE", 4*200, offset, shopHeight - 2 * offset, 200, Eosinophile, 50)
 ];
-var bacteria = addBacteria([], starting_nBacteria, BACTERIA_COLOR, 100, 5);
+var bacteria = addBacteria([], starting_nBacteria, BACTERIA_IMAGE, 100, 5);
 var tissueCells = addTissueCells([]);
 var viruses = [];
 var helmintes = [];
@@ -797,7 +797,7 @@ var game = setInterval(function(){
 
     
     if(bacteria.length === 0) {
-        bacteria = addBacteria([], starting_nBacteria + wave * 10, BACTERIA_COLOR, 100 + wave * 30, 5 + wave * 2);
+        bacteria = addBacteria([], starting_nBacteria + wave * 10, BACTERIA_IMAGE, 100 + wave * 30, 5 + wave * 2);
         wave += 1;
 
         if (wave % 4 === 2) {
