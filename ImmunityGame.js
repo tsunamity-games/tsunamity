@@ -169,6 +169,17 @@ class Shop {
         ctx.fillRect(this.x, this.y, this.height, this.width);
         ctx.style = this.color;
         ctx.strokeRect(this.x, this.y, this.height, this.width);
+
+        ctx.fillStyle = "Black";
+        ctx.textBaseline = "top";
+        ctx.textAlign = "left";
+
+        // Name of the cell type sold
+        ctx.font = "20px Courier";
+        ctx.fillText(this.cellType.name, this.x + this.width / 2 - 50, this.y + offset);
+
+        ctx.font = "22px Courier";
+        ctx.fillText("Price: " + this.price, this.x + offset + this.width / 2 - 55, this.y + this.height - 5 * offset);
     }
 
     buy() {
