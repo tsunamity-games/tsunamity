@@ -13,6 +13,8 @@ const BACTERIA_COLORS = ["blue", "green", "yellow", "orange"];
 const N_ANIMATION_FRAMES = 5;
 const ANIMATED_IMAGE_WIDTH = 100;
 const ANIMATED_IMAGE_HEIGHT = 80;
+const STATIC_IMAGE_WIDTH = 200;
+const STATIC_IMAGE_HEIGHT = 200;
 
 const LYMPHOCYTES_IMAGES = new Map();  // Map from color to image of lymphocytes
 
@@ -25,11 +27,11 @@ BACTERIA_COLORS.forEach((color) => {
 console.log("Colors map for lymphocytes:");
 console.log(LYMPHOCYTES_IMAGES);
 
+const GARBAGE_IMAGE = new Image();
+GARBAGE_IMAGE.src = "./images/garbage.png";
+
 const T_LYMPHOCYTES_IMAGE = new Image();
 T_LYMPHOCYTES_IMAGE.src = "./images/lymphocytes.png";
-
-const B_LYMPHOCYTES_IMAGE = new Image();
-B_LYMPHOCYTES_IMAGE.src = "./images/lymphocytes_dark.png";
 
 const MACROPHAGES_IMAGE = new Image();
 MACROPHAGES_IMAGE.src = "./images/macrophages.png";
@@ -252,9 +254,15 @@ class GarbagePile{
         this.x = x;
         this.y = y;
         this.size = size;
+        this.texture = GARBAGE_IMAGE;
     }
     draw(){
-        star(this.x, this.y, 12, this.size, this.size*0.2, "#A3A300");
+        ctx.drawImage(
+            this.texture, 0, 0, STATIC_IMAGE_WIDTH, STATIC_IMAGE_HEIGHT,
+            this.x - this.size / 2,
+            this.y - this.size / 2,
+            2 * this.size,
+            2 * this.size)
     }
 }
 //--------BASIC CLASSES----------
