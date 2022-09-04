@@ -49,6 +49,9 @@ HELMINTH_IMAGE.src = "./images/helminth.png";
 const BONE_MARROW_IMAGE = new Image();
 BONE_MARROW_IMAGE.src = "./images/bone_marrow.png";
 
+const CELL_IMAGE = new Image();
+CELL_IMAGE.src = "./images/cell.png";
+
 // Host cell parameters
 //      Tissue cells
 const tissueCellSize = 30;
@@ -281,21 +284,25 @@ class TissueCell{
         this.size = size;
         this.infection = [];
         this.health = 100;
+        this.texture = CELL_IMAGE;
     }
     
     draw(){
         if (this.size < tissueCellSize){this.size = Math.min(this.size + 0.05, tissueCellSize)};
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = "black";
-        if (this.infection.length === 0){
-            ctx.fillStyle = TISSUE_CELL_COLOR;
-        } else {
+        
+        ctx.drawImage(
+            this.texture, 0, 0, STATIC_IMAGE_WIDTH, STATIC_IMAGE_HEIGHT,
+            this.x,
+            this.y,
+            this.size,
+            this.size)
+        
+        if (this.infection.length !== 0){
             ctx.fillStyle = this.infection[0].color;
             ctx.globalAlpha = (this.infection.length+this.infection.length*0.2)/(maxVirusesInTissueCell+this.infection.length*0.2);
+            circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 2, true);
         }
-        square(this.x, this.y, this.size);
         ctx.globalAlpha = 1;
-        ctx.strokeRect(this.x, this.y, this.size, this.size);
     }
 }
 class ImmuneCell extends MovingObject {
