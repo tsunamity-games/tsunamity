@@ -7,11 +7,23 @@ const shopHeight = 200;
 const offset = 10;
 const playableFieldStart = shopHeight + offset;
 const playableFieldHeight = fieldHeight - shopHeight;
+const BACTERIA_COLORS = ["blue", "green", "yellow", "orange"];
 
 // Animation parameters
 const N_ANIMATION_FRAMES = 5;
 const ANIMATED_IMAGE_WIDTH = 100;
 const ANIMATED_IMAGE_HEIGHT = 80;
+
+const LYMPHOCYTES_IMAGES = new Map();  // Map from color to image of lymphocytes
+
+BACTERIA_COLORS.forEach((color) => {
+    const image = new Image();
+    image.src = "./images/lymphocytes_" + color + ".png";
+    LYMPHOCYTES_IMAGES.set(color, image);
+});
+
+console.log("Colors map for lymphocytes:");
+console.log(LYMPHOCYTES_IMAGES);
 
 const T_LYMPHOCYTES_IMAGE = new Image();
 T_LYMPHOCYTES_IMAGE.src = "./images/lymphocytes.png";
@@ -433,9 +445,12 @@ class TLymphocyte extends ImmuneCell {
 }
 class BLymphocyte extends ImmuneCell {
     constructor(x, y) {
-        super(B_LYMPHOCYTES_IMAGE, x, y, 20, 0.3, 1);
+        var color = randomChoice(BACTERIA_COLORS);
+
+        super(LYMPHOCYTES_IMAGES.get(color), x, y, 20, 0.3, 1);
         this.shootingRadius = 40;
         this.iteration = 0;
+        this.color = color;
     }
 
     move() {
@@ -449,7 +464,7 @@ class BLymphocyte extends ImmuneCell {
     }
 
     draw() {
-        ctx.fillStyle = "#975AF2";
+        ctx.fillStyle = this.color;
         // Visualize shooting radius
         if (this.x > 0 && this.y > 0 && this.x < fieldWidth && this.y < fieldHeight) {
             ctx.globalAlpha = 0.2;
