@@ -292,8 +292,8 @@ class TissueCell{
         
         ctx.drawImage(
             this.texture, 0, 0, STATIC_IMAGE_WIDTH, STATIC_IMAGE_HEIGHT,
-            this.x,
-            this.y,
+            this.x + (tissueCellSize - this.size) / 2,
+            this.y + (tissueCellSize - this.size) / 2,
             this.size,
             this.size)
         
