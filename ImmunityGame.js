@@ -4,6 +4,7 @@ var ctx = field.getContext("2d");
 const fieldWidth = field.width;
 const fieldHeight = field.height;
 const shopHeight = 200;
+const shopWidth = 200;
 const offset = 10;
 const playableFieldStart = shopHeight + offset;
 const playableFieldHeight = fieldHeight - shopHeight;
@@ -44,6 +45,9 @@ BACTERIA_IMAGE.src = "./images/bacteria.png";
 
 const HELMINTH_IMAGE = new Image();
 HELMINTH_IMAGE.src = "./images/helminth.png";
+
+const BONE_MARROW_IMAGE = new Image();
+BONE_MARROW_IMAGE.src = "./images/bone_marrow.png";
 
 // Host cell parameters
 //      Tissue cells
@@ -202,8 +206,8 @@ class MovingObject {
     }
 }
 class Shop {
-    constructor(color, x, y, width, height, cellType, price) {
-        this.color = color;
+    constructor(texture, x, y, width, height, cellType, price) {
+        this.texture = texture;
         this.x = x;
         this.y = y;
         this.height = height;
@@ -213,10 +217,12 @@ class Shop {
     }
 
     draw() {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.height, this.width);
-        ctx.style = this.color;
-        ctx.strokeRect(this.x, this.y, this.height, this.width);
+        ctx.drawImage(
+            this.texture, 0, 0, STATIC_IMAGE_WIDTH, STATIC_IMAGE_HEIGHT,
+            this.x,
+            this.y,
+            this.width,
+            this.height)
 
         ctx.fillStyle = "Black";
         ctx.textBaseline = "top";
@@ -690,10 +696,10 @@ function gameOver(){
 // Game Setup
 var immunityCells = [];
 var shops = [
-    new Shop("#FEB2BA", 200, offset, shopHeight - 2 * offset, 200, TLymphocyte, 200),
-    new Shop("#C4A4F4", 2 * 200, offset, shopHeight - 2 * offset, 200, BLymphocyte, 200),
-    new Shop("#F2715A", 3 * 200, offset, shopHeight - 2 * offset, 200, Macrophage, 100),
-    new Shop("#AFEEEE", 4*200, offset, shopHeight - 2 * offset, 200, Eosinophile, 50)
+    new Shop(BONE_MARROW_IMAGE, shopWidth, offset, shopWidth, shopHeight - 2 * offset, TLymphocyte, 200),
+    new Shop(BONE_MARROW_IMAGE, 2 * shopWidth + offset, offset, shopWidth, shopHeight - 2 * offset, BLymphocyte, 200),
+    new Shop(BONE_MARROW_IMAGE, 3 * shopWidth + 2 * offset, offset, shopWidth, shopHeight - 2 * offset, Macrophage, 100),
+    new Shop(BONE_MARROW_IMAGE, 4 * shopWidth + 3 * offset, offset, shopWidth, shopHeight - 2 * offset, Eosinophile, 50)
 ];
 var bacteria = addBacteria([], starting_nBacteria, BACTERIA_IMAGE, 100, 5);
 var tissueCells = addTissueCells([]);
