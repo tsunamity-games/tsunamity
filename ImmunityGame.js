@@ -96,6 +96,7 @@ function star(cx, cy, nSpikes, outerRadius, innerRadius, color){
 function clip(x, min, max) {
     return Math.min(Math.max(min, x), max);
 }
+
 function moveTo(xFrom, yFrom, xTo, yTo, speed){
     if (xTo === xFrom && yTo === yFrom){
         return [0, 0];
@@ -142,7 +143,6 @@ function tissueCellsDistance(c1, c2){
     return (Math.abs(c1.x - c2.x) + Math.abs(c1.y-c2.y))/(tissueCellSize + spaceBetweenTissueCells);
 }
 //-------SUPPORT FOR CELLS-------
-
 
 //--------BASIC CLASSES----------
 class MovingObject {
@@ -236,6 +236,7 @@ class SpleenSection{
         square(this.x-this.size/2, this.y-this.size/2, this.size);
     }
 }
+      
 class Spleen extends BodyPart{
     constructor(color, x, y, width, height, nSections){
         super(color, x, y, width, height);
@@ -255,6 +256,7 @@ class Spleen extends BodyPart{
     }
 }
 //---------ORGANS----------------
+
 
 //--------HOST CELLS-------------
 class TissueCell{
@@ -298,9 +300,6 @@ class ImmuneCell extends MovingObject {
             // Get away from shop
             this.xSpeed = randomUniform(-0.5, 0.5);
             this.ySpeed = this.baseSpeed * 3;
-//            if (this instanceof BLymphocyte){
-//                this.xSpeed = 0;
-//            }
         } else {
 
             if (targetsList.length > 0) {
@@ -336,7 +335,6 @@ class ImmuneCell extends MovingObject {
 
     move() {
         super.move();
-//        this.y = clip(this.y, this.radius, fieldHeight - this.radius);
         this.x = clip(this.x, this.radius, fieldWidth - this.radius);
     }
     live(){
@@ -386,6 +384,7 @@ class Eosinophile extends ImmuneCell {
         } else {
 
             if (targetsList.length > 0) {
+
                 targetsList = randomChoice(targetsList).parts;
                 nCandidates = targetsList.length;
                 
@@ -425,7 +424,6 @@ class TLymphocyte extends ImmuneCell {
 
     move() {
         super.move();
-
         if(this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size / 2)) {
             if (this.target.infection.length > 0){
                 this.target.health -= this.damage;    
@@ -445,17 +443,21 @@ class BLymphocyte extends ImmuneCell {
         super("#FFFFFF", x, y, 20, 0.3, 1);
         this.shootingRadius = 40;
         this.mode = "naive";
+
     }
 
     move() {
         super.move();
+
     
         bacteria.forEach((bacterium) => {
             if(doCirclesIntersect(this.x, this.y, this.shootingRadius, bacterium.x, bacterium.y, bacterium.radius) && bacterium.mode === "enemy" && bacterium.color === this.color) {
+
                 bacterium.health -= this.damage;
             }
         });
     }
+
 
     goToSplin(){
         if (this.y < shopHeight) {
@@ -507,6 +509,7 @@ class BLymphocyte extends ImmuneCell {
     }
 }
 //--------HOST CELLS-------------
+
 
 //---------PATHOGENS-------------
 class Virus{
@@ -564,6 +567,7 @@ class Bacterium extends MovingObject {
         this.spleenSection;
     }
 
+
     move() {
         super.move();
 
@@ -571,6 +575,7 @@ class Bacterium extends MovingObject {
         if (this.x > fieldWidth) {
              --livesLeft; 
         };
+      
         if (this.mode === "enemy"){
             this.y = clip(this.y, playableFieldStart + this.radius, fieldHeight - this.radius);            
         }
@@ -593,6 +598,7 @@ class Bacterium extends MovingObject {
         } else if (this.mode === "antigen"){
             super.draw();
         }
+
     }
 }
 class Helmint {
@@ -616,6 +622,7 @@ class Helmint {
     draw(){
         this.parts.forEach((part) => {part.draw(false)});
         // Draw a healthbar
+
         if (this.health > 0 && this.parts.length > 0){
             var barY = this.parts.slice().sort(function(a, b){return a.y-b.y;})[0].y - this.width;
             var barX = this.parts[this.parts.length-1].x - this.width/2;
@@ -797,7 +804,6 @@ var game = setInterval(function(){
                     nextTurnHelmintes.push(helmint);
                 }
         }
-
         }
     })
     helmintes = nextTurnHelmintes;
@@ -839,6 +845,7 @@ var game = setInterval(function(){
     viruses.forEach((virus) => {
         virus.grow();
     })
+
                 
     if (bacteria.length > 0){
         immunityCells.forEach((cell) => {
