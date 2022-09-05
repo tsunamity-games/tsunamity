@@ -298,9 +298,9 @@ class ImmuneCell extends MovingObject {
             // Get away from shop
             this.xSpeed = randomUniform(-0.5, 0.5);
             this.ySpeed = this.baseSpeed * 3;
-            if (this instanceof BLymphocyte){
-                this.xSpeed = 0;
-            }
+//            if (this instanceof BLymphocyte){
+//                this.xSpeed = 0;
+//            }
         } else {
 
             if (targetsList.length > 0) {
@@ -457,15 +457,28 @@ class BLymphocyte extends ImmuneCell {
         });
     }
 
+    goToSplin(){
+        if (this.y < shopHeight) {
+            // Get away from shop
+            this.xSpeed = 0;
+            this.ySpeed = this.baseSpeed * 3;}
+        else if (this.y >= shopHeight){
+            this.xSpeed = 0.5;
+            this.ySpeed = 0;
+        } else{
+            super.changeDirection()
+        }}
+    
     changeDirection(targetsList, nCandidates=randomTargetNumber){
         if (this.mode === "naive"){
-            if (spleen.sections.filter((section)=> section.antigen != null).length > 0){
+            if (this.x < spleen.x){
+                this.goToSplin();
+            } else if (spleen.sections.filter((section)=> section.antigen != null).length > 0){
                 super.changeDirection(spleen.sections.filter((section)=> section.antigen != null), nCandidates=spleen.sections.length);
             } else {
                 super.changeDirection(spleen.sections, spleen.sections.length);
-//                super.changeDirection([new Bacterium("#FFFFFF", spleen.x + spleen.width/2, spleen.y + spleen.width/2, 1)]);
             }
-            if (this.target instanceof SpleenSection && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size/2)){
+            if (this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size/2)){
                 if (this.target.antigen != null && doCirclesIntersect(this.target.x, this.target.y, this.target.size/2, this.target.antigen.x, this.target.antigen.y, this.target.antigen.radius) && randomUniform(0, 1) < 0.1){
                     this.color = this.target.antigen.color;
                     this.mode = "mature";
@@ -603,7 +616,7 @@ class Helmint {
     draw(){
         this.parts.forEach((part) => {part.draw(false)});
         // Draw a healthbar
-        if (this.health > 0){
+        if (this.health > 0 && this.parts.length > 0){
             var barY = this.parts.slice().sort(function(a, b){return a.y-b.y;})[0].y - this.width;
             var barX = this.parts[this.parts.length-1].x - this.width/2;
             var barLength = this.width*0.6*this.parts.length;
@@ -628,18 +641,22 @@ class Helmint {
         if (++this.movingtime >= this.delay){
             this.movingtime = 0;
             var segment = this.parts.pop();
-            var newY = this.parts[0].y + randomUniform(-this.overlay, this.overlay);
-            newY = clip(newY, playableFieldStart + this.width/2, playableFieldHeight-this.width/2);
-            var newX = this.parts[0].x + Math.sqrt(Math.pow(this.overlay, 2) - Math.pow(this.parts[0].y-newY, 2));
-            if (newX > fieldWidth){
-                livesLeft--;
+            if (this.parts.length > 0){
+                var newY = this.parts[0].y + randomUniform(-this.overlay, this.overlay);
+                newY = clip(newY, playableFieldStart + this.width/2, playableFieldHeight-this.width/2);
+                var newX = this.parts[0].x + Math.sqrt(Math.pow(this.overlay, 2) -  Math.pow(this.parts[0].y-newY, 2));
+                if (newX > fieldWidth){
+                    livesLeft--;
+                } else {
+                    segment.x = newX;
+                    segment.y = newY;
+                    this.parts.unshift(segment);
+                } 
+                this.x = segment.x;
+                this.y = segment.y;
             } else {
-                segment.x = newX;
-                segment.y = newY;
-                this.parts.unshift(segment);
-            } 
-            this.x = segment.x;
-            this.y = segment.y;
+                livesLeft--;
+            }
         }
     }
 }
@@ -771,13 +788,16 @@ var game = setInterval(function(){
     helmintes.forEach((helmint) => {
         helmint.move();
         helmint.draw();
-        if ((helmint.parts[helmint.parts.length - 1].x < fieldWidth)){
-            if (helmint.health <= 0) {
-//                money += helmint.price;
-                  garbagePiles.push(new GarbagePile(helmint.x, helmint.y, helmint.overlay*helmint.parts.length*0.5));
-            } else {
-                nextTurnHelmintes.push(helmint);
-            }
+        if (helmint.parts.length > 0){
+            if ((helmint.parts[helmint.parts.length - 1].x < fieldWidth)){
+                if (helmint.health <= 0) {
+    //                money += helmint.price;
+                      garbagePiles.push(new GarbagePile(helmint.x, helmint.y, helmint.overlay*helmint.parts.length*0.5));
+                } else {
+                    nextTurnHelmintes.push(helmint);
+                }
+        }
+
         }
     })
     helmintes = nextTurnHelmintes;
