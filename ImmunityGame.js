@@ -5,9 +5,9 @@ const fieldWidth = field.width;
 const fieldHeight = field.height;
 const shopHeight = 200;
 const shopWidth = 160;
+const buttonWidth = 34;
+const buttonHeight = 34;
 const offset = 10;
-const playableFieldStart = shopHeight + offset;
-const playableFieldHeight = fieldHeight - shopHeight;
 const BACTERIA_COLORS = ["blue", "green", "yellow", "orange"];
 
 // Animation parameters
@@ -46,6 +46,10 @@ T_LYMPHOCYTES_IMAGE.src = "./images/lymphocytes.png";
 const MACROPHAGES_IMAGE = new Image();
 MACROPHAGES_IMAGE.src = "./images/macrophages.png";
 
+const NEUTROPHILS_IMAGE = new Image();
+NEUTROPHILS_IMAGE.src = "./images/neutrophils.png";
+
+
 const EOSINOPHILES_IMAGE = new Image();
 EOSINOPHILES_IMAGE.src = "./images/eosinophiles.png";
 
@@ -69,7 +73,9 @@ VIRUS_IMAGE.src = "./images/virus.png";
 const tissueCellSize = 30;
 const spaceBetweenTissueCells = 5;
 var EdgeCellX;
-
+const nTissueCellRows = 14;
+const playableFieldStart = shopHeight + offset;
+const playableFieldHeight = playableFieldStart + nTissueCellRows*(tissueCellSize + spaceBetweenTissueCells)-spaceBetweenTissueCells;
 const TISSUE_CELL_COLOR = "#facdf3";
 
 //      Lymphocytes
@@ -84,7 +90,7 @@ const VIRUS_DOUBLING_TIME = 200;
 var starting_nViruses = 2;
 
 //      Bacteria
-const bacteriaRadius = 6;
+const bacteriaRadius = 8;
 var starting_nBacteria = 30;
 
 // Game parameters
@@ -92,7 +98,8 @@ var livesLeft = 10;
 var money = 200;
 var basePrice = 0.1;
 var chanceToGetAntigen = 0.05;
-var garbagePileSlowingCoefficient = 0.1;
+var garbagePileSlowingCoefficient = 0.4;
+var nVaccinate = 30;
 
 //------------RANDOM-------------
 function randomUniform(low, high) {
@@ -155,7 +162,6 @@ function star(cx, cy, nSpikes, outerRadius, innerRadius, color){
 function clip(x, min, max) {
     return Math.min(Math.max(min, x), max);
 }
-
 function moveTo(xFrom, yFrom, xTo, yTo, speed){
     if (xTo === xFrom && yTo === yFrom){
         return [0, 0];
@@ -275,6 +281,26 @@ class GarbagePile{
             this.radius*2, this.radius*2)
     }
 }
+class Button extends BodyPart {
+    constructor(color, x, y, width, height, text) {
+        super("", x, y, width, height);
+        this.color = color;
+        this.text = text;
+    }
+    
+    draw(){
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = 0.2;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.globalAlpha = 1;
+        ctx.strokeRect(this.x, this.y, this.width, this.height);
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "black";
+        ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
+    }
+    
+}
 //--------BASIC CLASSES----------
 
 //---------ORGANS----------------
@@ -381,6 +407,37 @@ class Spleen extends BodyPart{
         this.sections.forEach((section) => section.draw());
     }
 }
+class Antibiotic extends Button {
+    constructor(color, x, y, width, height, price){
+        super(color, x, y, width, height, "A");
+        this.price = price;
+    }  
+    
+    activate(){
+        if (money - this.price >= 0){
+            money -= this.price;
+            bacteria.filter((bacterium) => bacterium.color === this.color).forEach((bacterium) => {
+                bacterium.health = 1;
+            })
+        }
+    }
+}
+class Vaccine extends Button{
+    constructor(color, x, y, width, height, price){
+        super(color, x, y, width, height, "V");
+        this.price = price;
+    }  
+    activate(){
+        if (money - this.price >= 0){
+            money -= this.price;
+            var targetTissueCells = [];
+            for (var i = 0; i < nVaccinate; i++){
+                targetTissueCells.push(randomChoice(tissueCells.filter((cell) => !(cell in targetTissueCells) && cell.infection.length === 0)));
+            }
+            targetTissueCells.forEach((cell) => cell.vaccine = this.color);                          
+        }
+    }
+}
 //---------ORGANS----------------
 
 
@@ -393,6 +450,7 @@ class TissueCell{
         this.infection = [];
         this.health = 100;
         this.texture = CELL_IMAGE;
+        this.vaccine = null;
     }
     
     draw(){
@@ -409,6 +467,15 @@ class TissueCell{
             ctx.fillStyle = this.infection[0].color;
             ctx.globalAlpha = (this.infection.length+this.infection.length*0.2)/(maxVirusesInTissueCell+this.infection.length*0.2);
             circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 2, true);
+        } else if (this.vaccine != null){
+            ctx.fillStyle = this.vaccine;
+            ctx.globalAlpha = 0.1;
+            circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 2, true);
+            ctx.globalAlpha = 1;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "black";
+            ctx.fillText("V", this.x + this.size / 2, this.y + this.size / 2)
         }
         ctx.globalAlpha = 1;
     }
@@ -483,9 +550,9 @@ class ImmuneCell extends MovingObject {
 }
     
 
-class Macrophage extends ImmuneCell {
+class Neutrophil extends ImmuneCell {
     constructor(x, y) {
-        super(MACROPHAGES_IMAGE, x, y, 40, 0.4, 0.2);
+        super(NEUTROPHILS_IMAGE, x, y, 40, 0.4, 0.2);
     }
 
     move() {
@@ -504,7 +571,7 @@ class Macrophage extends ImmuneCell {
         ctx.globalAlpha = 1;
     }
 }
-class TrueMacrophage extends ImmuneCell {
+class Macrophage extends ImmuneCell {
     constructor(x, y) {
         super(MACROPHAGES_IMAGE, x, y, 20, 0.4, 1);
         this.texture = MACROPHAGES_IMAGE;
@@ -573,7 +640,7 @@ class Eosinophile extends ImmuneCell {
         }
     }
 }
-class TLymphocyte extends ImmuneCell {
+class NaturalKiller extends ImmuneCell {
     constructor(x, y) {
         super(T_LYMPHOCYTES_IMAGE, x, y, 20, 0.5, 1);
         this.iteration = 0;
@@ -698,9 +765,10 @@ class Virus{
             var cellToInfect;
             if (spreadDisease){
                 var thisHost = this.host;
+                var thisColor = this.color;
                 cellToInfect = randomChoice(tissueCells.filter(
-                    function isNeighbour(cell){
-                    return tissueCellsDistance(thisHost, cell) < 1.5 && cell.size === tissueCellSize;
+                    function isUninfectedNeighbour(cell){
+                    return tissueCellsDistance(thisHost, cell) < 1.5 && cell.size === tissueCellSize && (cell.infection.length === 0 || cell.infection[0].color === thisColor) && (cell.vaccine != thisColor);
                     }));
             } else {
                 cellToInfect = this.host
@@ -738,7 +806,7 @@ class Bacterium extends MovingObject {
         };
       
         if (this.mode === "enemy"){
-            this.y = clip(this.y, playableFieldStart + this.radius, fieldHeight - this.radius);            
+            this.y = clip(this.y, playableFieldStart + this.radius, playableFieldHeight - this.radius);            
         }
     }
 
@@ -753,7 +821,7 @@ class Bacterium extends MovingObject {
 
     draw() {
         if (this.mode === "enemy"){
-            ctx.globalAlpha = clip(this.health / this.maxHealth, 0.2, 1);
+            ctx.globalAlpha = clip(this.health / this.maxHealth, 0.5, 1);
             super.draw();
             ctx.globalAlpha = 1;            
         } else if (this.mode === "antigen"){
@@ -833,7 +901,7 @@ class Helmint {
 //-----GAME SETUP FUNCTIONS------
 function addTissueCells(tissueCellsList){
     for (var x = offset; x < fieldWidth - tissueCellSize - spaceBetweenTissueCells; x += tissueCellSize+spaceBetweenTissueCells){
-            for (var y = shopHeight + offset;y < fieldHeight-tissueCellSize-spaceBetweenTissueCells; y += tissueCellSize+spaceBetweenTissueCells){
+            for (var y = shopHeight + offset; y < fieldHeight - buttonHeight - offset -tissueCellSize-spaceBetweenTissueCells; y += tissueCellSize+spaceBetweenTissueCells){
                     tissueCellsList.push(new TissueCell(x, y));
             }
 }
@@ -842,16 +910,16 @@ function addTissueCells(tissueCellsList){
 }
 function addBacteria(bacteriaList, n, texture, maxHealth, price){
     for (var i=0; i<n; i++){
-        var y = randomUniform(shopHeight + offset, fieldHeight); 
+        var y = randomUniform(shopHeight + offset, playableFieldHeight); 
         var x = -10;
-        var color = randomChoice(["blue", "green", "yellow", "orange"]);
+        var color = randomChoice(BACTERIA_COLORS);
         bacteriaList.push(new Bacterium(color, x, y, bacteriaRadius, maxHealth, price));
     };
     return bacteriaList;
 }       
 function addViruses(virusesList, n, color, doublingTime){
     for (var i=0; i < n; i++){
-        virusesList.push(new Virus(color, doublingTime, null))
+        virusesList.push(new Virus(randomChoice(BACTERIA_COLORS), doublingTime, null))
     }
     return virusesList;
 }
@@ -896,14 +964,19 @@ function gameOver(){
 // Game Setup
 var immunityCells = [];
 
-var xLeftOffset = 140;
+var xLeftOffset = 145;
 var shops = [
-    new Shop(BONE_MARROW_IMAGE, xLeftOffset, offset, shopWidth, shopHeight - 2 * offset, TLymphocyte, 200, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
+    new Shop(BONE_MARROW_IMAGE, xLeftOffset, offset, shopWidth, shopHeight - 2 * offset, NaturalKiller, 200, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
     new Shop(BONE_MARROW_IMAGE, xLeftOffset + shopWidth + offset, offset, shopWidth, shopHeight - 2 * offset, BLymphocyte, 200, BACTERIA_IMAGE, LYMPHOCYTES_IMAGES.get("green")),
-    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 2 * shopWidth + 2 * offset, offset, shopWidth, shopHeight - 2 * offset, Macrophage, 100, GARBAGE_IMAGE, MACROPHAGES_IMAGE),
+    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 2 * shopWidth + 2 * offset, offset, shopWidth, shopHeight - 2 * offset, Neutrophil, 100, BACTERIA_IMAGE, NEUTROPHILS_IMAGE),
     new Shop(BONE_MARROW_IMAGE, xLeftOffset + 3 * shopWidth + 3 * offset, offset, shopWidth, shopHeight - 2 * offset, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE),
-    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 4*shopWidth + 4*offset, offset, shopWidth, shopHeight - 2 * offset, TrueMacrophage, 300, GARBAGE_IMAGE, MACROPHAGES_IMAGE)
+    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 4*shopWidth + 4*offset, offset, shopWidth, shopHeight - 2 * offset, Macrophage, 300, GARBAGE_IMAGE, MACROPHAGES_IMAGE)
 ];
+var buttons = [];
+for (var i = 0; i < BACTERIA_COLORS.length; i++){
+    buttons.push(new Antibiotic(BACTERIA_COLORS[i], fieldWidth/2 - buttonWidth*(BACTERIA_COLORS.length - i) - offset*(BACTERIA_COLORS.length - i), playableFieldHeight + offset, buttonWidth, buttonHeight, 100));
+    buttons.push(new Vaccine(BACTERIA_COLORS[i], fieldWidth/2 + offset*(i+1) + buttonWidth*i, playableFieldHeight + offset, buttonWidth, buttonHeight, 100));
+}
 spleen = new Spleen(BONE_MARROW_IMAGE, xLeftOffset+5*shopWidth + 5*offset + 10, offset, shopHeight - 2 * offset, shopHeight - 2 * offset, 16);
 var bacteria = addBacteria([], starting_nBacteria, BACTERIA_IMAGE, 100, 5);
 
@@ -932,6 +1005,13 @@ $("#field").click(function(event){
             shop.buy();
         }
     })
+    
+    // If any of the buttons are clicked, do their thing
+    buttons.forEach((button)=>{
+        if (button.isIntersected(x, y)){
+            button.activate();
+        }
+    })
 });
 
 var game = setInterval(function(){
@@ -940,9 +1020,12 @@ var game = setInterval(function(){
     }
     else{
     ctx.clearRect(0, 0, fieldWidth, fieldHeight);
+    
     printGameInfo();
         
     shops.forEach((shop) => {shop.draw()})
+    buttons.forEach((button) => {button.draw()})
+    
     spleen.draw();
     var nextTurnTissueCells = [];
     tissueCells.forEach((cell) => {
@@ -1020,12 +1103,12 @@ var game = setInterval(function(){
 
             var targetList;
 
-            if(cell instanceof TLymphocyte) {
+            if(cell instanceof NaturalKiller) {
                 targetList = tissueCells;
                 
             } else if (cell instanceof Eosinophile){
                 targetList = helmintes;
-            } else if (cell instanceof TrueMacrophage) {
+            } else if (cell instanceof Macrophage) {
                 targetList = garbagePiles;}
             else {
                 targetList = bacteria;
