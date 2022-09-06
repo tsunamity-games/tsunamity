@@ -4,7 +4,7 @@ var ctx = field.getContext("2d");
 const fieldWidth = field.width;
 const fieldHeight = field.height;
 const shopHeight = 200;
-const shopWidth = 200;
+const shopWidth = 180;
 const offset = 10;
 const playableFieldStart = shopHeight + offset;
 const playableFieldHeight = fieldHeight - shopHeight;
@@ -18,12 +18,21 @@ const STATIC_IMAGE_WIDTH = 200;
 const STATIC_IMAGE_HEIGHT = 200;
 
 const LYMPHOCYTES_IMAGES = new Map();  // Map from color to image of lymphocytes
+const BACTERIA_IMAGES = new Map();  // Map from color to image of bacteria
 
 BACTERIA_COLORS.forEach((color) => {
-    const image = new Image();
-    image.src = "./images/lymphocytes_" + color + ".png";
-    LYMPHOCYTES_IMAGES.set(color, image);
+    const lymphocyte_image = new Image();
+    lymphocyte_image.src = "./images/lymphocytes_" + color + ".png";
+    LYMPHOCYTES_IMAGES.set(color, lymphocyte_image);
+    
+    const bacterium_image = new Image();
+    bacterium_image.src = "./images/bacteria_" + color + ".png";
+    BACTERIA_IMAGES.set(color, bacterium_image);
 });
+
+const LYMPHOCYTES_DEFAULT_IMAGE = new Image();
+LYMPHOCYTES_DEFAULT_IMAGE.src = "./images/lymphocytes_dark.png";
+LYMPHOCYTES_IMAGES.set("#FFFFFF", LYMPHOCYTES_DEFAULT_IMAGE)
 
 console.log("Colors map for lymphocytes:");
 console.log(LYMPHOCYTES_IMAGES);
@@ -82,6 +91,7 @@ var starting_nBacteria = 30;
 var livesLeft = 10;
 var money = 200;
 var basePrice = 0.1;
+var chanceToGetAntigen = 0.05;
 
 //------------RANDOM-------------
 function randomUniform(low, high) {
@@ -144,6 +154,22 @@ function star(cx, cy, nSpikes, outerRadius, innerRadius, color){
 function clip(x, min, max) {
     return Math.min(Math.max(min, x), max);
 }
+
+function moveTo(xFrom, yFrom, xTo, yTo, speed){
+    if (xTo === xFrom && yTo === yFrom){
+        return [0, 0];
+    } 
+    var x_sign = (xTo - xFrom)/Math.abs(xTo - xFrom);
+    var y_sign = (yTo - yFrom)/Math.abs(yTo - yFrom);
+    var ratio = (yTo - yFrom)/(xTo - xFrom);
+
+    // Real calculation: speed is equal to base speed, direction is 'to the xTo yTo'
+    var xSpeed;
+    var ySpeed;
+    if (Math.abs(xTo - xFrom) < 1){xSpeed = 0;} else {xSpeed = x_sign * speed / Math.sqrt(ratio*ratio + 1)}
+    if (Math.abs(yTo - yFrom) < 1){ySpeed = 0;} else {ySpeed = y_sign * Math.abs(ratio * speed)} 
+    return [xSpeed, ySpeed];
+}
 //--------OTHER SUPPORT----------
 
 //-------SUPPORT FOR CELLS-------
@@ -175,7 +201,6 @@ function tissueCellsDistance(c1, c2){
     return (Math.abs(c1.x - c2.x) + Math.abs(c1.y-c2.y))/(tissueCellSize + spaceBetweenTissueCells);
 }
 //-------SUPPORT FOR CELLS-------
-
 
 //--------BASIC CLASSES----------
 class MovingObject {
@@ -211,22 +236,15 @@ class MovingObject {
         }
     }
 }
-class Shop {
-    constructor(texture, x, y, width, height, cellType, price, enemyTexture, cellTexture, isEnemyAnimated, isCellAnimated) {
+class BodyPart {
+    constructor(texture, x, y, width, height) {
         this.texture = texture;
         this.x = x;
         this.y = y;
         this.height = height;
         this.width = width;
-        this.cellType = cellType;
-        this.price = price;
-
-        this.enemyTexture = enemyTexture;
-        this.cellTexture = cellTexture;
-        this.isEnemyAnimated = isEnemyAnimated;
-        this.isCellAnimated = isCellAnimated;
     }
-
+    
     draw() {
         ctx.drawImage(
             this.texture, 0, 0, STATIC_IMAGE_WIDTH, STATIC_IMAGE_HEIGHT,
@@ -234,39 +252,41 @@ class Shop {
             this.y,
             this.width,
             this.height)
-
-        ctx.fillStyle = "Black";
-        ctx.textBaseline = "top";
-        ctx.textAlign = "left";
-
-        // Name of the cell type sold
-        ctx.font = "20px Courier";
-        ctx.fillText(this.cellType.name, this.x + this.width / 2 - 50, this.y + offset);
-
-        ctx.font = "16px Courier";
-        ctx.fillText("Produces", this.x + 25, this.y + 50);
-        ctx.fillText("Kills", this.x + this.width  - 75, this.y + 50);
-
-        ctx.font = "22px Courier";
-        ctx.fillText("Price: " + this.price, this.x + offset + this.width / 2 - 55, this.y + this.height - 5 * offset);
-
+    }
+    
+    isIntersected(x, y) {
+        return (x > this.x) && (x < this.x + this.width) && (y > this.y) && (y < this.y + this.height)
+    }
+}
+class GarbagePile{
+    constructor(x, y, size){
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.texture = GARBAGE_IMAGE;
+    }
+    draw(){
         ctx.drawImage(
-            this.cellTexture, 0, 0,
-            this.isCellAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
-            this.isCellAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
-            this.x  + 25,
-            this.y + 75,
-            50,
-            50)
+            this.texture,
+            this.x,
+            this.y,
+            this.size*2, this.size*2)
+    }
+}
+//--------BASIC CLASSES----------
 
-        ctx.drawImage(
-            this.enemyTexture, 0, 0,
-            this.isEnemyAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
-            this.isEnemyAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
-            this.x + this.width - 75,
-            this.y + 75,
-            50,
-            50)
+//---------ORGANS----------------
+class Shop extends BodyPart {
+  
+    constructor(texture, x, y, width, height, cellType, price, enemyTexture, cellTexture, isEnemyAnimated, isCellAnimated) {
+        super(texture, x, y, width, height);
+        this.cellType = cellType;
+        this.price = price;
+        
+        this.enemyTexture = enemyTexture;
+        this.cellTexture = cellTexture;
+        this.isEnemyAnimated = isEnemyAnimated;
+        this.isCellAnimated = isCellAnimated;
     }
 
     buy() {
@@ -283,28 +303,85 @@ class Shop {
             money -= this.price;
         }
     }
+    
+    draw() {
+        super.draw();
+    
+        ctx.fillStyle = "Black";
+        ctx.textBaseline = "top";
+        ctx.textAlign = "center";
 
-    isIntersected(x, y) {
-        return (x > this.x) && (x < this.x + this.width) && (y > this.y) && (y < this.y + this.height)
-    }
+        // Name of the cell type sold
+        ctx.font = "20px Courier";
+        ctx.fillText(this.cellType.name, this.x + this.width / 2, this.y + offset);
+        
+        ctx.textAlign = "left";
+        ctx.font = "16px Courier";
+        ctx.fillText("Produces", this.x+5, this.y + 50);
+        ctx.textAlign = "right";
+        ctx.fillText("Kills", this.x-5 + this.width, this.y + 50);
+
+        ctx.font = "22px Courier";
+        ctx.textAlign = "center";
+        ctx.fillText("Price: " + this.price, this.x + offset + this.width / 2, this.y + this.height - 5 * offset);
+
+        ctx.drawImage(
+            this.cellTexture, 0, 0,
+            this.isCellAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
+            this.isCellAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
+            this.x  + 20,
+            this.y + 75,
+            50,
+            50)
+
+        ctx.drawImage(
+            this.enemyTexture, 0, 0,
+            this.isEnemyAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
+            this.isEnemyAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
+            this.x + this.width - 60,
+            this.y + 75,
+            50,
+            50)
+        }
 }
-class GarbagePile{
+class SpleenSection{
     constructor(x, y, size){
-        this.x = x;
-        this.y = y;
-        this.size = size;
-        this.texture = GARBAGE_IMAGE;
+        this.x = x + size/2;
+        this.y = y + size/2;
+        this.size = size; // width = height = size
+        this.antigen = null;
+        this.texture = BONE_MARROW_IMAGE;
     }
+    
     draw(){
         ctx.drawImage(
             this.texture, 0, 0, STATIC_IMAGE_WIDTH, STATIC_IMAGE_HEIGHT,
             this.x - this.size / 2,
             this.y - this.size / 2,
-            2 * this.size,
-            2 * this.size)
+            this.size,
+            this.size)
+    }
+}   
+class Spleen extends BodyPart{
+    constructor(color, x, y, width, height, nSections){
+        super(color, x, y, width, height);
+        this.sections = [];
+        var sectionSize = this.width/((nSections - 4)/4 + 2);
+        for (var i = 0; i < this.width/sectionSize; i ++){
+            for (var j = 0; j < this.width/sectionSize; j ++){
+                if (i === 0 || j === 0 || i === this.width/sectionSize-1 || j === this.width/sectionSize-1){
+                    this.sections.push(new SpleenSection(this.x + i*sectionSize, this.y+j*sectionSize, this.width/((nSections - 4)/4 + 2)));
+                }
+            }    
+        }
+    }
+    draw(){
+        super.draw();
+        this.sections.forEach((section) => section.draw());
     }
 }
-//--------BASIC CLASSES----------
+//---------ORGANS----------------
+
 
 //--------HOST CELLS-------------
 class TissueCell{
@@ -336,7 +413,7 @@ class TissueCell{
     }
 }
 class ImmuneCell extends MovingObject {
-    constructor(texture, x, y, radius, baseSpeed, damage, longevity=20000) {
+    constructor(texture, x, y, radius, baseSpeed, damage, longevity=1000) {
         super(texture, x, y, radius);
         this.xSpeed = 0;
         this.ySpeed = 0;
@@ -349,14 +426,13 @@ class ImmuneCell extends MovingObject {
     }
     
     changeDirection(targetsList, nCandidates=randomTargetNumber) {
-        if (this.y < shopHeight) {
+        if (this.y < shopHeight && this.x < spleen.x) {
             // Get away from shop
             this.xSpeed = randomUniform(-0.5, 0.5);
             this.ySpeed = this.baseSpeed * 3;
         } else {
 
             if (targetsList.length > 0) {
-                
                 // Move to the random bacterium
                 if (this.target == null || this.target.health <= 0 || this.target.x > fieldWidth)  
                 {
@@ -365,6 +441,7 @@ class ImmuneCell extends MovingObject {
                 
                 if (this.target != null) {
                     // helper variables
+//                    [this.xSpeed, this.ySpeed] = moveTo(this.x, this.y, this.target.x, this.target.y, this.baseSpeed);
                     var x_sign = (this.target.x - this.x)/Math.abs(this.target.x - this.x);
                     var y_sign = (this.target.y - this.y)/Math.abs(this.target.y - this.y);
                     var ratio = (this.target.y - this.y)/(this.target.x - this.x);
@@ -388,7 +465,6 @@ class ImmuneCell extends MovingObject {
 
     move() {
         super.move();
-        this.y = clip(this.y, this.radius, fieldHeight - this.radius);
         this.x = clip(this.x, this.radius, fieldWidth - this.radius);
     }
     live(){
@@ -405,7 +481,7 @@ class Macrophage extends ImmuneCell {
         super.move();
         
         bacteria.forEach((bacterium) => {
-            if(doCirclesIntersect(this.x, this.y, this.radius, bacterium.x, bacterium.y, bacterium.radius)) {
+            if(doCirclesIntersect(this.x, this.y, this.radius, bacterium.x, bacterium.y, bacterium.radius) && bacterium.mode === "enemy") {
                 bacterium.health -= this.damage;
             }
         });
@@ -439,6 +515,7 @@ class Eosinophile extends ImmuneCell {
         } else {
 
             if (targetsList.length > 0) {
+
                 targetsList = randomChoice(targetsList).parts;
                 nCandidates = targetsList.length;
                 
@@ -479,7 +556,6 @@ class TLymphocyte extends ImmuneCell {
 
     move() {
         super.move();
-
         if(this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size / 2)) {
             if (this.target.infection.length > 0){
                 this.target.health -= this.damage;    
@@ -496,9 +572,9 @@ class TLymphocyte extends ImmuneCell {
 }
 class BLymphocyte extends ImmuneCell {
     constructor(x, y) {
-        var color = randomChoice(BACTERIA_COLORS);
-
+        var color = "#FFFFFF";
         super(LYMPHOCYTES_IMAGES.get(color), x, y, 20, 0.3, 1);
+        this.mode = "naive";
         this.shootingRadius = 40;
         this.iteration = 0;
         this.color = color;
@@ -506,16 +582,54 @@ class BLymphocyte extends ImmuneCell {
 
     move() {
         super.move();
-    
         bacteria.forEach((bacterium) => {
-            if(doCirclesIntersect(this.x, this.y, this.shootingRadius, bacterium.x, bacterium.y, bacterium.radius)) {
+            if(doCirclesIntersect(this.x, this.y, this.shootingRadius, bacterium.x, bacterium.y, bacterium.radius) && bacterium.mode === "enemy" && bacterium.color === this.color) {
+
                 bacterium.health -= this.damage;
             }
         });
     }
 
+    goToSplin(){
+        if (this.y < shopHeight) {
+            // Get away from shop
+            this.xSpeed = 0;
+            this.ySpeed = this.baseSpeed * 3;}
+        else if (this.y >= shopHeight){
+            this.xSpeed = 0.5;
+            this.ySpeed = 0;
+        } else{
+            super.changeDirection()
+        }}
+    
+    changeDirection(targetsList, nCandidates=randomTargetNumber){
+        if (this.mode === "naive"){
+            if (this.x < spleen.x){
+                this.goToSplin();
+            } else if (spleen.sections.filter((section)=> section.antigen != null).length > 0){
+                super.changeDirection(spleen.sections.filter((section)=> section.antigen != null), nCandidates=spleen.sections.length);
+            } else {
+                super.changeDirection(spleen.sections, spleen.sections.length);
+            }
+            if (this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size/2)){
+                if (this.target.antigen != null && doCirclesIntersect(this.target.x, this.target.y, this.target.size/2, this.target.antigen.x, this.target.antigen.y, this.target.antigen.radius) && randomUniform(0, 1) < 0.1){
+                    this.texture = LYMPHOCYTES_IMAGES.get(this.target.antigen.color);
+                    this.color = this.target.antigen.color;
+                    this.mode = "mature";
+                    this.target = null;
+                }
+                else{
+                    this.target = null;
+                }
+            }
+        } else if (this.mode === "mature") {
+            super.changeDirection(targetsList.filter((target) => target.color === this.color), nCandidates);   
+        }
+    }
+    
     draw() {
         ctx.fillStyle = this.color;
+
         // Visualize shooting radius
         if (this.x > 0 && this.y > 0 && this.x < fieldWidth && this.y < fieldHeight) {
             ctx.globalAlpha = 0.2;
@@ -528,6 +642,7 @@ class BLymphocyte extends ImmuneCell {
     }
 }
 //--------HOST CELLS-------------
+
 
 //---------PATHOGENS-------------
 class Virus{
@@ -574,14 +689,20 @@ class Virus{
     
 }
 class Bacterium extends MovingObject {
-    constructor(texture, x, y, radius, maxHealth, price) {
+    constructor(color, x, y, radius, maxHealth, price) {
+        var texture = BACTERIA_IMAGES.get(color);
+
         super(texture, x, y, radius)
+        this.color = color;
         this.xSpeed = randomUniform(-5, 5); 
         this.ySpeed = randomUniform(-5, 5);
         this.maxHealth = maxHealth;
         this.health = maxHealth;
         this.price = price;
+        this.mode = "enemy";
+        this.spleenSection;
     }
+
 
     move() {
         super.move();
@@ -590,19 +711,30 @@ class Bacterium extends MovingObject {
         if (this.x > fieldWidth) {
              --livesLeft; 
         };
-
-        this.y = clip(this.y, playableFieldStart + this.radius, fieldHeight - this.radius);
+      
+        if (this.mode === "enemy"){
+            this.y = clip(this.y, playableFieldStart + this.radius, fieldHeight - this.radius);            
+        }
     }
 
     changeDirection() {
-        this.xSpeed = randomUniform(-0.8, 1.2); 
-        this.ySpeed = randomUniform(-1, 1);
+        if (this.mode === "enemy"){
+            this.xSpeed = randomUniform(-0.8, 1.2); 
+            this.ySpeed = randomUniform(-1, 1);            
+        } else if (this.mode === "antigen"){
+            [this.xSpeed, this.ySpeed] = moveTo(this.x, this.y, this.spleenSection.x, this.spleenSection.y, 1);
+        }
     }
 
     draw() {
-        ctx.globalAlpha = clip(this.health / this.maxHealth, 0.2, 1);
-        super.draw();
-        ctx.globalAlpha = 1;
+        if (this.mode === "enemy"){
+            ctx.globalAlpha = clip(this.health / this.maxHealth, 0.2, 1);
+            super.draw();
+            ctx.globalAlpha = 1;            
+        } else if (this.mode === "antigen"){
+            super.draw();
+        }
+
     }
 }
 class Helmint {
@@ -626,7 +758,8 @@ class Helmint {
     draw(){
         this.parts.forEach((part) => {part.draw(false)});
         // Draw a healthbar
-        if (this.health > 0){
+
+        if (this.health > 0 && this.parts.length > 0){
             var barY = this.parts.slice().sort(function(a, b){return a.y-b.y;})[0].y - this.width;
             var barX = this.parts[this.parts.length-1].x - this.width/2;
             var barLength = this.width*0.6*this.parts.length;
@@ -651,18 +784,22 @@ class Helmint {
         if (++this.movingtime >= this.delay){
             this.movingtime = 0;
             var segment = this.parts.pop();
-            var newY = this.parts[0].y + randomUniform(-this.overlay, this.overlay);
-            newY = clip(newY, playableFieldStart + this.width/2, playableFieldHeight-this.width/2);
-            var newX = this.parts[0].x + Math.sqrt(Math.pow(this.overlay, 2) - Math.pow(this.parts[0].y-newY, 2));
-            if (newX > fieldWidth){
-                livesLeft--;
+            if (this.parts.length > 0){
+                var newY = this.parts[0].y + randomUniform(-this.overlay, this.overlay);
+                newY = clip(newY, playableFieldStart + this.width/2, playableFieldHeight-this.width/2);
+                var newX = this.parts[0].x + Math.sqrt(Math.pow(this.overlay, 2) -  Math.pow(this.parts[0].y-newY, 2));
+                if (newX > fieldWidth){
+                    livesLeft--;
+                } else {
+                    segment.x = newX;
+                    segment.y = newY;
+                    this.parts.unshift(segment);
+                } 
+                this.x = segment.x;
+                this.y = segment.y;
             } else {
-                segment.x = newX;
-                segment.y = newY;
-                this.parts.unshift(segment);
-            } 
-            this.x = segment.x;
-            this.y = segment.y;
+                livesLeft--;
+            }
         }
     }
 }
@@ -682,7 +819,8 @@ function addBacteria(bacteriaList, n, texture, maxHealth, price){
     for (var i=0; i<n; i++){
         var y = randomUniform(shopHeight + offset, fieldHeight); 
         var x = -10;
-        bacteriaList.push(new Bacterium(texture, x, y, bacteriaRadius, maxHealth, price));
+        var color = randomChoice(["blue", "green", "yellow", "orange"]);
+        bacteriaList.push(new Bacterium(color, x, y, bacteriaRadius, maxHealth, price));
     };
     return bacteriaList;
 }       
@@ -738,15 +876,15 @@ var shops = [
     new Shop(BONE_MARROW_IMAGE, 3 * shopWidth + 2 * offset, offset, shopWidth, shopHeight - 2 * offset, Macrophage, 100, GARBAGE_IMAGE, MACROPHAGES_IMAGE),
     new Shop(BONE_MARROW_IMAGE, 4 * shopWidth + 3 * offset, offset, shopWidth, shopHeight - 2 * offset, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE)
 ];
+spleen = new Spleen(BONE_MARROW_IMAGE, shopWidth+4*shopWidth + 4*offset + 10, offset, shopHeight - 2 * offset, shopHeight - 2 * offset, 16);
 var bacteria = addBacteria([], starting_nBacteria, BACTERIA_IMAGE, 100, 5);
+
 var tissueCells = addTissueCells([]);
 var viruses = [];
 var helmintes = [];
-//helmintes = [new Helmint(-10, randomUniform(playableFieldStart + 15, playableFieldHeight-15), 1000, 1000, 100, 30, 10)];
 var garbagePiles = [];
 var wave = 1;
-var gameOverTrue = false; 
-
+var gameOverTrue = false;  
 // Gameplay
 $("#field").click(function(event){
     console.log("Page coordinates:")
@@ -777,7 +915,7 @@ var game = setInterval(function(){
     printGameInfo();
         
     shops.forEach((shop) => {shop.draw()})
-
+    spleen.draw();
     var nextTurnTissueCells = [];
     tissueCells.forEach((cell) => {
         if(cell.health > 0) {
@@ -795,13 +933,15 @@ var game = setInterval(function(){
     helmintes.forEach((helmint) => {
         helmint.move();
         helmint.draw();
-        if ((helmint.parts[helmint.parts.length - 1].x < fieldWidth)){
-            if (helmint.health <= 0) {
-//                money += helmint.price;
-                  garbagePiles.push(new GarbagePile(helmint.x, helmint.y, helmint.overlay*helmint.parts.length*0.5));
-            } else {
-                nextTurnHelmintes.push(helmint);
-            }
+        if (helmint.parts.length > 0){
+            if ((helmint.parts[helmint.parts.length - 1].x < fieldWidth)){
+                if (helmint.health <= 0) {
+    //                money += helmint.price;
+                      garbagePiles.push(new GarbagePile(helmint.x, helmint.y, helmint.overlay*helmint.parts.length*0.5));
+                } else {
+                    nextTurnHelmintes.push(helmint);
+                }
+        }
         }
     })
     helmintes = nextTurnHelmintes;
@@ -815,10 +955,26 @@ var game = setInterval(function(){
         bacterium.draw();
         if ((bacterium.x < fieldWidth)){
             if (bacterium.health <= 0) {
+                if (randomUniform(0, 1) < chanceToGetAntigen){
+                    bacterium.mode = "antigen";
+                    var sectionSet = spleen.sections.filter((section) => section.antigen === null);
+                    if (sectionSet.length === 0){
+                        sectionSet = spleen.sections;
+                    }
+                    bacterium.spleenSection = randomChoice(sectionSet);
+                    bacterium.spleenSection.antigen = bacterium; 
+                }
 //                money += bacterium.price;
             } else{
                 nextTurnBacteria.push(bacterium);
             }
+        }
+    })
+    spleen.sections.forEach((section) => {
+        if (section.antigen != null){
+            section.antigen.move();
+            section.antigen.changeDirection();
+            section.antigen.draw();            
         }
     })
     
@@ -827,6 +983,7 @@ var game = setInterval(function(){
     viruses.forEach((virus) => {
         virus.grow();
     })
+
                 
     if (bacteria.length > 0){
         immunityCells.forEach((cell) => {
