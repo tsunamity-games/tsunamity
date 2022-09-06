@@ -610,7 +610,7 @@ class BLymphocyte extends ImmuneCell {
             }
             if (this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size/2)){
                 if (this.target.antigen != null && doCirclesIntersect(this.target.x, this.target.y, this.target.size/2, this.target.antigen.x, this.target.antigen.y, this.target.antigen.radius) && randomUniform(0, 1) < 0.1){
-                    this.color = this.target.antigen.color;
+                    this.texture = LYMPHOCYTES_IMAGES.get(this.target.antigen.color);
                     this.mode = "mature";
                     this.target = null;
                 }
@@ -685,8 +685,11 @@ class Virus{
     
 }
 class Bacterium extends MovingObject {
-    constructor(texture, x, y, radius, maxHealth, price) {
+    constructor(color, x, y, radius, maxHealth, price) {
+        var texture = BACTERIA_IMAGES.get(color);
+
         super(texture, x, y, radius)
+        this.color = color;
         this.xSpeed = randomUniform(-5, 5); 
         this.ySpeed = randomUniform(-5, 5);
         this.maxHealth = maxHealth;
@@ -812,8 +815,8 @@ function addBacteria(bacteriaList, n, texture, maxHealth, price){
     for (var i=0; i<n; i++){
         var y = randomUniform(shopHeight + offset, fieldHeight); 
         var x = -10;
-        var color = randomChoice(["blue", "green", "yellow", "orange"];
-        bacteriaList.push(new Bacterium(BACTERIA_COLORS.get(color), x, y, bacteriaRadius, maxHealth, price));
+        var color = randomChoice(["blue", "green", "yellow", "orange"]);
+        bacteriaList.push(new Bacterium(color, x, y, bacteriaRadius, maxHealth, price));
     };
     return bacteriaList;
 }       
