@@ -4,7 +4,7 @@ var ctx = field.getContext("2d");
 const fieldWidth = field.width;
 const fieldHeight = field.height;
 const shopHeight = 200;
-const shopWidth = 200;
+const shopWidth = 180;
 const offset = 10;
 const playableFieldStart = shopHeight + offset;
 const playableFieldHeight = fieldHeight - shopHeight;
@@ -236,7 +236,6 @@ class MovingObject {
         }
     }
 }
-
 class BodyPart {
     constructor(texture, x, y, width, height) {
         this.texture = texture;
@@ -264,9 +263,14 @@ class GarbagePile{
         this.x = x;
         this.y = y;
         this.size = size;
+        this.texture = GARBAGE_IMAGE;
     }
     draw(){
-        star(this.x, this.y, 12, this.size, this.size*0.2, "#A3A300");
+        ctx.drawImage(
+            this.texture,
+            this.x,
+            this.y,
+            this.size*2, this.size*2)
     }
 }
 //--------BASIC CLASSES----------
@@ -305,24 +309,27 @@ class Shop extends BodyPart {
     
         ctx.fillStyle = "Black";
         ctx.textBaseline = "top";
-        ctx.textAlign = "left";
+        ctx.textAlign = "center";
 
         // Name of the cell type sold
         ctx.font = "20px Courier";
-        ctx.fillText(this.cellType.name, this.x + this.width / 2 - 50, this.y + offset);
-
+        ctx.fillText(this.cellType.name, this.x + this.width / 2, this.y + offset);
+        
+        ctx.textAlign = "left";
         ctx.font = "16px Courier";
-        ctx.fillText("Produces", this.x + 25, this.y + 50);
-        ctx.fillText("Kills", this.x + this.width  - 75, this.y + 50);
+        ctx.fillText("Produces", this.x+5, this.y + 50);
+        ctx.textAlign = "right";
+        ctx.fillText("Kills", this.x-5 + this.width, this.y + 50);
 
         ctx.font = "22px Courier";
-        ctx.fillText("Price: " + this.price, this.x + offset + this.width / 2 - 55, this.y + this.height - 5 * offset);
+        ctx.textAlign = "center";
+        ctx.fillText("Price: " + this.price, this.x + offset + this.width / 2, this.y + this.height - 5 * offset);
 
         ctx.drawImage(
             this.cellTexture, 0, 0,
             this.isCellAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
             this.isCellAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
-            this.x  + 25,
+            this.x  + 20,
             this.y + 75,
             50,
             50)
@@ -331,7 +338,7 @@ class Shop extends BodyPart {
             this.enemyTexture, 0, 0,
             this.isEnemyAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
             this.isEnemyAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
-            this.x + this.width - 75,
+            this.x + this.width - 60,
             this.y + 75,
             50,
             50)
@@ -341,7 +348,7 @@ class SpleenSection{
     constructor(x, y, size){
         this.x = x + size/2;
         this.y = y + size/2;
-        this.size = size;
+        this.size = size; // width = height = size
         this.antigen = null;
         this.texture = BONE_MARROW_IMAGE;
     }
@@ -351,11 +358,10 @@ class SpleenSection{
             this.texture, 0, 0, STATIC_IMAGE_WIDTH, STATIC_IMAGE_HEIGHT,
             this.x - this.size / 2,
             this.y - this.size / 2,
-            2 * this.size,
-            2 * this.size)
+            this.size,
+            this.size)
     }
-}
-      
+}   
 class Spleen extends BodyPart{
     constructor(color, x, y, width, height, nSections){
         super(color, x, y, width, height);
@@ -407,7 +413,7 @@ class TissueCell{
     }
 }
 class ImmuneCell extends MovingObject {
-    constructor(texture, x, y, radius, baseSpeed, damage, longevity=20000) {
+    constructor(texture, x, y, radius, baseSpeed, damage, longevity=1000) {
         super(texture, x, y, radius);
         this.xSpeed = 0;
         this.ySpeed = 0;
@@ -576,8 +582,6 @@ class BLymphocyte extends ImmuneCell {
 
     move() {
         super.move();
-
-    
         bacteria.forEach((bacterium) => {
             if(doCirclesIntersect(this.x, this.y, this.shootingRadius, bacterium.x, bacterium.y, bacterium.radius) && bacterium.mode === "enemy" && bacterium.color === this.color) {
 
@@ -585,7 +589,6 @@ class BLymphocyte extends ImmuneCell {
             }
         });
     }
-
 
     goToSplin(){
         if (this.y < shopHeight) {
@@ -611,6 +614,7 @@ class BLymphocyte extends ImmuneCell {
             if (this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size/2)){
                 if (this.target.antigen != null && doCirclesIntersect(this.target.x, this.target.y, this.target.size/2, this.target.antigen.x, this.target.antigen.y, this.target.antigen.radius) && randomUniform(0, 1) < 0.1){
                     this.texture = LYMPHOCYTES_IMAGES.get(this.target.antigen.color);
+                    this.color = this.target.antigen.color;
                     this.mode = "mature";
                     this.target = null;
                 }
@@ -872,7 +876,7 @@ var shops = [
     new Shop(BONE_MARROW_IMAGE, 3 * shopWidth + 2 * offset, offset, shopWidth, shopHeight - 2 * offset, Macrophage, 100, GARBAGE_IMAGE, MACROPHAGES_IMAGE),
     new Shop(BONE_MARROW_IMAGE, 4 * shopWidth + 3 * offset, offset, shopWidth, shopHeight - 2 * offset, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE)
 ];
-spleen = new Spleen(BONE_MARROW_IMAGE, 150+4*200 + 20, offset, shopHeight - 2*offset, shopHeight - 2 * offset, 16);
+spleen = new Spleen(BONE_MARROW_IMAGE, shopWidth+4*shopWidth + 4*offset + 10, offset, shopHeight - 2 * offset, shopHeight - 2 * offset, 16);
 var bacteria = addBacteria([], starting_nBacteria, BACTERIA_IMAGE, 100, 5);
 
 var tissueCells = addTissueCells([]);
