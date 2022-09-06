@@ -52,6 +52,9 @@ BONE_MARROW_IMAGE.src = "./images/bone_marrow.png";
 const CELL_IMAGE = new Image();
 CELL_IMAGE.src = "./images/cell.png";
 
+const VIRUS_IMAGE = new Image();
+VIRUS_IMAGE.src = "./images/virus.png";
+
 // Host cell parameters
 //      Tissue cells
 const tissueCellSize = 30;
@@ -209,7 +212,7 @@ class MovingObject {
     }
 }
 class Shop {
-    constructor(texture, x, y, width, height, cellType, price) {
+    constructor(texture, x, y, width, height, cellType, price, enemyTexture, cellTexture, isEnemyAnimated, isCellAnimated) {
         this.texture = texture;
         this.x = x;
         this.y = y;
@@ -217,6 +220,11 @@ class Shop {
         this.width = width;
         this.cellType = cellType;
         this.price = price;
+
+        this.enemyTexture = enemyTexture;
+        this.cellTexture = cellTexture;
+        this.isEnemyAnimated = isEnemyAnimated;
+        this.isCellAnimated = isCellAnimated;
     }
 
     draw() {
@@ -235,8 +243,30 @@ class Shop {
         ctx.font = "20px Courier";
         ctx.fillText(this.cellType.name, this.x + this.width / 2 - 50, this.y + offset);
 
+        ctx.font = "16px Courier";
+        ctx.fillText("Produces", this.x + 25, this.y + 50);
+        ctx.fillText("Kills", this.x + this.width  - 75, this.y + 50);
+
         ctx.font = "22px Courier";
         ctx.fillText("Price: " + this.price, this.x + offset + this.width / 2 - 55, this.y + this.height - 5 * offset);
+
+        ctx.drawImage(
+            this.cellTexture, 0, 0,
+            this.isCellAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
+            this.isCellAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
+            this.x  + 25,
+            this.y + 75,
+            50,
+            50)
+
+        ctx.drawImage(
+            this.enemyTexture, 0, 0,
+            this.isEnemyAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
+            this.isEnemyAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
+            this.x + this.width - 75,
+            this.y + 75,
+            50,
+            50)
     }
 
     buy() {
@@ -703,10 +733,10 @@ function gameOver(){
 // Game Setup
 var immunityCells = [];
 var shops = [
-    new Shop(BONE_MARROW_IMAGE, shopWidth, offset, shopWidth, shopHeight - 2 * offset, TLymphocyte, 200),
-    new Shop(BONE_MARROW_IMAGE, 2 * shopWidth + offset, offset, shopWidth, shopHeight - 2 * offset, BLymphocyte, 200),
-    new Shop(BONE_MARROW_IMAGE, 3 * shopWidth + 2 * offset, offset, shopWidth, shopHeight - 2 * offset, Macrophage, 100),
-    new Shop(BONE_MARROW_IMAGE, 4 * shopWidth + 3 * offset, offset, shopWidth, shopHeight - 2 * offset, Eosinophile, 50)
+    new Shop(BONE_MARROW_IMAGE, shopWidth, offset, shopWidth, shopHeight - 2 * offset, TLymphocyte, 200, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
+    new Shop(BONE_MARROW_IMAGE, 2 * shopWidth + offset, offset, shopWidth, shopHeight - 2 * offset, BLymphocyte, 200, BACTERIA_IMAGE, LYMPHOCYTES_IMAGES.get("green")),
+    new Shop(BONE_MARROW_IMAGE, 3 * shopWidth + 2 * offset, offset, shopWidth, shopHeight - 2 * offset, Macrophage, 100, GARBAGE_IMAGE, MACROPHAGES_IMAGE),
+    new Shop(BONE_MARROW_IMAGE, 4 * shopWidth + 3 * offset, offset, shopWidth, shopHeight - 2 * offset, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE)
 ];
 var bacteria = addBacteria([], starting_nBacteria, BACTERIA_IMAGE, 100, 5);
 var tissueCells = addTissueCells([]);
