@@ -100,6 +100,7 @@ var basePrice = 0.1;
 var chanceToGetAntigen = 0.05;
 var garbagePileSlowingCoefficient = 0.4;
 var nVaccinate = 30;
+var ANTIBIOTIC_COURSE_LENGTH = 4;
 
 //------------RANDOM-------------
 function randomUniform(low, high) {
@@ -290,13 +291,13 @@ class Button extends BodyPart {
     
     draw(){
         ctx.fillStyle = this.color;
-        ctx.globalAlpha = 0.2;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.globalAlpha = 0.1;
+        circle(this.x+this.width/2, this.y+this.height/2, this.width/2, true);
         ctx.globalAlpha = 1;
-        ctx.strokeRect(this.x, this.y, this.width, this.height);
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "black";
+        circle(this.x+this.width/2, this.y+this.height/2, this.width/2, false);
         ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
     }
     
@@ -411,14 +412,54 @@ class Antibiotic extends Button {
     constructor(color, x, y, width, height, price){
         super(color, x, y, width, height, "A");
         this.price = price;
+        this.course = 0;
+        this.lastWave = null;
+        this.available = true;
     }  
     
     activate(){
-        if (money - this.price >= 0){
+        if (this.available && money - this.price >= 0){
             money -= this.price;
             bacteria.filter((bacterium) => bacterium.color === this.color).forEach((bacterium) => {
                 bacterium.health = 1;
             })
+            if (this.lastWave != wave){
+                this.course += 1;
+                this.course = this.course % ANTIBIOTIC_COURSE_LENGTH;  
+                if (this.course == 0)
+                    this.lastWave = null;
+            }
+            this.lastWave = wave;
+        }
+    }
+    
+    draw(){
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = 0.1;
+        circle(this.x+this.width/2, this.y+this.height/2, this.width/2, true);
+        ctx.globalAlpha = 1;
+        if (this.course > 0){
+            ctx.beginPath();
+            ctx.moveTo(this.x+this.width/2, this.y+this.height/2);
+            ctx.arc(this.x+this.width/2, this.y+this.height/2, this.width/2, -Math.PI/2, -Math.PI/2+2*Math.PI*this.course/ANTIBIOTIC_COURSE_LENGTH, false);
+            ctx.fill();
+            
+        }
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "black";
+        circle(this.x+this.width/2, this.y+this.height/2, this.width/2, false);
+        ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
+        if (!this.available){
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(this.x, this.y, this.width, this.height);
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(this.x + this.width, this.y + this.height);
+            ctx.moveTo(this.x + this.width, this.y);
+            ctx.lineTo(this.x, this.y + this.height);
+            ctx.stroke();
         }
     }
 }
@@ -951,13 +992,22 @@ function printGameInfo(){
     ctx.fillText("Money: "+ Math.floor(money), offset, offset+20);
     ctx.fillText("Lives: "+ livesLeft, offset, offset+40);
     
-            };
+            }
 function gameOver(){
     ctx.font = "60px Courier";
     ctx.fillStyle = "Black";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("Game over", fieldWidth/2, fieldHeight/2);
+}
+function checkAntibiotics(){
+    buttons.filter((button) => button instanceof Antibiotic).forEach((anti) => {
+        console.log(anti.lastWave);
+        if (anti.lastWave != null && this.wave > anti.lastWave + 1){
+            anti.available = false;
+        }
+    }
+    );
 }
 //--------SETUP FUNCTIONS--------
 
@@ -1133,7 +1183,6 @@ var game = setInterval(function(){
         })
         immunityCells = immunityCells.filter((cell)=>cell.age < cell.longevity);
     })}
-
     
     if(bacteria.length === 0) {
         bacteria = addBacteria([], starting_nBacteria + wave * 10, BACTERIA_IMAGE, 100 + wave * 30, 5 + wave * 2);
@@ -1145,6 +1194,7 @@ var game = setInterval(function(){
         if (wave % 10 === 0){
             helmintes = [new Helmint(-10, randomUniform(playableFieldStart + 15, playableFieldHeight-15), 1000, 1000, 100, 30, 10)];
         }
+        checkAntibiotics();
     }
     money += basePrice * tissueCells.filter((cell) => cell.infection.length === 0).length/tissueCells.length;
     ctx.lineWidth = 1;
