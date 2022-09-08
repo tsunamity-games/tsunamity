@@ -123,3 +123,42 @@ class Spleen extends BodyPart{
         this.sections.forEach((section) => section.draw());
     }
 }
+
+class TissueCell{
+    constructor(x, y, size=tissueCellSize){
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.infection = [];
+        this.health = 100;
+        this.texture = CELL_IMAGE;
+        this.vaccine = null;
+    }
+    
+    draw(){
+        if (this.size < tissueCellSize){this.size = Math.min(this.size + 0.05, tissueCellSize)};
+        
+        ctx.drawImage(
+            this.texture, 0, 0, STATIC_IMAGE_WIDTH, STATIC_IMAGE_HEIGHT,
+            this.x + (tissueCellSize - this.size) / 2,
+            this.y + (tissueCellSize - this.size) / 2,
+            this.size,
+            this.size)
+        
+        if (this.infection.length !== 0){
+            ctx.fillStyle = this.infection[0].color;
+            ctx.globalAlpha = (this.infection.length+this.infection.length*0.2)/(maxVirusesInTissueCell+this.infection.length*0.2);
+            circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 2, true);
+        } else if (this.vaccine != null){
+            ctx.fillStyle = this.vaccine;
+            ctx.globalAlpha = 0.1;
+            circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 2, true);
+            ctx.globalAlpha = 1;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "black";
+            ctx.fillText("V", this.x + this.size / 2, this.y + this.size / 2)
+        }
+        ctx.globalAlpha = 1;
+    }
+}
