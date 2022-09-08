@@ -595,7 +595,7 @@ class ImmuneCell extends MovingObject {
 
 class Neutrophil extends ImmuneCell {
     constructor(x, y) {
-        super(NEUTROPHILS_IMAGE, x, y, 40, 0.4, 0.2);
+        super(NEUTROPHILS_IMAGE, x, y, 20, 0.4, 0.4);
     }
 
     move() {
@@ -616,7 +616,7 @@ class Neutrophil extends ImmuneCell {
 }
 class Macrophage extends ImmuneCell {
     constructor(x, y) {
-        super(MACROPHAGES_IMAGE, x, y, 20, 0.4, 1);
+        super(MACROPHAGES_IMAGE, x, y, 40, 0.4, 1);
         this.texture = MACROPHAGES_IMAGE;
     }
     move(){
