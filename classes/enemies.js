@@ -157,3 +157,20 @@ class Helmint {
         }
     }
 }
+
+class GarbagePile{
+    constructor(x, y, radius){
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.texture = GARBAGE_IMAGE;
+        this.health = this.radius * 30;
+    }
+    draw(){
+        ctx.drawImage(
+            this.texture,
+            this.x-this.radius/2,
+            this.y-this.radius/2,
+            this.radius*2, this.radius*2)
+    }
+}
