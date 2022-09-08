@@ -34,8 +34,8 @@ const LYMPHOCYTES_DEFAULT_IMAGE = new Image();
 LYMPHOCYTES_DEFAULT_IMAGE.src = "./images/lymphocytes_dark.png";
 LYMPHOCYTES_IMAGES.set("#FFFFFF", LYMPHOCYTES_DEFAULT_IMAGE)
 
-console.log("Colors map for lymphocytes:");
-console.log(LYMPHOCYTES_IMAGES);
+//console.log("Colors map for lymphocytes:");
+//console.log(LYMPHOCYTES_IMAGES);
 
 const GARBAGE_IMAGE = new Image();
 GARBAGE_IMAGE.src = "./images/garbage.png";
@@ -319,16 +319,15 @@ class Shop extends BodyPart {
     }
 
     buy() {
-        console.log("Buying " + this.cellType);
+//        console.log("Buying " + this.cellType);
         if(money - this.price >= 0) {
-            console.log("Got enough money");
-            console.log("x: " + (this.x + this.width / 2));
-            console.log("y: " + (this.y + this.height / 2));
+//            console.log("Got enough money");
+//            console.log("x: " + (this.x + this.width / 2));
+//            console.log("y: " + (this.y + this.height / 2));
             var cell = new this.cellType(
                 randomUniform(this.x, this.x + this.width),
                 randomUniform(this.y, this.y + this.height));
             immunityCells.push(cell);
-            console.log(immunityCells);
             money -= this.price;
         }
     }
@@ -425,11 +424,14 @@ class Antibiotic extends Button {
             })
             if (this.lastWave != wave){
                 this.course += 1;
-                this.course = this.course % ANTIBIOTIC_COURSE_LENGTH;  
-                if (this.course == 0)
+                this.course = this.course % ANTIBIOTIC_COURSE_LENGTH;
+                if (this.course === 0){
                     this.lastWave = null;
+                } else {
+                    this.lastWave = wave;
+                }
             }
-            this.lastWave = wave;
+            
         }
     }
     
@@ -1002,8 +1004,7 @@ function gameOver(){
 }
 function checkAntibiotics(){
     buttons.filter((button) => button instanceof Antibiotic).forEach((anti) => {
-        console.log(anti.lastWave);
-        if (anti.lastWave != null && this.wave > anti.lastWave + 1){
+        if ((anti.lastWave != null) && this.wave > anti.lastWave + 1){
             anti.available = false;
         }
     }
@@ -1038,19 +1039,19 @@ var wave = 1;
 var gameOverTrue = false;  
 // Gameplay
 $("#field").click(function(event){
-    console.log("Page coordinates:")
-    console.log("[", event.pageX, ",", event.pageY, "],");
+//    console.log("Page coordinates:")
+//    console.log("[", event.pageX, ",", event.pageY, "],");
 
     x = event.pageX - field.offsetLeft;
     y = event.pageY - field.offsetTop;
 
-    console.log("Canvas coordinates:")
-    console.log("[", x, ",", y, "],");
+//    console.log("Canvas coordinates:")
+//    console.log("[", x, ",", y, "],");
 
     // If any of the shops clicked, try to buy cell;
     shops.forEach((shop) => {
-        console.log(shop);
-        console.log(shop.isIntersected(x, y));
+//        console.log(shop);
+//        console.log(shop.isIntersected(x, y));
         if(shop.isIntersected(x, y)) {
             shop.buy();
         }
