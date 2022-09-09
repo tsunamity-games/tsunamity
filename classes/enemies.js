@@ -157,7 +157,6 @@ class Helmint {
         }
     }
 }
-
 class GarbagePile{
     constructor(x, y, radius){
         this.x = x;

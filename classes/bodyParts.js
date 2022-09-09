@@ -20,7 +20,6 @@ class BodyPart {
         return (x > this.x) && (x < this.x + this.width) && (y > this.y) && (y < this.y + this.height)
     }
 }
-
 class Shop extends BodyPart {
   
     constructor(texture, x, y, width, height, cellType, price, enemyTexture, cellTexture, isEnemyAnimated, isCellAnimated) {
@@ -123,7 +122,6 @@ class Spleen extends BodyPart{
         this.sections.forEach((section) => section.draw());
     }
 }
-
 class TissueCell{
     constructor(x, y, size=tissueCellSize){
         this.x = x;

@@ -4,7 +4,7 @@ var ctx = field.getContext("2d");
 const fieldWidth = field.width;
 const fieldHeight = field.height;
 const shopHeight = 200;
-const shopWidth = 160;
+const shopWidth = 130;
 const buttonWidth = 34;
 const buttonHeight = 34;
 const offset = 10;
@@ -78,6 +78,7 @@ const TISSUE_CELL_COLOR = "#facdf3";
 
 //      Lymphocytes
 const randomTargetNumber = 5;
+const TlymphocyteReproductionNumber = 5;
 
 // Pathogen parameters
 //      Viruses

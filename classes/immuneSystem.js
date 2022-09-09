@@ -32,7 +32,6 @@ class MovingObject {
         }
     }
 }
-
 class ImmuneCell extends MovingObject {
     constructor(texture, x, y, radius, baseSpeed, damage, longevity=20000) {
         super(texture, x, y, radius);
@@ -101,8 +100,6 @@ class ImmuneCell extends MovingObject {
         }
     }
 }
-    
-
 class Neutrophil extends ImmuneCell {
     constructor(x, y) {
         super(NEUTROPHILS_IMAGE, x, y, 20, 0.4, 0.4);
@@ -202,7 +199,7 @@ class NaturalKiller extends ImmuneCell {
     move() {
         super.move();
         if(this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size / 2)) {
-            if (this.target.infection.length > 0){
+            if (this.target.infection.length > 0 || this.target.vaccine != null){
                 this.target.health -= this.damage;    
             } else{
                 this.target = null;
@@ -284,5 +281,48 @@ class BLymphocyte extends ImmuneCell {
 
             super.draw();
         }
+    }
+}
+class Tlymphocyte extends ImmuneCell {
+    constructor(x, y, color=null, active=false) {
+        super(T_LYMPHOCYTES_IMAGE, x, y, 20, 0.5, 1);
+        this.iteration = 0;
+        if (color === null){
+            this.color = randomChoice(BACTERIA_COLORS);
+        } else {
+            this.color = color;
+        }
+        this.active = active;
+    }
+    
+    move() {
+        super.move();
+        if(this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size / 2)) {
+            if ((this.target.infection.length > 0 && this.target.infection[0].color === this.color) || (this.target.vaccine === this.color)){
+                this.target.health -= this.damage;  
+                if (!this.active){
+                    this.active = true;
+                    for (var i = 0; i < TlymphocyteReproductionNumber; i++){
+                        immunityCells.push(new Tlymphocyte(this.x, this.y, this.color, true));
+                    }
+                }
+            } else{
+                this.target = null;
+            }
+            
+        }
+    }
+    changeDirection(targetsList){
+        super.changeDirection(targetsList, 10);
+    }
+    
+    draw(){
+        
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = 0.2;
+        circle(this.x, this.y, 30, true);
+        circle(this.x, this.y, 30, false);
+        ctx.globalAlpha = 1;
+        super.draw();
     }
 }

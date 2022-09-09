@@ -57,7 +57,6 @@ function star(cx, cy, nSpikes, outerRadius, innerRadius, color){
 function clip(x, min, max) {
     return Math.min(Math.max(min, x), max);
 }
-
 function moveTo(xFrom, yFrom, xTo, yTo, speed){
     if (xTo === xFrom && yTo === yFrom){
         return [0, 0];

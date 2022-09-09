@@ -18,7 +18,6 @@ class Button extends BodyPart {
     }
     
 }
-
 class Antibiotic extends Button {
     constructor(color, x, y, width, height, price){
         super(color, x, y, width, height, "A");
