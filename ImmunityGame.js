@@ -4,7 +4,7 @@ var ctx = field.getContext("2d");
 const fieldWidth = field.width;
 const fieldHeight = field.height;
 const shopHeight = 200;
-const shopWidth = 180;
+const shopWidth = 160;
 const offset = 10;
 const playableFieldStart = shopHeight + offset;
 const playableFieldHeight = fieldHeight - shopHeight;
@@ -92,6 +92,7 @@ var livesLeft = 10;
 var money = 200;
 var basePrice = 0.1;
 var chanceToGetAntigen = 0.05;
+var garbagePileSlowingCoefficient = 0.1;
 
 //------------RANDOM-------------
 function randomUniform(low, high) {
@@ -259,18 +260,19 @@ class BodyPart {
     }
 }
 class GarbagePile{
-    constructor(x, y, size){
+    constructor(x, y, radius){
         this.x = x;
         this.y = y;
-        this.size = size;
+        this.radius = radius;
         this.texture = GARBAGE_IMAGE;
+        this.health = this.radius * 30;
     }
     draw(){
         ctx.drawImage(
             this.texture,
-            this.x,
-            this.y,
-            this.size*2, this.size*2)
+            this.x-this.radius/2,
+            this.y-this.radius/2,
+            this.radius*2, this.radius*2)
     }
 }
 //--------BASIC CLASSES----------
@@ -309,39 +311,38 @@ class Shop extends BodyPart {
     
         ctx.fillStyle = "Black";
         ctx.textBaseline = "top";
-        ctx.textAlign = "center";
-
-        // Name of the cell type sold
-        ctx.font = "20px Courier";
-        ctx.fillText(this.cellType.name, this.x + this.width / 2, this.y + offset);
         
-        ctx.textAlign = "left";
-        ctx.font = "16px Courier";
-        ctx.fillText("Produces", this.x+5, this.y + 50);
-        ctx.textAlign = "right";
-        ctx.fillText("Kills", this.x-5 + this.width, this.y + 50);
-
-        ctx.font = "22px Courier";
+        // Name of the cell type sold
+        ctx.font = this.width/10 + "px Courier";
         ctx.textAlign = "center";
-        ctx.fillText("Price: " + this.price, this.x + offset + this.width / 2, this.y + this.height - 5 * offset);
+        ctx.fillText(this.cellType.name, this.x + this.width / 2, this.y + this.height/10);
+        
+        ctx.font = this.width/11 + "px Courier";
+        ctx.textAlign = "center";
+        ctx.fillText("Produces", this.x + this.width/4, this.y + 3*this.height/10);
+        ctx.fillText("Kills", this.x + 3*this.width/4, this.y + 3*this.height/10);
 
         ctx.drawImage(
             this.cellTexture, 0, 0,
             this.isCellAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
             this.isCellAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
-            this.x  + 20,
-            this.y + 75,
-            50,
-            50)
-
+            this.x + this.width/4 - 3*this.width/10/2,
+            this.y + 4.5*this.height/10,
+            3*this.width/10,
+            3*this.height/10)
+        
+            
         ctx.drawImage(
             this.enemyTexture, 0, 0,
             this.isEnemyAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
-            this.isEnemyAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
-            this.x + this.width - 60,
-            this.y + 75,
-            50,
-            50)
+            this.isEnemyAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
+            this.x + 3*this.width/4 - 3*this.width/10/2,
+            this.y + 4.5*this.height/10,
+            3*this.width/10,
+            9/4*this.height/10)
+        
+        ctx.font = this.width/9 + "px Courier";
+        ctx.fillText("Price: " + this.price, this.x + this.width / 2, this.y + 8*this.height/10);
         }
 }
 class SpleenSection{
@@ -413,7 +414,7 @@ class TissueCell{
     }
 }
 class ImmuneCell extends MovingObject {
-    constructor(texture, x, y, radius, baseSpeed, damage, longevity=1000) {
+    constructor(texture, x, y, radius, baseSpeed, damage, longevity=20000) {
         super(texture, x, y, radius);
         this.xSpeed = 0;
         this.ySpeed = 0;
@@ -464,14 +465,24 @@ class ImmuneCell extends MovingObject {
     }
 
     move() {
-        super.move();
+        if (garbagePiles.some((pile) => doCirclesIntersect(this.x, this.y, this.radius, pile.x, pile.y, pile.radius))){
+            this.x += this.xSpeed*garbagePileSlowingCoefficient;
+            this.y += this.ySpeed*garbagePileSlowingCoefficient;
+            
+        }
+        else{
+            super.move();
+        }
         this.x = clip(this.x, this.radius, fieldWidth - this.radius);
     }
     live(){
-        this.age++;
+        if (this.y > playableFieldStart){
+            this.age++;
+        }
     }
-    
 }
+    
+
 class Macrophage extends ImmuneCell {
     constructor(x, y) {
         super(MACROPHAGES_IMAGE, x, y, 40, 0.4, 0.2);
@@ -491,6 +502,20 @@ class Macrophage extends ImmuneCell {
         ctx.globalAlpha = 0.8;
         super.draw();
         ctx.globalAlpha = 1;
+    }
+}
+class TrueMacrophage extends ImmuneCell {
+    constructor(x, y) {
+        super(MACROPHAGES_IMAGE, x, y, 20, 0.4, 1);
+        this.texture = MACROPHAGES_IMAGE;
+    }
+    move(){
+        super.move();
+        garbagePiles.forEach((pile) => {
+            if(doCirclesIntersect(this.x, this.y, this.radius, pile.x, pile.y, pile.radius)) {
+                pile.health -= this.damage;
+            }
+        });
     }
 }
 class Eosinophile extends ImmuneCell {
@@ -870,13 +895,16 @@ function gameOver(){
 
 // Game Setup
 var immunityCells = [];
+
+var xLeftOffset = 140;
 var shops = [
-    new Shop(BONE_MARROW_IMAGE, shopWidth, offset, shopWidth, shopHeight - 2 * offset, TLymphocyte, 200, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
-    new Shop(BONE_MARROW_IMAGE, 2 * shopWidth + offset, offset, shopWidth, shopHeight - 2 * offset, BLymphocyte, 200, BACTERIA_IMAGE, LYMPHOCYTES_IMAGES.get("green")),
-    new Shop(BONE_MARROW_IMAGE, 3 * shopWidth + 2 * offset, offset, shopWidth, shopHeight - 2 * offset, Macrophage, 100, GARBAGE_IMAGE, MACROPHAGES_IMAGE),
-    new Shop(BONE_MARROW_IMAGE, 4 * shopWidth + 3 * offset, offset, shopWidth, shopHeight - 2 * offset, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE)
+    new Shop(BONE_MARROW_IMAGE, xLeftOffset, offset, shopWidth, shopHeight - 2 * offset, TLymphocyte, 200, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
+    new Shop(BONE_MARROW_IMAGE, xLeftOffset + shopWidth + offset, offset, shopWidth, shopHeight - 2 * offset, BLymphocyte, 200, BACTERIA_IMAGE, LYMPHOCYTES_IMAGES.get("green")),
+    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 2 * shopWidth + 2 * offset, offset, shopWidth, shopHeight - 2 * offset, Macrophage, 100, GARBAGE_IMAGE, MACROPHAGES_IMAGE),
+    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 3 * shopWidth + 3 * offset, offset, shopWidth, shopHeight - 2 * offset, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE),
+    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 4*shopWidth + 4*offset, offset, shopWidth, shopHeight - 2 * offset, TrueMacrophage, 300, GARBAGE_IMAGE, MACROPHAGES_IMAGE)
 ];
-spleen = new Spleen(BONE_MARROW_IMAGE, shopWidth+4*shopWidth + 4*offset + 10, offset, shopHeight - 2 * offset, shopHeight - 2 * offset, 16);
+spleen = new Spleen(BONE_MARROW_IMAGE, xLeftOffset+5*shopWidth + 5*offset + 10, offset, shopHeight - 2 * offset, shopHeight - 2 * offset, 16);
 var bacteria = addBacteria([], starting_nBacteria, BACTERIA_IMAGE, 100, 5);
 
 var tissueCells = addTissueCells([]);
@@ -928,7 +956,7 @@ var game = setInterval(function(){
     })
     tissueCells = nextTurnTissueCells;
     garbagePiles.forEach((pile) => {pile.draw()})
-    
+    garbagePiles = garbagePiles.filter((pile) => pile.health > 0);
     var nextTurnHelmintes = [];
     helmintes.forEach((helmint) => {
         helmint.move();
@@ -997,7 +1025,9 @@ var game = setInterval(function(){
                 
             } else if (cell instanceof Eosinophile){
                 targetList = helmintes;
-            } else {
+            } else if (cell instanceof TrueMacrophage) {
+                targetList = garbagePiles;}
+            else {
                 targetList = bacteria;
             }
 
