@@ -32,6 +32,45 @@ class MovingObject {
         }
     }
 }
+class Antibody {
+    constructor(x, y, color){
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.age = 0;
+        this.longevity = 1000;
+        this.attached = null;
+    }
+    
+    draw(){
+        ctx.beginPath();
+        ctx.strokeStyle = this.color;
+        ctx.moveTo(this.x, this.y-5);
+        ctx.lineTo(this.x, this.y);
+        ctx.lineTo(this.x+2, this.y+2);
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(this.x-2, this.y+2);
+        ctx.stroke();
+    }
+    
+    move(){
+        if (this.attached == null){
+            this.age++;
+            this.x += randomUniform(-0.5, 0.5);
+            this.y += randomUniform(-0.5, 0.5);
+            bacteria.forEach((bacterium) =>{
+                if (bacterium.color === this.color && doCirclesIntersect(bacterium.x, bacterium.y, bacterium.radius, this.x, this.y, 5)){
+                    this.attached = bacterium;
+                    this.attached.baseSpeed *=0.8;
+                } 
+        });
+        } else {
+            this.x = this.attached.x + randomUniform(-this.attached.radius, this.attached.radius);
+            this.y = Math.sqrt(Math.pow(this.attached.radius, 2) - Math.pow(this.x, 2))*randomChoice([1, -1]);
+        }
+    }
+    
+}
 class ImmuneCell extends MovingObject {
     constructor(texture, x, y, radius, baseSpeed, damage, longevity=20000) {
         super(texture, x, y, radius);
@@ -43,6 +82,10 @@ class ImmuneCell extends MovingObject {
         this.age = 0;
         this.longevity = longevity;
         this.iteration = 0;
+    }
+    
+    isIntersected(x, y) {
+        return Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2) < Math.pow(this.radius, 2);
     }
     
     changeDirection(targetsList, nCandidates=randomTargetNumber) {
@@ -213,23 +256,54 @@ class NaturalKiller extends ImmuneCell {
     }
 }
 class BLymphocyte extends ImmuneCell {
-    constructor(x, y) {
-        var color = "#FFFFFF";
+    constructor(x, y, mode="naive", color="#FFFFFF") {
         super(LYMPHOCYTES_IMAGES.get(color), x, y, 20, 0.3, 1);
-        this.mode = "naive";
+        this.mode = mode;
         this.shootingRadius = 40;
         this.iteration = 0;
         this.color = color;
+        this.label = new Label(this);
+        this.killed = false;
+        this.upgradePrice = 200;
     }
 
+    upgrade(){
+        if (this.mode === "mature"){
+            this.mode = "plasmatic";
+            this.damage = 0;
+            this.upgradePrice = 300;
+        } else if (this.mode === "plasmatic"){
+            this.mode = "memory";
+            this.longevity = 100000;
+            this.baseSpeed = 0;
+            this.upgradePrice = 0;
+            shops.filter((shop)=> shop.cellType === BLymphocyte).forEach((shop) =>{
+                shop.pockets.push(new Pocket(shop, 
+                                             shop.x + BACTERIA_COLORS.indexOf(this.color)*shop.width/BACTERIA_COLORS.length, shop.height+offset, shop.width/BACTERIA_COLORS.length, 2*offset*0.9, 
+                                             this.color))
+                console.log(shop.pockets);  
+            })
+        }
+    }
+    
     move() {
-        super.move();
-        bacteria.forEach((bacterium) => {
-            if(doCirclesIntersect(this.x, this.y, this.shootingRadius, bacterium.x, bacterium.y, bacterium.radius) && bacterium.mode === "enemy" && bacterium.color === this.color) {
-
-                bacterium.health -= this.damage;
-            }
-        });
+        if (this.mode != "memory"){
+            super.move();
+        }
+        if (this.mode === "mature"){
+            bacteria.forEach((bacterium) => {
+                if(doCirclesIntersect(this.x, this.y, this.shootingRadius, bacterium.x, bacterium.y, bacterium.radius) && bacterium.mode === "enemy" && bacterium.color === this.color) {
+                    bacterium.health -= this.damage;
+                    if (!this.killed && bacterium.health <= 0){
+                        this.killed = true;
+                    }
+                }
+            })    
+        }
+        if (this.mode === "plasmatic"){
+            this.y = clip(this.y, playableFieldStart+this.radius, playableFieldHeight-this.radius);
+            antibodies.push(new Antibody(this.x, this.y, this.color));
+        }
     }
 
     goToSplin(){
@@ -266,6 +340,11 @@ class BLymphocyte extends ImmuneCell {
             }
         } else if (this.mode === "mature") {
             super.changeDirection(targetsList.filter((target) => target.color === this.color), nCandidates);   
+        } else if (this.mode === "plasmatic"){
+            super.changeDirection(targetsList, 1000);
+            if(this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size / 2)){
+                this.target = null;
+            }
         }
     }
     
@@ -317,7 +396,6 @@ class Tlymphocyte extends ImmuneCell {
     }
     
     draw(){
-        
         ctx.fillStyle = this.color;
         ctx.globalAlpha = 0.2;
         circle(this.x, this.y, 30, true);

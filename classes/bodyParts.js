@@ -31,14 +31,11 @@ class Shop extends BodyPart {
         this.cellTexture = cellTexture;
         this.isEnemyAnimated = isEnemyAnimated;
         this.isCellAnimated = isCellAnimated;
+        this.pockets = [];
     }
 
     buy() {
-//        console.log("Buying " + this.cellType);
         if(money - this.price >= 0) {
-//            console.log("Got enough money");
-//            console.log("x: " + (this.x + this.width / 2));
-//            console.log("y: " + (this.y + this.height / 2));
             var cell = new this.cellType(
                 randomUniform(this.x, this.x + this.width),
                 randomUniform(this.y, this.y + this.height));

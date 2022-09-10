@@ -55,6 +55,7 @@ class Bacterium extends MovingObject {
         this.price = price;
         this.mode = "enemy";
         this.spleenSection;
+        this.baseSpeed = 0.2;
     }
 
 
@@ -73,7 +74,7 @@ class Bacterium extends MovingObject {
 
     changeDirection() {
         if (this.mode === "enemy"){
-            this.xSpeed = randomUniform(-0.8, 1.2); 
+            this.xSpeed = randomUniform(-1+this.baseSpeed, 1+this.baseSpeed); 
             this.ySpeed = randomUniform(-1, 1);            
         } else if (this.mode === "antigen"){
             [this.xSpeed, this.ySpeed] = moveTo(this.x, this.y, this.spleenSection.x, this.spleenSection.y, 1);

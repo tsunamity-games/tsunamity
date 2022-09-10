@@ -92,3 +92,61 @@ class Vaccine extends Button{
         }
     }
 }
+class Label extends BodyPart{
+    constructor(labelledObject){
+        super("", labelledObject.x - labelledObject.radius*3, labelledObject.y - labelledObject.radius*3, labelledObject.radius*6, labelledObject.radius*2*0.9)
+        this.labelledObject = labelledObject;
+        this.active = false;
+    }
+    updatePosition(){
+        this.x = this.labelledObject.x - this.labelledObject.radius*3;
+        this.y = this.labelledObject.y - this.labelledObject.radius*3;
+    }
+    draw(){
+        this.updatePosition();
+        if (this.active){
+            ctx.fillStyle = "white";
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+            ctx.globalAlpha = 0.1;
+            if ((this.labelledObject.killed || this.labelledObject.mode === "plasmatic") && money >= this.labelledObject.upgradePrice) {
+                ctx.fillStyle = "green";
+            } else {
+                ctx.fillStyle = "red";
+            }
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+            ctx.globalAlpha = 1;
+            ctx.strokeRect(this.x, this.y, this.width, this.height);
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.font = this.width/13 + "px Courier";
+            ctx.fillStyle = "black";
+            var labelText;
+            if (this.labelledObject.mode === "naive" || this.labelledObject.mode === "mature"){
+                labelText = "Plasmatic Cell (" + this.labelledObject.upgradePrice + ")";
+            } else if (this.labelledObject.mode === "plasmatic"){
+                labelText = "Memory cell (" + this.labelledObject.upgradePrice + ")";
+            }
+            ctx.fillText(labelText, this.x + this.width/2, this.y + this.height/2);     
+        }
+    }
+}
+class Pocket extends Shop{
+    constructor(shopObj, x, y, width, height, color){
+        super("", x, y, width, height, shopObj.cellType, shopObj.price)
+        this.color = color;
+        this.shopObj = shopObj;
+    }
+    draw(){
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+    buy(){
+        if(money - this.price >= 0) {
+            var cell = new this.cellType(
+                randomUniform(this.shopObj.x, this.shopObj.x + this.shopObj.width),
+                randomUniform(this.shopObj.y, this.shopObj.y + this.shopObj.height), "mature", this.color);
+            immunityCells.push(cell);
+            money -= this.price;
+        }
+    }
+}

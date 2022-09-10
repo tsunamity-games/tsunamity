@@ -71,6 +71,7 @@ function checkAntibiotics(){
 
 // Game Setup
 var immunityCells = [];
+var antibodies = [];
 
 var shops = [
     new Shop(BONE_MARROW_IMAGE, xLeftOffset, offset, shopWidth, shopHeight - 2 * offset, NaturalKiller, 150, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
@@ -86,6 +87,7 @@ for (var i = 0; i < BACTERIA_COLORS.length; i++){
     buttons.push(new Antibiotic(BACTERIA_COLORS[i], fieldWidth/2 - buttonWidth*(BACTERIA_COLORS.length - i) - offset*(BACTERIA_COLORS.length - i), playableFieldHeight + offset, buttonWidth, buttonHeight, 100));
     buttons.push(new Vaccine(BACTERIA_COLORS[i], fieldWidth/2 + offset*(i+1) + buttonWidth*i, playableFieldHeight + offset, buttonWidth, buttonHeight, 100));
 }
+
 spleen = new Spleen(BONE_MARROW_IMAGE, xLeftOffset+6*shopWidth + 6*offset + 10, offset, shopHeight - 2 * offset, shopHeight - 2 * offset, 16);
 var bacteria = addBacteria([], starting_nBacteria, BACTERIA_IMAGE, 100, 5);
 var tissueCells = addTissueCells([]);
@@ -96,22 +98,19 @@ var wave = 1;
 var gameOverTrue = false;  
 // Gameplay
 $("#field").click(function(event){
-//    console.log("Page coordinates:")
-//    console.log("[", event.pageX, ",", event.pageY, "],");
-
     x = event.pageX - field.offsetLeft;
     y = event.pageY - field.offsetTop;
 
-//    console.log("Canvas coordinates:")
-//    console.log("[", x, ",", y, "],");
-
     // If any of the shops clicked, try to buy cell;
     shops.forEach((shop) => {
-//        console.log(shop);
-//        console.log(shop.isIntersected(x, y));
         if(shop.isIntersected(x, y)) {
             shop.buy();
         }
+        shop.pockets.forEach((pocket) => {
+            if(pocket.isIntersected(x, y)) {
+            pocket.buy();
+            }
+        })
     })
     
     // If any of the buttons are clicked, do their thing
@@ -120,6 +119,22 @@ $("#field").click(function(event){
             button.activate();
         }
     })
+    
+    // If B-lymphocyte is clicked, suggest upgrade
+    immunityCells.forEach((cell) => {
+        if (cell instanceof BLymphocyte){
+            if (cell.label.active && cell.label.isIntersected(x, y) && money >= cell.upgradePrice){
+                money -= cell.upgradePrice;
+                cell.upgrade();
+            }
+            if (cell.isIntersected(x, y) && cell.mode != "memory"){
+                cell.label.active = true;                
+            } else {
+                cell.label.active = false;
+            }
+        }
+    })
+    
 });
 
 var game = setInterval(function(){
@@ -131,8 +146,20 @@ var game = setInterval(function(){
     
     printGameInfo();
         
-    shops.forEach((shop) => {shop.draw()})
+    shops.forEach((shop) => {
+        shop.draw();
+        if (shop.pockets.length > 0)
+            console.log(shop.pockets);
+        shop.pockets = shop.pockets.filter(function hasMemoryCell(pocket){
+            var colors = [];
+            immunityCells.filter((cell) => cell instanceof shop.cellType && cell.mode === "memory").forEach((cell) => {colors.push(cell.color);})
+            return colors.includes(pocket.color);
+            
+        });
+        shop.pockets.forEach((pocket) => pocket.draw());
+    })
     buttons.forEach((button) => {button.draw()})
+    ctx.fillText("Price: 100", buttons[0].x - 60, buttons[0].y + buttons[0].height/2);
     
     spleen.draw();
     var nextTurnTissueCells = [];
@@ -142,7 +169,7 @@ var game = setInterval(function(){
             nextTurnTissueCells.push(cell);
         } else {
             nextTurnTissueCells.push(new TissueCell(cell.x, cell.y, 1));
-            viruses = viruses.filter(function notFromThisHost(virus){return virus.host != cell;});
+            viruses = viruses.filter((virus) => virus.host != cell);
         }
     })
     tissueCells = nextTurnTissueCells;
@@ -155,7 +182,6 @@ var game = setInterval(function(){
         if (helmint.parts.length > 0){
             if ((helmint.parts[helmint.parts.length - 1].x < fieldWidth)){
                 if (helmint.health <= 0) {
-    //                money += helmint.price;
                       garbagePiles.push(new GarbagePile(helmint.x, helmint.y, helmint.overlay*helmint.parts.length*0.5));
                 } else {
                     nextTurnHelmintes.push(helmint);
@@ -164,8 +190,6 @@ var game = setInterval(function(){
         }
     })
     helmintes = nextTurnHelmintes;
-    
-//    drawBlood();
     
     var nextTurnBacteria = [];
     bacteria.forEach((bacterium) => {
@@ -183,7 +207,6 @@ var game = setInterval(function(){
                     bacterium.spleenSection = randomChoice(sectionSet);
                     bacterium.spleenSection.antigen = bacterium; 
                 }
-//                money += bacterium.price;
             } else{
                 nextTurnBacteria.push(bacterium);
             }
@@ -211,7 +234,7 @@ var game = setInterval(function(){
 
             var targetList;
 
-            if(cell instanceof NaturalKiller || cell instanceof Tlymphocyte) {
+            if(cell instanceof NaturalKiller || cell instanceof Tlymphocyte || (cell instanceof BLymphocyte && cell.mode === "plasmatic")) {
                 targetList = tissueCells;
                 
             } else if (cell instanceof Eosinophile){
@@ -225,22 +248,20 @@ var game = setInterval(function(){
             cell.changeDirection(targetList);
             cell.draw();
             
-            // Visualize target
-//            if(cell.target != null) {
-//                ctx.beginPath();
-//                ctx.strokeStyle = "red";
-//                ctx.moveTo(cell.x, cell.y);
-//                ctx.lineTo(cell.target.x, cell.target.y);
-//                ctx.stroke();
-//            }
             
-        // Old cells die
-        var oldCells = immunityCells.filter((cell)=>cell.age >= cell.longevity);
-        oldCells.forEach((cell) => {
-            garbagePiles.push(new GarbagePile(cell.x, cell.y, cell.radius));
+            // Old cells die
+            var oldCells = immunityCells.filter((cell)=>cell.age >= cell.longevity);
+            oldCells.forEach((cell) => {
+                garbagePiles.push(new GarbagePile(cell.x, cell.y, cell.radius));
+            })
+            immunityCells = immunityCells.filter((cell)=>cell.age < cell.longevity);
         })
-        immunityCells = immunityCells.filter((cell)=>cell.age < cell.longevity);
-    })}
+    }
+    antibodies = antibodies.filter((antibody) => antibody.age < antibody.longevity && (antibody.attached == null || antibody.attached.health > 0));
+    antibodies.forEach((antibody) => {
+        antibody.move();
+        antibody.draw();
+    })
     
     if(bacteria.length === 0) {
         bacteria = addBacteria([], starting_nBacteria + wave * 10, BACTERIA_IMAGE, 100 + wave * 30, 5 + wave * 2);
@@ -254,6 +275,7 @@ var game = setInterval(function(){
         }
         checkAntibiotics();
     }
+    immunityCells.filter(cell => cell instanceof BLymphocyte).forEach(cell => cell.label.draw());
     money += basePrice * tissueCells.filter((cell) => cell.infection.length === 0).length/tissueCells.length;
     ctx.lineWidth = 1;
     ctx.strokeStyle = "black";
