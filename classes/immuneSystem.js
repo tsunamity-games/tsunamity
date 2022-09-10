@@ -277,11 +277,10 @@ class BLymphocyte extends ImmuneCell {
             this.longevity = 100000;
             this.baseSpeed = 0;
             this.upgradePrice = 0;
-            shops.filter((shop)=> shop.cellType === BLymphocyte).forEach((shop) =>{
+            shops.filter((shop)=> this instanceof shop.cellType).forEach((shop) =>{
                 shop.pockets.push(new Pocket(shop, 
                                              shop.x + BACTERIA_COLORS.indexOf(this.color)*shop.width/BACTERIA_COLORS.length, shop.height+offset, shop.width/BACTERIA_COLORS.length, 2*offset*0.9, 
-                                             this.color))
-                console.log(shop.pockets);  
+                                             this.color)) 
             })
         }
     }
@@ -362,7 +361,7 @@ class BLymphocyte extends ImmuneCell {
         }
     }
 }
-class Tlymphocyte extends ImmuneCell {
+class TLymphocyte extends ImmuneCell {
     constructor(x, y, color=null, active=false) {
         super(T_LYMPHOCYTES_IMAGE, x, y, 20, 0.5, 1);
         this.iteration = 0;
@@ -372,17 +371,35 @@ class Tlymphocyte extends ImmuneCell {
             this.color = color;
         }
         this.active = active;
+        this.label = new Label(this);
+        this.mode = "killer";
+        this.upgradePrice = 300;
+    }
+    
+    upgrade(){
+        if (this.mode === "killer"){
+            this.mode = "memory";
+            this.longevity = 100000;
+            this.baseSpeed = 0;
+            this.upgradePrice = 0;
+            shops.filter((shop)=> this instanceof shop.cellType).forEach((shop) =>{
+                shop.pockets.push(new Pocket(shop, 
+                                             shop.x + BACTERIA_COLORS.indexOf(this.color)*shop.width/BACTERIA_COLORS.length, shop.height+offset, shop.width/BACTERIA_COLORS.length, 2*offset*0.9, 
+                                             this.color))
+            })
+        }
     }
     
     move() {
-        super.move();
-        if(this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size / 2)) {
+        if (this.mode != "memory"){
+            super.move();
+            if(this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size / 2)) {
             if ((this.target.infection.length > 0 && this.target.infection[0].color === this.color) || (this.target.vaccine === this.color)){
                 this.target.health -= this.damage;  
                 if (!this.active){
                     this.active = true;
                     for (var i = 0; i < TlymphocyteReproductionNumber; i++){
-                        immunityCells.push(new Tlymphocyte(this.x, this.y, this.color, true));
+                        immunityCells.push(new TLymphocyte(this.x, this.y, this.color, true));
                     }
                 }
             } else{
@@ -390,7 +407,9 @@ class Tlymphocyte extends ImmuneCell {
             }
             
         }
+        }
     }
+    
     changeDirection(targetsList){
         super.changeDirection(targetsList, 10);
     }

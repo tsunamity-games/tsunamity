@@ -108,7 +108,7 @@ class Label extends BodyPart{
             ctx.fillStyle = "white";
             ctx.fillRect(this.x, this.y, this.width, this.height);
             ctx.globalAlpha = 0.1;
-            if ((this.labelledObject.killed || this.labelledObject.mode === "plasmatic") && money >= this.labelledObject.upgradePrice) {
+            if ((this.labelledObject.killed || this.labelledObject.active || this.labelledObject.mode === "plasmatic") && money >= this.labelledObject.upgradePrice) {
                 ctx.fillStyle = "green";
             } else {
                 ctx.fillStyle = "red";
@@ -121,11 +121,12 @@ class Label extends BodyPart{
             ctx.font = this.width/13 + "px Courier";
             ctx.fillStyle = "black";
             var labelText;
-            if (this.labelledObject.mode === "naive" || this.labelledObject.mode === "mature"){
-                labelText = "Plasmatic Cell (" + this.labelledObject.upgradePrice + ")";
-            } else if (this.labelledObject.mode === "plasmatic"){
-                labelText = "Memory cell (" + this.labelledObject.upgradePrice + ")";
+            if (["naive", "mature"].includes(this.labelledObject.mode)){
+                labelText = "Plasmatic Cell";
+            } else if (["plasmatic", "killer"].includes(this.labelledObject.mode)){
+                labelText = "Memory cell";
             }
+            labelText += " (" + this.labelledObject.upgradePrice + ")";
             ctx.fillText(labelText, this.x + this.width/2, this.y + this.height/2);     
         }
     }

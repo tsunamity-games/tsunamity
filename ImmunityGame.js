@@ -75,7 +75,7 @@ var antibodies = [];
 
 var shops = [
     new Shop(BONE_MARROW_IMAGE, xLeftOffset, offset, shopWidth, shopHeight - 2 * offset, NaturalKiller, 150, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
-    new Shop(BONE_MARROW_IMAGE, xLeftOffset + shopWidth + offset, offset, shopWidth, shopHeight - 2 * offset, Tlymphocyte, 300, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
+    new Shop(BONE_MARROW_IMAGE, xLeftOffset + shopWidth + offset, offset, shopWidth, shopHeight - 2 * offset, TLymphocyte, 300, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
     new Shop(BONE_MARROW_IMAGE, xLeftOffset + 2*shopWidth + 2*offset, offset, shopWidth, shopHeight - 2 * offset, BLymphocyte, 200, BACTERIA_IMAGE, LYMPHOCYTES_IMAGES.get("green")),
     new Shop(BONE_MARROW_IMAGE, xLeftOffset + 3 * shopWidth + 3 * offset, offset, shopWidth, shopHeight - 2 * offset, Neutrophil, 100, BACTERIA_IMAGE, NEUTROPHILS_IMAGE),
     new Shop(BONE_MARROW_IMAGE, xLeftOffset + 4 * shopWidth + 4 * offset, offset, shopWidth, shopHeight - 2 * offset, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE),
@@ -120,9 +120,9 @@ $("#field").click(function(event){
         }
     })
     
-    // If B-lymphocyte is clicked, suggest upgrade
+    // If B or T-lymphocyte is clicked, suggest upgrade
     immunityCells.forEach((cell) => {
-        if (cell instanceof BLymphocyte){
+        if ((cell instanceof BLymphocyte || cell instanceof TLymphocyte) && cell.mode != "memory"){
             if (cell.label.active && cell.label.isIntersected(x, y) && money >= cell.upgradePrice){
                 money -= cell.upgradePrice;
                 cell.upgrade();
@@ -234,7 +234,7 @@ var game = setInterval(function(){
 
             var targetList;
 
-            if(cell instanceof NaturalKiller || cell instanceof Tlymphocyte || (cell instanceof BLymphocyte && cell.mode === "plasmatic")) {
+            if(cell instanceof NaturalKiller || cell instanceof TLymphocyte || (cell instanceof BLymphocyte && cell.mode === "plasmatic")) {
                 targetList = tissueCells;
                 
             } else if (cell instanceof Eosinophile){
@@ -275,7 +275,7 @@ var game = setInterval(function(){
         }
         checkAntibiotics();
     }
-    immunityCells.filter(cell => cell instanceof BLymphocyte).forEach(cell => cell.label.draw());
+    immunityCells.filter(cell => cell instanceof BLymphocyte || cell instanceof TLymphocyte).forEach(cell => cell.label.draw());
     money += basePrice * tissueCells.filter((cell) => cell.infection.length === 0).length/tissueCells.length;
     ctx.lineWidth = 1;
     ctx.strokeStyle = "black";
