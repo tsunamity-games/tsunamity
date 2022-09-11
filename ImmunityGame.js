@@ -164,7 +164,7 @@ var game = setInterval(function(){
     spleen.draw();
     var nextTurnTissueCells = [];
     tissueCells.forEach((cell) => {
-        if(cell.health > 0) {
+        if(cell.health > 0 && randomUniform(0, 1) > tissueCellDeathRate) {
             cell.draw()
             nextTurnTissueCells.push(cell);
         } else {

@@ -77,6 +77,7 @@ const playableFieldHeight = playableFieldStart + nTissueCellRows*(tissueCellSize
 const TISSUE_CELL_COLOR = "#facdf3";
 const cancerMutationsThreshold = 50;
 const mutationProbability = 0.05;
+const tissueCellDeathRate = 0.000001;
 
 
 //      Lymphocytes
