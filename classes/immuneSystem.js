@@ -242,7 +242,7 @@ class NaturalKiller extends ImmuneCell {
     move() {
         super.move();
         if(this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size / 2)) {
-            if (this.target.infection.length > 0 || this.target.vaccine != null){
+            if (this.target.infection.length > 0 || this.target.vaccine != null || this.target.nMutations >= cancerMutationsThreshold){
                 this.target.health -= this.damage;    
             } else{
                 this.target = null;

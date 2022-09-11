@@ -75,6 +75,9 @@ const nTissueCellRows = 14;
 const playableFieldStart = shopHeight + offset;
 const playableFieldHeight = playableFieldStart + nTissueCellRows*(tissueCellSize + spaceBetweenTissueCells)-spaceBetweenTissueCells;
 const TISSUE_CELL_COLOR = "#facdf3";
+const cancerMutationsThreshold = 50;
+const mutationProbability = 0.05;
+
 
 //      Lymphocytes
 const randomTargetNumber = 5;

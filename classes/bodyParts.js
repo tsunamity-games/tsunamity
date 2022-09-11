@@ -120,7 +120,7 @@ class Spleen extends BodyPart{
     }
 }
 class TissueCell{
-    constructor(x, y, size=tissueCellSize){
+    constructor(x, y, size=tissueCellSize, ancestor=null){
         this.x = x;
         this.y = y;
         this.size = size;
@@ -128,6 +128,15 @@ class TissueCell{
         this.health = 100;
         this.texture = CELL_IMAGE;
         this.vaccine = null;
+        this.nMutations;
+        if (ancestor === null){
+            this.nMutations = 0;
+        } else {
+            this.nMutations = ancestor.nMutations;
+            if (randomUniform(0, 1) < mutationProbability){
+                this.nMutations += 1;   
+            }
+        }
     }
     
     draw(){
@@ -153,6 +162,9 @@ class TissueCell{
             ctx.textBaseline = "middle";
             ctx.fillStyle = "black";
             ctx.fillText("V", this.x + this.size / 2, this.y + this.size / 2)
+        } else if (this.nMutations >= cancerMutationsThreshold){
+            ctx.fillStyle = "black";
+            circle(this.x +  tissueCellSize/ 2, this.y + tissueCellSize / 2, this.size / 2, true);
         }
         ctx.globalAlpha = 1;
     }

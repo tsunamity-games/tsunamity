@@ -168,7 +168,12 @@ var game = setInterval(function(){
             cell.draw()
             nextTurnTissueCells.push(cell);
         } else {
-            nextTurnTissueCells.push(new TissueCell(cell.x, cell.y, 1));
+            var neighbours = tissueCells.filter((potentialNeighbour) => {
+                return (Math.abs(cell.x - potentialNeighbour.x) <= tissueCellSize + spaceBetweenTissueCells) && (Math.abs(cell.y - potentialNeighbour.y) <= tissueCellSize + spaceBetweenTissueCells) && !(cell.x === potentialNeighbour.x && cell.y === potentialNeighbour.y);
+            })
+            var probs = [];
+            neighbours.forEach((neighbour)=>{probs.push(neighbour.nMutations);})
+            nextTurnTissueCells.push(new TissueCell(cell.x, cell.y, 1, randomChoice(neighbours, probs)));
             viruses = viruses.filter((virus) => virus.host != cell);
         }
     })

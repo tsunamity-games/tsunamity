@@ -3,8 +3,30 @@ function randomUniform(low, high) {
     var u = Math.random() * (high - low);
     return u + low;
 }
-function randomChoice(array){
-    return array[Math.floor(Math.random() * array.length)];
+function randomChoice(array, probs = null){
+    
+    // If "probs" is not supplied, choose with uniform probabilities
+    if (probs === null){
+        probs = Array(array.length).fill(1);
+    } 
+    // Normalize probabilities
+    var sum = 0;
+    probs.forEach((prob) => {sum += prob;})
+    for (var i = 0; i < probs.length; i++){
+        probs[i] /= sum;
+    }
+    
+    var num = Math.random(),
+        s = 0,
+        lastIndex = probs.length - 1;
+
+    for (var i = 0; i < lastIndex; i++) {
+        s += probs[i];
+        if (num < s) {
+            return array[i];
+        }
+    }
+    return array[lastIndex];
 }
 
 //------------DRAWING-------------
