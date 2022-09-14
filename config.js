@@ -4,10 +4,10 @@ var ctx = field.getContext("2d");
 const fieldWidth = field.width;
 const fieldHeight = field.height;
 const shopHeight = 200;
-const shopWidth = 130;
+const shopWidth = 116;
 const buttonWidth = 34;
 const buttonHeight = 34;
-const offset = 10;
+const offset = 5;
 const BACTERIA_COLORS = ["blue", "green", "yellow", "orange"];
 const xLeftOffset = 145;
 
@@ -65,6 +65,9 @@ CELL_IMAGE.src = "./images/cell.png";
 
 const VIRUS_IMAGE = new Image();
 VIRUS_IMAGE.src = "./images/virus.png";
+
+const HIV_IMAGE = new Image();
+HIV_IMAGE.src = "./images/HIV.png";
 
 // Host cell parameters
 //      Tissue cells
