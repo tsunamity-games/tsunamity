@@ -91,6 +91,8 @@ const NEUTROPHIL_PRICE = 100;
 const MACROPHAGE_PRICE = 100;
 const EOSINOPHILE_PRICE = 50;
 
+const EOSINOPHILES_DAMAGE = 0.1;
+
 //      Lymphocytes
 const randomTargetNumber = 5;
 const TlymphocyteReproductionNumber = 5;
@@ -106,6 +108,10 @@ var starting_nViruses = 2;
 //      Bacteria
 const bacteriaRadius = 8;
 var starting_nBacteria = 30;
+const BACTERIA_BASE_HEALTH = 100;
+BACTERIA_HEALTH_INCREASE = 20;
+BACTERIA_PRICE_INCREASE = 5;
+BACTERIA_NUMBER_INCREASE = 10;
 
 // Game parameters
 var livesLeft = 10;

@@ -180,7 +180,7 @@ class Macrophage extends ImmuneCell {
 }
 class Eosinophile extends ImmuneCell {
     constructor(x, y) {
-        super(EOSINOPHILES_IMAGE, x, y, 10, 0.2, 0.01);
+        super(EOSINOPHILES_IMAGE, x, y, 10, 0.2, EOSINOPHILES_DAMAGE);
     } 
     move() {
         super.move();
