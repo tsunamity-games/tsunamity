@@ -73,13 +73,17 @@ function checkAntibiotics(){
 var immunityCells = [];
 var antibodies = [];
 
+const T_LYMPHOCYTE_SHOP = new Shop(BONE_MARROW_IMAGE, xLeftOffset + shopWidth + offset, offset, shopWidth, shopHeight - 2 * offset, TLymphocyte, 300, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE, false, true);
+const B_LYMPHOCYTE_SHOP = new Shop(BONE_MARROW_IMAGE, xLeftOffset + 3 * shopWidth + 3 * offset, offset, shopWidth, shopHeight - 2 * offset, BLymphocyte, 200, BACTERIA_IMAGE, LYMPHOCYTES_IMAGES.get("green"), true, true);
+
 var shops = [
-    new Shop(BONE_MARROW_IMAGE, xLeftOffset, offset, shopWidth, shopHeight - 2 * offset, NaturalKiller, 150, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
-    new Shop(BONE_MARROW_IMAGE, xLeftOffset + shopWidth + offset, offset, shopWidth, shopHeight - 2 * offset, TLymphocyte, 300, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
-    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 2*shopWidth + 2*offset, offset, shopWidth, shopHeight - 2 * offset, BLymphocyte, 200, BACTERIA_IMAGE, LYMPHOCYTES_IMAGES.get("green")),
-    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 3 * shopWidth + 3 * offset, offset, shopWidth, shopHeight - 2 * offset, Neutrophil, 100, BACTERIA_IMAGE, NEUTROPHILS_IMAGE),
-    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 4 * shopWidth + 4 * offset, offset, shopWidth, shopHeight - 2 * offset, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE),
-    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 5*shopWidth + 5*offset, offset, shopWidth, shopHeight - 2 * offset, Macrophage, 300, GARBAGE_IMAGE, MACROPHAGES_IMAGE)
+    new Shop(BONE_MARROW_IMAGE, xLeftOffset, offset, shopWidth, shopHeight - 2 * offset, NaturalKiller, 150, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE, false, true),
+    T_LYMPHOCYTE_SHOP,
+    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 2 * shopWidth + 2 * offset, offset, shopWidth, shopHeight - 2 * offset, THelper, 300, T_LYMPHOCYTES_IMAGE, T_LYMPHOCYTES_IMAGE, true, true),
+    B_LYMPHOCYTE_SHOP,
+    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 4 * shopWidth + 4 * offset, offset, shopWidth, shopHeight - 2 * offset, Neutrophil, 100, BACTERIA_IMAGE, NEUTROPHILS_IMAGE, true, true),
+    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 5 * shopWidth + 5 * offset, offset, shopWidth, shopHeight - 2 * offset, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE, false, true),
+    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 6 * shopWidth + 6 * offset, offset, shopWidth, shopHeight - 2 * offset, Macrophage, 300, GARBAGE_IMAGE, MACROPHAGES_IMAGE, false, true)
     
 ];
 var buttons = [];
@@ -88,7 +92,7 @@ for (var i = 0; i < BACTERIA_COLORS.length; i++){
     buttons.push(new Vaccine(BACTERIA_COLORS[i], fieldWidth/2 + offset*(i+1) + buttonWidth*i, playableFieldHeight + offset, buttonWidth, buttonHeight, 100));
 }
 
-spleen = new Spleen(BONE_MARROW_IMAGE, xLeftOffset+6*shopWidth + 6*offset + 10, offset, shopHeight - 2 * offset, shopHeight - 2 * offset, 16);
+spleen = new Spleen(BONE_MARROW_IMAGE, xLeftOffset + 7 * shopWidth + 6 * offset + 10, offset, shopHeight - 2 * offset, shopHeight - 2 * offset, 16);
 var bacteria = addBacteria([], starting_nBacteria, BACTERIA_IMAGE, 100, 5);
 var tissueCells = addTissueCells([]);
 var viruses = [];
@@ -136,6 +140,8 @@ $("#field").click(function(event){
     })
     
 });
+
+// var hiv = new HIV(HIV_IMAGE, 300, 200);
 
 var game = setInterval(function(){
     if (gameOverTrue){
@@ -236,6 +242,10 @@ var game = setInterval(function(){
         immunityCells.forEach((cell) => {
             cell.live();
             cell.move();
+            
+            if(cell instanceof THelper) {
+                cell.act();
+            }
 
             var targetList;
 
@@ -267,6 +277,8 @@ var game = setInterval(function(){
         antibody.move();
         antibody.draw();
     })
+
+    // hiv.draw();
     
     if(bacteria.length === 0) {
         bacteria = addBacteria([], starting_nBacteria + wave * 10, BACTERIA_IMAGE, 100 + wave * 30, 5 + wave * 2);

@@ -58,7 +58,10 @@ class Shop extends BodyPart {
         ctx.font = this.width/11 + "px Courier";
         ctx.textAlign = "center";
         ctx.fillText("Produces", this.x + this.width/4, this.y + 3*this.height/10);
-        ctx.fillText("Kills", this.x + 3*this.width/4, this.y + 3*this.height/10);
+
+        const targetText = this.cellType == THelper ? "Buys" : "Kills";
+
+        ctx.fillText(targetText, this.x + 3*this.width/4, this.y + 3*this.height/10);
 
         ctx.drawImage(
             this.cellTexture, 0, 0,
@@ -67,7 +70,7 @@ class Shop extends BodyPart {
             this.x + this.width/4 - 3*this.width/10/2,
             this.y + 4.5*this.height/10,
             3*this.width/10,
-            *this.height/10)
+            9/4*this.height/10)
         
             
         ctx.drawImage(

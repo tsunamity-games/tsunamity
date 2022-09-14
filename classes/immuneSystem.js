@@ -423,3 +423,103 @@ class TLymphocyte extends ImmuneCell {
         super.draw();
     }
 }
+
+class THelper extends ImmuneCell {
+    constructor(x, y) {
+        super(T_LYMPHOCYTES_IMAGE, x, y, 20, 0.5, 0, 100000);
+
+        this.place = this.choosePlace();
+        this.placeReached = false;
+        this.cooldown = 10000;
+        this.timeFromTheLastPurchase = 0;
+    }
+
+    choosePlace() {
+        const ROWS = 4;
+        const COLS = 12;
+
+        const gridCellWidth = Math.floor(fieldWidth / COLS);
+        const gridCellHeight = Math.floor((playableFieldHeight) / ROWS);
+        
+        const col = Math.floor(randomUniform(0, COLS));
+        const row = Math.floor(randomUniform(0, ROWS));
+
+        var place = [col * gridCellWidth + randomUniform(-10, 10), playableFieldStart + row * gridCellHeight + randomUniform(-10, 10)];
+        place[0] = clip(place[0], this.radius, fieldWidth - this.radius);
+        place[1] = clip(place[1], playableFieldStart + this.radius, playableFieldHeight - this.radius);
+
+        return place;
+    }
+
+    changeDirection(){
+        if (this.y < shopHeight) {
+            // Get away from shop
+            this.xSpeed = randomUniform(-0.5, 0.5);
+            this.ySpeed = this.baseSpeed * 3;
+        }
+        else {
+            
+            if(this.placeReached) {
+                // Mess around the place
+                this.xSpeed = randomUniform(-0.1, 0.1);
+                this.ySpeed = randomUniform(-0.1, 0.1);
+            }
+            else {
+                // Move closer to place
+                [this.xSpeed, this.ySpeed] = moveTo(this.x, this.y, this.place[0], this.place[1], this.baseSpeed);
+
+                this.xSpeed += randomUniform(-0.1, 0.1);
+                this.ySpeed += randomUniform(-0.1, 0.1);
+            }
+            
+        }
+    }
+
+    move() {
+        if(doCirclesIntersect(this.x, this.y, this.radius, this.place[0], this.place[1], 10)) {
+            this.placeReached = true;
+        }
+
+        super.move();
+    }
+
+    act() {
+        if(this.timeFromTheLastPurchase < this.cooldown) {
+            this.timeFromTheLastPurchase += 1;
+        }
+        else {
+            this.timeFromTheLastPurchase = 0;
+            var shopToBuy;
+
+            // Evaluate, which type of pathogen is threatening the body
+            var infectedCells = tissueCells.filter((cell) => {return(cell.infection.length > 0)});
+            var infectionRatio = infectedCells.length / tissueCells.length;
+    
+            if(infectionRatio > 0.1) {
+                console.log("Buying T cell");
+                shopToBuy = T_LYMPHOCYTE_SHOP;
+            }
+            else {
+                console.log("Buying B cell");
+                shopToBuy = B_LYMPHOCYTE_SHOP;
+            }
+    
+            // Buy the corresponding lymphocyte
+            money += shopToBuy.price;
+            shopToBuy.buy();
+        }
+    }
+
+    draw() {
+        super.draw();
+
+        if(this.placeReached) {
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "black";
+            
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius + 2, 0, Math.PI*2 * this.timeFromTheLastPurchase / this.cooldown);
+            ctx.stroke();
+        }
+    }
+}
