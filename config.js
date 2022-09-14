@@ -82,6 +82,14 @@ const cancerMutationsThreshold = 50;
 const mutationProbability = 0.05;
 const tissueCellDeathRate = 0.000001;
 
+// Immune cells
+const NK_PRICE = 150;
+const T_LYMPHOCYTE_PRICE = 300;
+const B_LYMPHOCYTE_PRICE = 200;
+const T_HELPER_PRICE = 200;
+const NEUTROPHIL_PRICE = 100;
+const MACROPHAGE_PRICE = 200;
+const EOSINOPHILE_PRICE = 50;
 
 //      Lymphocytes
 const randomTargetNumber = 5;
