@@ -67,13 +67,13 @@ class Shop extends BodyPart {
             this.x + this.width/4 - 3*this.width/10/2,
             this.y + 4.5*this.height/10,
             3*this.width/10,
-            3*this.height/10)
+            *this.height/10)
         
             
         ctx.drawImage(
             this.enemyTexture, 0, 0,
             this.isEnemyAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
-            this.isEnemyAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
+            this.isEnemyAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
             this.x + 3*this.width/4 - 3*this.width/10/2,
             this.y + 4.5*this.height/10,
             3*this.width/10,
