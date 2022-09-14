@@ -8,7 +8,7 @@ function addTissueCells(tissueCellsList){
     EdgeCellX = x;
     return tissueCellsList;
 }
-function addBacteria(bacteriaList, n, texture, maxHealth, price){
+function addBacteria(bacteriaList, n, maxHealth, price){
     for (var i=0; i<n; i++){
         var y = randomUniform(shopHeight + offset, playableFieldHeight); 
         var x = -10;
@@ -93,7 +93,7 @@ for (var i = 0; i < BACTERIA_COLORS.length; i++){
 }
 
 spleen = new Spleen(BONE_MARROW_IMAGE, xLeftOffset + 7 * shopWidth + 6 * offset + 10, offset, shopHeight - 2 * offset, shopHeight - 2 * offset, 16);
-var bacteria = addBacteria([], starting_nBacteria, BACTERIA_IMAGE, 100, 5);
+var bacteria = addBacteria([], starting_nBacteria, 100, 5);
 var tissueCells = addTissueCells([]);
 var viruses = [];
 var helmintes = [];
@@ -281,7 +281,7 @@ var game = setInterval(function(){
     // hiv.draw();
     
     if(bacteria.length === 0) {
-        bacteria = addBacteria([], starting_nBacteria + wave * 10, BACTERIA_IMAGE, 100 + wave * 30, 5 + wave * 2);
+        bacteria = addBacteria([], starting_nBacteria + wave * BACTERIA_NUMBER_INCREASE, BACTERIA_BASE_HEALTH + wave * BACTERIA_HEALTH_INCREASE, 5 + wave * BACTERIA_PRICE_INCREASE);
         wave += 1;
 
         if (wave % 4 === 2) {
