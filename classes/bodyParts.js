@@ -22,8 +22,8 @@ class BodyPart {
 }
 class Shop extends BodyPart {
   
-    constructor(texture, x, y, width, height, cellType, price, enemyTexture, cellTexture, isEnemyAnimated, isCellAnimated) {
-        super(texture, x, y, width, height);
+    constructor(x, y, cellType, price, enemyTexture, cellTexture, isEnemyAnimated, isCellAnimated) {
+        super(BONE_MARROW_IMAGE, x, y, shopWidth, shopHeight - 2 * offset);
         this.cellType = cellType;
         this.price = price;
         
