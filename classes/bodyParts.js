@@ -26,12 +26,14 @@ class Shop extends BodyPart {
         super(BONE_MARROW_IMAGE, x, y, shopWidth, shopHeight - 2 * offset);
         this.cellType = cellType;
         this.price = price;
+        this.base_price = price;
         
         this.enemyTexture = enemyTexture;
         this.cellTexture = cellTexture;
         this.isEnemyAnimated = isEnemyAnimated;
         this.isCellAnimated = isCellAnimated;
         this.pockets = [];
+        this.discount = 0;
     }
 
     buy() {
@@ -42,6 +44,11 @@ class Shop extends BodyPart {
             immunityCells.push(cell);
             money -= this.price;
         }
+    }
+
+    reset() {
+        this.price = this.base_price;
+        this.discount = 0;
     }
     
     draw() {

@@ -93,6 +93,8 @@ const EOSINOPHILE_PRICE = 50;
 
 const EOSINOPHILES_DAMAGE = 0.1;
 
+const HELPER_DISCOUNT_RATE = 0.9;
+
 //      Lymphocytes
 const randomTargetNumber = 5;
 const TlymphocyteReproductionNumber = 5;

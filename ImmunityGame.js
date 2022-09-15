@@ -153,7 +153,8 @@ var game = setInterval(function(){
     printGameInfo();
         
     shops.forEach((shop) => {
-        shop.draw();
+        shop.reset();
+        
         if (shop.pockets.length > 0)
             console.log(shop.pockets);
         shop.pockets = shop.pockets.filter(function hasMemoryCell(pocket){
@@ -260,9 +261,7 @@ var game = setInterval(function(){
                 targetList = bacteria;
             }
 
-            cell.changeDirection(targetList);
-            cell.draw();
-            
+            cell.changeDirection(targetList);            
             
             // Old cells die
             var oldCells = immunityCells.filter((cell)=>cell.age >= cell.longevity);
@@ -277,6 +276,16 @@ var game = setInterval(function(){
         antibody.move();
         antibody.draw();
     })
+
+    shops.forEach((shop) => {
+        // Set price with discount
+        shop.price = Math.round(shop.base_price * Math.pow(HELPER_DISCOUNT_RATE, shop.discount));
+        shop.draw();
+    });
+
+    immunityCells.forEach((cell) => {
+        cell.draw();
+    });
 
     // hiv.draw();
     
