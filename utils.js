@@ -97,7 +97,13 @@ function moveTo(xFrom, yFrom, xTo, yTo, speed){
 
 //-------SUPPORT FOR CELLS-------
 function findTarget(x, y, targetList, n) {
-    if (targetList.length > 0){
+    if (targetList.length > 0 && !(targetList[0] instanceof TissueCell)){
+        var distances = [];
+        targetList.forEach((target) => {
+            distances.push(1/Math.abs(Math.pow(x - target.x, 2) + Math.pow(y - target.y, 2)));
+        })
+        return randomChoice(targetList, distances); 
+    } else if (targetList.length > 0 && targetList[0] instanceof TissueCell){
         var number = Math.floor(randomUniform(0, n));
         var res = targetList.sort(function(a, b){
             var da = Math.abs(Math.pow(x - a.x, 2) + Math.pow(y - a.y, 2));
@@ -105,7 +111,8 @@ function findTarget(x, y, targetList, n) {
             return da-db;
         })[number]
         return res;            
-    } else {return -1;}
+    }
+    else {return -1;}
 }
 function findRandomTarget(targetsList) {
     if (targetsList.length > 0){
