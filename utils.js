@@ -1,19 +1,23 @@
 //------------RANDOM-------------
+function randomInteger(low, high){
+    return Math.round(randomUniform(low, high));
+}
 function randomUniform(low, high) {
     var u = Math.random() * (high - low);
     return u + low;
 }
-function randomChoice(array, probs = null){
+function randomChoice(array, inputProbs = null){
     
-    // If "probs" is not supplied, choose with uniform probabilities
-    if (probs === null){
-        probs = Array(array.length).fill(1);
+    // If "inputProbs" is not supplied, choose with uniform probabilities
+    if (inputProbs === null){
+        inputProbs = Array(array.length).fill(1);
     } 
     // Normalize probabilities
     var sum = 0;
-    probs.forEach((prob) => {sum += prob;})
-    for (var i = 0; i < probs.length; i++){
-        probs[i] /= sum;
+    inputProbs.forEach((prob) => {sum += prob;})
+    var probs = inputProbs.slice(0, inputProbs.length);
+    for (var i = 0; i < inputProbs.length; i++){
+        probs[i] = inputProbs[i]/sum;
     }
     
     var num = Math.random(),
