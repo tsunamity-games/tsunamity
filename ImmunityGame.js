@@ -52,13 +52,15 @@ function printGameInfo(){
     ctx.fillText("Lives: "+ livesLeft, offset, offset+40);
     
             }
-function gameOver(){
+function stopGame(why){
     ctx.font = "60px Courier";
     ctx.fillStyle = "Black";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("Game over", fieldWidth/2, fieldHeight/2);
+    ctx.fillText(why, fieldWidth/2, fieldHeight/2);
 }
+
+
 function checkAntibiotics(){
     buttons.filter((button) => button instanceof Antibiotic).forEach((anti) => {
         if ((anti.lastWave != null) && this.wave > anti.lastWave + 1){
@@ -154,7 +156,7 @@ var shops = [
     new Shop(BONE_MARROW_IMAGE, xLeftOffset, offset, shopWidth, shopHeight - 2 * offset, NaturalKiller, 150, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
     new Shop(BONE_MARROW_IMAGE, xLeftOffset + shopWidth + offset, offset, shopWidth, shopHeight - 2 * offset, TLymphocyte, 300, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
     new Shop(BONE_MARROW_IMAGE, xLeftOffset + 2*shopWidth + 2*offset, offset, shopWidth, shopHeight - 2 * offset, BLymphocyte, 200, BACTERIA_IMAGE, LYMPHOCYTES_IMAGES.get("green")),
-    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 3 * shopWidth + 3 * offset, offset, shopWidth, shopHeight - 2 * offset, Neutrophil, 1, BACTERIA_IMAGE, NEUTROPHILS_IMAGE),
+    new Shop(BONE_MARROW_IMAGE, xLeftOffset + 3 * shopWidth + 3 * offset, offset, shopWidth, shopHeight - 2 * offset, Neutrophil, 100, BACTERIA_IMAGE, NEUTROPHILS_IMAGE),
     new Shop(BONE_MARROW_IMAGE, xLeftOffset + 4 * shopWidth + 4 * offset, offset, shopWidth, shopHeight - 2 * offset, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE),
     new Shop(BONE_MARROW_IMAGE, xLeftOffset + 5*shopWidth + 5*offset, offset, shopWidth, shopHeight - 2 * offset, Macrophage, 300, GARBAGE_IMAGE, MACROPHAGES_IMAGE)
     
@@ -177,6 +179,7 @@ var garbagePiles = [];
 var wave = 1;
 [bacteria, viruses, helmintes] = formNewWave(wave, bacteria, viruses, helmintes);
 var gameOverTrue = false;  
+var pauseTrue = false;
 // Gameplay
 $("#field").click(function(event){
     x = event.pageX - field.offsetLeft;
@@ -218,11 +221,43 @@ $("#field").click(function(event){
     
 });
 
+var keyActions = {
+    49: "1",
+    50: "2",
+    51: "3",
+    52: "4",
+    53: "5",
+    54: "6",
+    81: "a1",
+    87: "a2",
+    69: "a3",
+    82: "a4",
+    65: "v1",
+    83: "v2",
+    68: "v3",
+    70: "v4",
+    32: "pause",
+    27: "pause"
+};
+$("body").keydown(function(event){
+    var action = keyActions[event.keyCode];
+    if (["1", "2", "3", "4", "5", "6"].includes(action)){
+        shops[parseInt(action)-1].buy();
+    } else if (action.startsWith("a")){
+        buttons.filter((button) => button instanceof Antibiotic)[parseInt(action[1])-1].activate()
+    } else if (action.startsWith("v")){
+        buttons.filter((button) => button instanceof Vaccine)[parseInt(action[1])-1].activate()
+    } else if (action == "pause"){
+        pauseTrue = !pauseTrue;
+    }          
+            });
 var game = setInterval(function(){    
     if (gameOverTrue){
-        gameOver();
+        stopGame("Game Over");
     }
-    else{
+    else if (pauseTrue){
+        stopGame("Pause");
+    } else {
     ctx.clearRect(0, 0, fieldWidth, fieldHeight);
     
     printGameInfo();
