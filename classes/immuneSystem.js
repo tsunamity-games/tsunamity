@@ -276,6 +276,7 @@ class BLymphocyte extends ImmuneCell {
     }
 
     upgrade(){
+        this.label.active = false;
         if (this.mode === "mature"){
             this.mode = "plasmatic";
             this.damage = 0;
@@ -386,6 +387,7 @@ class TLymphocyte extends ImmuneCell {
     }
     
     upgrade(){
+        this.label.active = false;
         if (this.mode === "killer"){
             this.mode = "memory";
             this.longevity = 100000;

@@ -237,19 +237,26 @@ var keyActions = {
     68: "v3",
     70: "v4",
     32: "pause",
-    27: "pause"
+    27: "pause",
+    85: "upgrade"
 };
 $("body").keydown(function(event){
     var action = keyActions[event.keyCode];
-    if (["1", "2", "3", "4", "5", "6"].includes(action)){
-        shops[parseInt(action)-1].buy();
-    } else if (action.startsWith("a")){
-        buttons.filter((button) => button instanceof Antibiotic)[parseInt(action[1])-1].activate()
-    } else if (action.startsWith("v")){
-        buttons.filter((button) => button instanceof Vaccine)[parseInt(action[1])-1].activate()
-    } else if (action == "pause"){
-        pauseTrue = !pauseTrue;
-    }          
+    if (action != undefined){
+        if (["1", "2", "3", "4", "5", "6"].includes(action)){
+            shops[parseInt(action)-1].buy();
+        } else if (action.startsWith("a")){
+            buttons.filter((button) => button instanceof Antibiotic)[parseInt(action[1])-1].activate()
+        } else if (action.startsWith("v")){
+            buttons.filter((button) => button instanceof Vaccine)[parseInt(action[1])-1].activate()
+        } else if (action == "pause"){
+            pauseTrue = !pauseTrue;
+        } else if (action == "upgrade"){
+            immunityCells.filter((cell) => cell.label != undefined && cell.label.active).forEach((cell) => {
+                cell.upgrade();
+            })
+    }       
+    }      
             });
 var game = setInterval(function(){    
     if (gameOverTrue){
