@@ -1,10 +1,36 @@
 //------------RANDOM-------------
+function randomInteger(low, high){
+    return Math.round(randomUniform(low, high));
+}
 function randomUniform(low, high) {
     var u = Math.random() * (high - low);
     return u + low;
 }
-function randomChoice(array){
-    return array[Math.floor(Math.random() * array.length)];
+function randomChoice(array, inputProbs = null){
+    
+    // If "inputProbs" is not supplied, choose with uniform probabilities
+    if (inputProbs === null){
+        inputProbs = Array(array.length).fill(1);
+    } 
+    // Normalize probabilities
+    var sum = 0;
+    inputProbs.forEach((prob) => {sum += prob;})
+    var probs = inputProbs.slice(0, inputProbs.length);
+    for (var i = 0; i < inputProbs.length; i++){
+        probs[i] = inputProbs[i]/sum;
+    }
+    
+    var num = Math.random(),
+        s = 0,
+        lastIndex = probs.length - 1;
+
+    for (var i = 0; i < lastIndex; i++) {
+        s += probs[i];
+        if (num < s) {
+            return array[i];
+        }
+    }
+    return array[lastIndex];
 }
 
 //------------DRAWING-------------
@@ -75,7 +101,13 @@ function moveTo(xFrom, yFrom, xTo, yTo, speed){
 
 //-------SUPPORT FOR CELLS-------
 function findTarget(x, y, targetList, n) {
-    if (targetList.length > 0){
+    if (targetList.length > 0 && !(targetList[0] instanceof TissueCell)){
+        var distances = [];
+        targetList.forEach((target) => {
+            distances.push(1/Math.abs(Math.pow(x - target.x, 2) + Math.pow(y - target.y, 2)));
+        })
+        return randomChoice(targetList, distances); 
+    } else if (targetList.length > 0 && targetList[0] instanceof TissueCell){
         var number = Math.floor(randomUniform(0, n));
         var res = targetList.sort(function(a, b){
             var da = Math.abs(Math.pow(x - a.x, 2) + Math.pow(y - a.y, 2));
@@ -83,7 +115,8 @@ function findTarget(x, y, targetList, n) {
             return da-db;
         })[number]
         return res;            
-    } else {return -1;}
+    }
+    else {return -1;}
 }
 function findRandomTarget(targetsList) {
     if (targetsList.length > 0){

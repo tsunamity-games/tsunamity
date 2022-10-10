@@ -43,7 +43,7 @@ class Virus{
     
 }
 class Bacterium extends MovingObject {
-    constructor(color, x, y, radius, maxHealth, price) {
+    constructor(color, x, y, radius, maxHealth) {
         var texture = BACTERIA_IMAGES.get(color);
 
         super(texture, x, y, radius)
@@ -52,7 +52,6 @@ class Bacterium extends MovingObject {
         this.ySpeed = randomUniform(-5, 5);
         this.maxHealth = maxHealth;
         this.health = maxHealth;
-        this.price = price;
         this.mode = "enemy";
         this.spleenSection;
         this.baseSpeed = 0.2;
@@ -92,6 +91,12 @@ class Bacterium extends MovingObject {
 
     }
 }
+class HelmintPart extends MovingObject{
+    constructor(texture, x, y, radius, helmint){
+        super(texture, x, y, radius);
+        this.helmint = helmint;
+    }
+}
 class Helmint {
     constructor(x, y, health, price, delay, width, length){
         this.x = x;
@@ -106,7 +111,7 @@ class Helmint {
         this.movingtime = 0;
         this.overlay = this.width*0.6; // stupid, but this is actually something inversely proportional to the overlay of the segments
         for (var i=0; i < length; i++){
-            this.parts.push(new MovingObject(this.texture, this.x-i*this.overlay, this.y, this.width/2));
+            this.parts.push(new HelmintPart(this.texture, this.x-i*this.overlay, this.y, this.width/2, this));
         }
     }
     

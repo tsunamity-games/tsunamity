@@ -97,18 +97,20 @@ class Label extends BodyPart{
         super("", labelledObject.x - labelledObject.radius*3, labelledObject.y - labelledObject.radius*3, labelledObject.radius*6, labelledObject.radius*2*0.9)
         this.labelledObject = labelledObject;
         this.active = false;
+        this.upgradeAvailable = false;
     }
     updatePosition(){
         this.x = this.labelledObject.x - this.labelledObject.radius*3;
         this.y = this.labelledObject.y - this.labelledObject.radius*3;
     }
     draw(){
+        this.upgradeAvailable = (this.labelledObject.killed || this.labelledObject.active || this.labelledObject.mode === "plasmatic") && money >= this.labelledObject.upgradePrice;
         this.updatePosition();
         if (this.active){
             ctx.fillStyle = "white";
             ctx.fillRect(this.x, this.y, this.width, this.height);
             ctx.globalAlpha = 0.1;
-            if ((this.labelledObject.killed || this.labelledObject.active || this.labelledObject.mode === "plasmatic") && money >= this.labelledObject.upgradePrice) {
+            if (this.upgradeAvailable) {
                 ctx.fillStyle = "green";
             } else {
                 ctx.fillStyle = "red";
@@ -143,9 +145,16 @@ class Pocket extends Shop{
     }
     buy(){
         if(money - this.price >= 0) {
+            var mode;
+            if (this.cellType == TLymphocyte){
+                mode = "killer";
+            } else if (this.cellType == BLymphocyte){
+                mode = "mature";
+            }
             var cell = new this.cellType(
                 randomUniform(this.shopObj.x, this.shopObj.x + this.shopObj.width),
-                randomUniform(this.shopObj.y, this.shopObj.y + this.shopObj.height), "mature", this.color);
+                randomUniform(this.shopObj.y, this.shopObj.y + this.shopObj.height), mode, 
+                this.color);
             immunityCells.push(cell);
             money -= this.price;
         }
