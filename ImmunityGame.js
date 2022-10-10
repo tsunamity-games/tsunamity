@@ -53,14 +53,21 @@ function printGameInfo(){
     
             }
 function stopGame(why){
-    ctx.font = "60px Courier";
     ctx.fillStyle = "Black";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(why, fieldWidth/2, fieldHeight/2);
+    if (why == "Game Over"){
+        ctx.font = "40px Courier";
+        ctx.fillText(why, fieldWidth/2, fieldHeight/3)
+        ctx.font = "20px Courier";
+        var lines = historyObject.makeReport().split('\n');
+        for (var i = 0; i < lines.length; i++)
+            ctx.fillText(lines[i], fieldWidth/2, fieldHeight/2 + ((i-3)*20));        
+    } else {
+        ctx.font = "60px Courier";
+        ctx.fillText(why, fieldWidth/2, fieldHeight/2);
+    }
 }
-
-
 function checkAntibiotics(){
     buttons.filter((button) => button instanceof Antibiotic).forEach((anti) => {
         if ((anti.lastWave != null) && this.wave > anti.lastWave + 1){
@@ -192,7 +199,7 @@ $("#field").click(function(event){
         }
         shop.pockets.forEach((pocket) => {
             if(pocket.isIntersected(x, y)) {
-            pocket.buy();
+                pocket.buy();
             }
         })
     })
@@ -258,6 +265,7 @@ $("body").keydown(function(event){
     }       
     }      
             });
+var historyObject = new GameHistory();
 var game = setInterval(function(){    
     if (gameOverTrue){
         stopGame("Game Over");
@@ -290,6 +298,9 @@ var game = setInterval(function(){
             cell.draw()
             nextTurnTissueCells.push(cell);
         } else {
+            if (cell.health < 0){
+                historyObject.tissueCellsKilled += 1;
+            }
             var neighbours = tissueCells.filter((potentialNeighbour) => {
                 return (Math.abs(cell.x - potentialNeighbour.x) <= tissueCellSize + spaceBetweenTissueCells) && (Math.abs(cell.y - potentialNeighbour.y) <= tissueCellSize + spaceBetweenTissueCells) && !(cell.x === potentialNeighbour.x && cell.y === potentialNeighbour.y);
             })
@@ -310,6 +321,7 @@ var game = setInterval(function(){
             if ((helmint.parts[helmint.parts.length - 1].x < fieldWidth)){
                 if (helmint.health <= 0) {
                       garbagePiles.push(new GarbagePile(helmint.x, helmint.y, helmint.overlay*helmint.parts.length*0.5));
+                    historyObject.helmintesKilled += 1;
                 } else {
                     nextTurnHelmintes.push(helmint);
                 }
@@ -334,6 +346,7 @@ var game = setInterval(function(){
                     bacterium.spleenSection = randomChoice(sectionSet);
                     bacterium.spleenSection.antigen = bacterium; 
                 }
+                historyObject.bacteriaKilled += 1;
             } else{
                 nextTurnBacteria.push(bacterium);
             }
