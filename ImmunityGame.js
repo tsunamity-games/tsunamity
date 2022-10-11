@@ -207,6 +207,7 @@ function setupGame(){
     historyObject = new GameHistory();
     reset = new ResetButton("lightgreen", offset+15, offset+70, 90, 90, "Restart");
     livesLeft = 10;
+    money = 0;
 }
 // Gameplay
 $("#field").click(function(event){
