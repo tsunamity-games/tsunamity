@@ -57,7 +57,9 @@ class Antibody {
         if (this.attached == null){
             this.age++;
             this.x += randomUniform(-2, 2);
+            this.x = clip(this.x, 0, fieldWidth);
             this.y += randomUniform(-2, 2);
+            this.y = clip(this.y, playableFieldStart, playableFieldHeight);
             bacteria.forEach((bacterium) =>{
                 if (bacterium.color === this.color && doCirclesIntersect(bacterium.x, bacterium.y, bacterium.radius, this.x, this.y, 5)){
                     this.attached = bacterium;

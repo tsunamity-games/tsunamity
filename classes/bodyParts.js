@@ -40,7 +40,9 @@ class Shop extends BodyPart {
                 randomUniform(this.y, this.y + this.height));
             immunityCells.push(cell);
             money -= this.price;
+            historyObject.cellsBought[cell.constructor.name] += 1;
         }
+        
     }
     
     draw() {

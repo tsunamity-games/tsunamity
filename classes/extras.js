@@ -28,20 +28,19 @@ class Antibiotic extends Button {
     }  
     
     activate(){
-        if (this.available && money - this.price >= 0){
+        if (this.lastWave != wave && this.available && money - this.price >= 0){
             money -= this.price;
             bacteria.filter((bacterium) => bacterium.color === this.color).forEach((bacterium) => {
                 bacterium.health = 1;
             })
-            if (this.lastWave != wave){
-                this.course += 1;
-                this.course = this.course % ANTIBIOTIC_COURSE_LENGTH;
-                if (this.course === 0){
-                    this.lastWave = null;
-                } else {
-                    this.lastWave = wave;
-                }
+            this.course += 1;
+            this.course = this.course % ANTIBIOTIC_COURSE_LENGTH;
+            if (this.course === 0){
+                this.lastWave = null;
+            } else {
+                this.lastWave = wave;
             }
+            historyObject.antibioticsBought += 1;
             
         }
     }
@@ -88,7 +87,8 @@ class Vaccine extends Button{
             for (var i = 0; i < nVaccinate; i++){
                 targetTissueCells.push(randomChoice(tissueCells.filter((cell) => !(cell in targetTissueCells) && cell.infection.length === 0)));
             }
-            targetTissueCells.forEach((cell) => cell.vaccine = this.color);                          
+            targetTissueCells.forEach((cell) => cell.vaccine = this.color);
+            historyObject.vaccinesBought += 1;       
         }
     }
 }
@@ -157,6 +157,32 @@ class Pocket extends Shop{
                 this.color);
             immunityCells.push(cell);
             money -= this.price;
+            historyObject.cellsBought[cell.constructor.name] += 1;
+
         }
+    }
+}
+class GameHistory {
+    constructor(){
+        this.cellsBought = {
+            NaturalKiller: 0,
+            TLymphocyte: 0,
+            BLymphocyte: 0,
+            Neutrophil: 0,
+            Eosinophile: 0,
+            Macrophage: 0
+        }
+        this.bacteriaKilled = 0;
+        this.tissueCellsKilled = 0;
+        this.helmintesKilled = 0;
+        this.vaccinesBought = 0;
+        this.antibioticsBought = 0;
+        this.moneyEarned = 0;
+    }
+    
+    makeReport(){
+        this.moneyEarned = Math.round(this.cellsBought["NaturalKiller"]*150 + this.cellsBought["TLymphocyte"]*300 + this.cellsBought["BLymphocyte"]*200 + this.cellsBought["Neutrophil"]*100 + this.cellsBought["Eosinophile"]*50 + this.cellsBought["Macrophage"]*300 + this.antibioticsBought*100 + this.vaccinesBought*100 + money);
+        var text = "Immune cells bought:\nNatural Killers: " + this.cellsBought["NaturalKiller"] + "\nT-lymphocytes: " + this.cellsBought["TLymphocyte"] + "\nB-lymphocytes: " + this.cellsBought["BLymphocyte"] + "\nNeutrophils: " + this.cellsBought["Neutrophil"] + "\nEosinophiles: " + this.cellsBought["Eosinophile"] + "\nMacrophages: " + this.cellsBought["Macrophage"] + "\n\nEnemies killed:\nBacteria: " + this.bacteriaKilled + "\nInfected Tissue Cells: " + this.tissueCellsKilled + "\nHelmintes: " + this.helmintesKilled + "\n\nBoosters bought:\nAntibiotics: " + this.antibioticsBought + "\nVaccines: " + this.vaccinesBought + "\n\n Money earned: " + this.moneyEarned + "\nCurrent wave: " + wave;
+        return text;
     }
 }
