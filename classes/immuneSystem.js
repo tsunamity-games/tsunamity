@@ -378,7 +378,16 @@ class TLymphocyte extends ImmuneCell {
         super(T_LYMPHOCYTES_IMAGE, x, y, 20, 0.5, 1);
         this.iteration = 0;
         if (color === null){
-            this.color = randomChoice(BACTERIA_COLORS);
+            var probs = []
+            BACTERIA_COLORS.forEach((color) => {
+                probs.push(tissueCells.filter((tissueCell) => tissueCell.vaccine === color).length);
+            })
+            for (var i = 0; i < probs.length; i++){
+                probs[i] += tissueCells.filter((tissueCell) => tissueCell.vaccine == null).length/4;                
+            }
+            
+            console.log(probs);
+            this.color = randomChoice(BACTERIA_COLORS, probs);
         } else {
             this.color = color;
         }

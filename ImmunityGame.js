@@ -293,7 +293,6 @@ $("body").keydown(function(event){
             });
 gameStart = true;
 var game = setInterval(function(){  
-    console.log(gameStart, gameOverTrue);
     if (gameStart){
         setupGame();
         gameStart = false;
