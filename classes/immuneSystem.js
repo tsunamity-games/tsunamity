@@ -200,26 +200,18 @@ class Eosinophile extends ImmuneCell {
             this.xSpeed = randomUniform(-0.5, 0.5);
             this.ySpeed = this.baseSpeed * 3;
         } else {
-            console.log(targetsList);
             if (targetsList.length > 0) {
 
                 
                 // Move to the random target
-                console.log("gonna go here? my target is", this.target);
                 if (this.target == null || this.target.helmint.health <= 0 || this.target.x > fieldWidth)  
                 {
-                    console.log("yes");
-                    console.log(targetsList, "before");
                     targetsList = randomChoice(targetsList).parts;
-                    console.log(targetsList, "after");
                     this.target = findTarget(this.x, this.y, 
                                              targetsList, 
                                              targetsList.length);
-                    console.log(this.target);
                 }
-                console.log("and there? my target is", this.target);
                 if (this.target != null) {
-                    console.log("yes");
                     // helper variables
                     var x_sign = (this.target.x - this.x)/Math.abs(this.target.x - this.x);
                     var y_sign = (this.target.y - this.y)/Math.abs(this.target.y - this.y);
@@ -386,7 +378,6 @@ class TLymphocyte extends ImmuneCell {
                 probs[i] += tissueCells.filter((tissueCell) => tissueCell.vaccine == null).length/4;                
             }
             
-            console.log(probs);
             this.color = randomChoice(BACTERIA_COLORS, probs);
         } else {
             this.color = color;

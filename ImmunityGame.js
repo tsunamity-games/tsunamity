@@ -56,6 +56,11 @@ function stopGame(why){
     ctx.fillStyle = "Black";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
+    ctx.fillStyle = "lightgreen";
+    ctx.globalAlpha = 0.01;
+    ctx.fillRect(fieldWidth*0.35, fieldHeight*0.3, fieldWidth*0.3, fieldHeight*0.63);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "black";
     if (why == "Game Over"){
         ctx.font = "40px Courier";
         ctx.fillText(why, fieldWidth/2, fieldHeight/3)
@@ -67,6 +72,7 @@ function stopGame(why){
         ctx.font = "60px Courier";
         ctx.fillText(why, fieldWidth/2, fieldHeight/2);
     }
+    ctx.globalAlpha = 1;
 }
 function checkAntibiotics(){
     buttons.filter((button) => button instanceof Antibiotic).forEach((anti) => {
@@ -434,6 +440,13 @@ var game = setInterval(function(){
     
     if(bacteria.length === 0) {
         wave += 1;
+        var nmut = [];
+        tissueCells.forEach(cell => {
+            nmut.push(cell.nMutations);
+        })
+        var mean = 0;
+        nmut.forEach(m => {mean += m;})
+        console.log(nmut);
 //        bacteria = addBacteria([], starting_nBacteria + wave * 10, BACTERIA_IMAGE, 100 + wave * 30);
         
 //
@@ -444,7 +457,8 @@ var game = setInterval(function(){
 //            helmintes = [new Helmint(-10, randomUniform(playableFieldStart + 15, playableFieldHeight-15), 1000, 1000, 100, 30, 10)];
 //        }
 //        
-        [bacteria, viruses, helmintes] = formNewWave(wave, bacteria, viruses, helmintes);
+        var r = formNewWave(wave, bacteria, viruses, helmintes);
+        [bacteria, viruses, helmintes] = r; //formNewWave(wave, bacteria, viruses, helmintes);
         checkAntibiotics();
     }
     immunityCells.filter(cell => cell instanceof BLymphocyte || cell instanceof TLymphocyte).forEach(cell => cell.label.draw());
