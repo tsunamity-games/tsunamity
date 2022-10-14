@@ -87,7 +87,7 @@ function formNewWave(waveNumber, oldBac, oldVir, oldHel){
     var newVir = oldVir;
     var newHel = oldHel;
     var coins = Math.round(50*waveNumber + 0.05*waveNumber**2);
-    if (randomUniform(0, 1) < PROB_TO_ADD_NEW_COLOR){
+    if (waveNumber > 3 && randomUniform(0, 1) < PROB_TO_ADD_NEW_COLOR){
         var newIndex = (inplayBacteriaColorsIndices[inplayBacteriaColorsIndices.length-1] + 1) % BACTERIA_COLORS.length;
         if (!inplayBacteriaColorsIndices.includes(newIndex)){
             inplayBacteriaColorsIndices.push(newIndex);   
@@ -113,10 +113,10 @@ function formNewWave(waveNumber, oldBac, oldVir, oldHel){
 }
 function chooseEnemy(bacList, virList, helList, coins, waveNumber){
     var candidates = [Bacterium];
-    if (waveNumber > 0){
+    if (waveNumber > 2){
         candidates.push(Virus);
     }
-    if (waveNumber > 0){
+    if (waveNumber > 10){
         candidates.push(Helmint);
     }
     var enemyPrice;
@@ -213,7 +213,7 @@ function setupGame(){
     historyObject = new GameHistory();
     reset = new ResetButton("lightgreen", offset+15, offset+70, 90, 90, "Restart");
     livesLeft = 10;
-    money = 0;
+    money = STARTING_MONEY;
 }
 // Gameplay
 $("#field").click(function(event){
@@ -245,9 +245,13 @@ $("#field").click(function(event){
             if (cell.label.active && cell.label.isIntersected(x, y) && money >= cell.upgradePrice && cell.label.upgradeAvailable){
                 money -= cell.upgradePrice;
                 cell.upgrade();
+                break;
+
             }
-            if (cell.isIntersected(x, y) && cell.mode != "memory"){
-                cell.label.active = true;                
+            else if (cell.isIntersected(x, y) && cell.mode != "memory"){
+                cell.label.active = true;     
+                break;
+
             } else {
                 cell.label.active = false;
             }
