@@ -277,7 +277,7 @@ class BLymphocyte extends ImmuneCell {
             this.upgradePrice = 300;
         } else if (this.mode === "plasmatic"){
             this.mode = "memory";
-            this.longevity = 100000;
+            this.longevity = BASE_IMMUNITY_CELL_LONGEVITY*4;
             this.baseSpeed = 0;
             this.upgradePrice = 0;
             shops.filter((shop)=> this instanceof shop.cellType).forEach((shop) =>{

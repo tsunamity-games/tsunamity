@@ -240,23 +240,26 @@ $("#field").click(function(event){
     })
     
     // If B or T-lymphocyte is clicked, suggest upgrade
-    immunityCells.forEach((cell) => {
+    try{immunityCells.forEach((cell) => {
         if ((cell instanceof BLymphocyte || cell instanceof TLymphocyte) && cell.mode != "memory"){
             if (cell.label.active && cell.label.isIntersected(x, y) && money >= cell.upgradePrice && cell.label.upgradeAvailable){
                 money -= cell.upgradePrice;
                 cell.upgrade();
-                break;
+                throw 'Break';
 
             }
             else if (cell.isIntersected(x, y) && cell.mode != "memory"){
                 cell.label.active = true;     
-                break;
+                throw 'Break';
 
             } else {
                 cell.label.active = false;
             }
         }
-    })
+    })} catch (e) {
+        if (e !== 'Break') 
+            throw e;
+    }
     
     if (reset.isIntersected(x, y)){
         reset.resetGame();
