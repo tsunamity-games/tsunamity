@@ -67,7 +67,7 @@ const VIRUS_IMAGE = new Image();
 VIRUS_IMAGE.src = "./images/virus.png";
 
 const HIV_IMAGE = new Image();
-HIV_IMAGE.src = "./images/HIV.png";
+HIV_IMAGE.src = "./images/HIV_texture.png";
 
 // Host cell parameters
 //      Tissue cells
@@ -108,6 +108,9 @@ const viralSpreadThreshold = 63;
 const VIRUS_COLOR = "#800080";
 const VIRUS_DOUBLING_TIME = 200;
 var starting_nViruses = 2;
+
+const HIV_DOUBLING_PROBABILITY = 0.0001;
+const HIV_DAMAGE = 0.05;
 
 //      Bacteria
 const bacteriaRadius = 8;
