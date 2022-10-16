@@ -41,6 +41,8 @@ class Shop extends BodyPart {
             var cell = new this.cellType(
                 randomUniform(this.x, this.x + this.width),
                 randomUniform(this.y, this.y + this.height));
+
+            cell.damage = cell.damage * Math.pow(HELPER_DAMAGE_INCREASE, this.discount);
             immunityCells.push(cell);
             money -= this.price;
         }

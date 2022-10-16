@@ -430,7 +430,7 @@ class THelper extends ImmuneCell {
 
         this.place = this.choosePlace();
         this.placeReached = false;
-        this.cooldown = 10000;
+        this.cooldown = HELPER_BUYING_COOLDOWN;
         this.timeFromTheLastPurchase = 0;
     }
 
@@ -487,51 +487,42 @@ class THelper extends ImmuneCell {
         // Evaluate, which type of pathogen is threatening the body
         var infectedCells = tissueCells.filter((cell) => {return(cell.infection.length > 0)});
         var infectionRatio = infectedCells.length / tissueCells.length;
+        var shopToBuy;
 
         if(infectionRatio > 0.1) {
-            T_LYMPHOCYTE_SHOP.discount += 1;
+            shopToBuy = T_LYMPHOCYTE_SHOP;
+            T_LYMPHOCYTE_SHOP
         }
         else {
-            B_LYMPHOCYTE_SHOP.discount += 1;
+            shopToBuy = B_LYMPHOCYTE_SHOP;
         }
 
+        shopToBuy.discount += 1;
 
-        // if(this.timeFromTheLastPurchase < this.cooldown) {
-        //     this.timeFromTheLastPurchase += 1;
-        // }
-        // else {
-        //     this.timeFromTheLastPurchase = 0;
-        //     var shopToBuy;
-
-        //     // Evaluate, which type of pathogen is threatening the body
-        //     var infectedCells = tissueCells.filter((cell) => {return(cell.infection.length > 0)});
-        //     var infectionRatio = infectedCells.length / tissueCells.length;
+        // Buy the cell once in a cooldown
+        if(this.timeFromTheLastPurchase < this.cooldown) {
+            this.timeFromTheLastPurchase += 1;
+        }
+        else {
+            this.timeFromTheLastPurchase = 0;
     
-        //     if(infectionRatio > 0.1) {
-        //         console.log("Buying T cell");
-        //         shopToBuy = T_LYMPHOCYTE_SHOP;
-        //     }
-        //     else {
-        //         console.log("Buying B cell");
-        //         shopToBuy = B_LYMPHOCYTE_SHOP;
-        //     }
-    
-        //     // Buy the corresponding lymphocyte
-        //     money += shopToBuy.price;
-        //     shopToBuy.buy();
-        // }
+            // Buy the corresponding lymphocyte
+            money += shopToBuy.price;
+            shopToBuy.buy();
+        }
     }
 
-    // draw() {
-    //     super.draw();
+    draw() {
+        super.draw();
 
-    //     if(this.placeReached) {
-    //         ctx.lineWidth = 1;
-    //         ctx.strokeStyle = "black";
+        // Draw the progress of buying a lymphocyte
+        if(this.placeReached) {
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "black";
             
-    //         ctx.beginPath();
-    //         ctx.arc(this.x, this.y, this.radius + 2, 0, Math.PI*2 * this.timeFromTheLastPurchase / this.cooldown);
-    //         ctx.stroke();
-    //     }
-    // }
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius + 2, 0, Math.PI*2 * this.timeFromTheLastPurchase / this.cooldown);
+            ctx.stroke();
+        }
+    }
 }
