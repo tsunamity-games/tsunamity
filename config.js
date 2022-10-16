@@ -109,6 +109,7 @@ const VIRUS_COLOR = "#800080";
 const VIRUS_DOUBLING_TIME = 200;
 var starting_nViruses = 2;
 
+const HIV_INFECTION_PROBABILITY = 0.03;
 const HIV_DOUBLING_PROBABILITY = 0.0001;
 const HIV_DAMAGE = 0.05;
 

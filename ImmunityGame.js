@@ -1,4 +1,5 @@
 //-----GAME SETUP FUNCTIONS------
+
 function addTissueCells(tissueCellsList){
     for (var x = offset; x < fieldWidth - tissueCellSize - spaceBetweenTissueCells; x += tissueCellSize+spaceBetweenTissueCells){
             for (var y = shopHeight + offset; y < fieldHeight - buttonHeight - offset -tissueCellSize-spaceBetweenTissueCells; y += tissueCellSize+spaceBetweenTissueCells){
@@ -98,6 +99,7 @@ var tissueCells = addTissueCells([]);
 var viruses = [];
 var helmintes = [];
 var garbagePiles = [];
+var hiv_particles = [];
 var wave = 1;
 var gameOverTrue = false;  
 // Gameplay
@@ -140,8 +142,6 @@ $("#field").click(function(event){
     })
     
 });
-
-// var hiv = new HIV(HIV_IMAGE, 300, 200);
 
 var game = setInterval(function(){
     if (gameOverTrue){
@@ -287,11 +287,19 @@ var game = setInterval(function(){
         cell.draw();
     });
 
-    // hiv.draw();
+    hiv_particles.forEach((hiv) => {
+        hiv.act();
+        hiv.draw();
+    });
+    
     
     if(bacteria.length === 0) {
         bacteria = addBacteria([], starting_nBacteria + wave * BACTERIA_NUMBER_INCREASE, BACTERIA_BASE_HEALTH + wave * BACTERIA_HEALTH_INCREASE, 5 + wave * BACTERIA_PRICE_INCREASE);
         wave += 1;
+
+        if(randomUniform(0, 1) < HIV_INFECTION_PROBABILITY) {
+            hiv_particles.push(new HIV(HIV_IMAGE, 300, 200));
+        }
 
         if (wave % 4 === 2) {
             viruses = addViruses(viruses, starting_nViruses, VIRUS_COLOR, VIRUS_DOUBLING_TIME - wave);
@@ -311,3 +319,9 @@ var game = setInterval(function(){
     };
     }
 }, 1);
+
+function stopAllBacteria() {
+    bacteria.forEach((bacterium) => {
+        bacterium.baseSpeed = 0;
+    })
+}

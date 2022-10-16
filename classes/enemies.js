@@ -174,3 +174,76 @@ class GarbagePile{
             this.radius*2, this.radius*2)
     }
 }
+
+class IntracellularPathogen extends MovingObject {
+    constructor(texture, x, y, radius, possibleHostTypes) {
+        super(texture, x, y, radius);
+        this.possibleHostTypes = possibleHostTypes;
+        this.target = undefined;
+        this.baseSpeed = 1;
+        this.doublingProbability = HIV_DOUBLING_PROBABILITY;
+    }
+
+    changeDirection() {
+        if(this.target == undefined) {
+            this.xSpeed = randomUniform(-this.baseSpeed, this.baseSpeed);
+            this.ySpeed = randomUniform(-this.baseSpeed, this.baseSpeed);
+        }
+    }
+
+    move() {
+        if(this.target == null) {
+            // Mess around
+            super.move();
+
+            // If pathogen intersects any of its possible hosts, it goes inside
+            immunityCells.forEach((cell) => {
+                this.possibleHostTypes.forEach((host) => {
+                    if((cell instanceof host) && (doCirclesIntersect(cell.x, cell.y, cell.radius, this.x, this.y, this.radius))) {
+                        this.target = cell;
+                    }
+                });
+            });
+        }
+        else {
+            this.x = this.target.x + randomUniform(-3, 3);
+            this.y = this.target.y + randomUniform(-3, 3);
+        }
+        
+        this.x = clip(this.x, this.radius, fieldWidth - this.radius)
+        this.y = clip(this.y, playableFieldStart + this.radius, fieldHeight - this.radius)
+
+    }
+
+    act() {
+        this.changeDirection();
+        this.move();
+    }
+}
+
+
+class HIV extends IntracellularPathogen {
+    constructor(texture, x, y) {
+        var radius = 1;
+        super(texture, x, y, radius, [TLymphocyte, Macrophage, THelper]);
+    }
+
+    act() {
+        super.act();
+
+        if(this.target != null) {
+            // Kill host slowly
+            this.target.age += HIV_DAMAGE;
+            
+            // Double sometimes
+            if(randomUniform(0, 1) < this.doublingProbability) {
+                hiv_particles.push(new HIV(HIV_IMAGE, this.target.x, this.target.y));
+                console.log("HIV doubled, total number of particles: " + hiv_particles.length);
+            }
+
+            if(this.target.age > this.target.longevity) {
+                this.target = null;
+            }
+        }
+    }
+}
