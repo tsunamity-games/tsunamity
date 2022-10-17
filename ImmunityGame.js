@@ -172,6 +172,7 @@ var tissuecells;
 var inplayBacteriaColorsIndices;
 var colorProbs;
 var bacteria;
+var hiv_particles = [];
 var viruses;
 var helmintes;
 var garbagePiles;
@@ -188,13 +189,13 @@ function setupGame(){
     immunityCells = [];
     antibodies = [];
     shops = [
-        new Shop(BONE_MARROW_IMAGE, xLeftOffset, offset, shopWidth, shopHeight - 2 * offset, NaturalKiller, 150, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
+        new Shop(xLeftOffset, offset, NaturalKiller, 150, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
         T_LYMPHOCYTE_SHOP,
         new Shop(xLeftOffset + 2 * shopWidth + 2 * offset, offset, THelper, T_HELPER_PRICE, T_LYMPHOCYTES_IMAGE, T_LYMPHOCYTES_IMAGE, true, true),
         B_LYMPHOCYTE_SHOP,
-        new Shop(BONE_MARROW_IMAGE, xLeftOffset + 4 * shopWidth + 4 * offset, offset, shopWidth, shopHeight - 2 * offset, Neutrophil, 100, BACTERIA_IMAGE, NEUTROPHILS_IMAGE),
-        new Shop(BONE_MARROW_IMAGE, xLeftOffset + 5 * shopWidth + 5 * offset, offset, shopWidth, shopHeight - 2 * offset, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE),
-        new Shop(BONE_MARROW_IMAGE, xLeftOffset + 6 * shopWidth + 6 * offset, offset, shopWidth, shopHeight - 2 * offset, Macrophage, 300, GARBAGE_IMAGE, MACROPHAGES_IMAGE)
+        new Shop(xLeftOffset + 4 * shopWidth + 4 * offset, offset, Neutrophil, 100, BACTERIA_IMAGE, NEUTROPHILS_IMAGE),
+        new Shop(xLeftOffset + 5 * shopWidth + 5 * offset, offset, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE),
+        new Shop(xLeftOffset + 6 * shopWidth + 6 * offset, offset, Macrophage, 300, GARBAGE_IMAGE, MACROPHAGES_IMAGE)
     ];
     buttons = [];
     for (var i = 0; i < BACTERIA_COLORS.length; i++){
