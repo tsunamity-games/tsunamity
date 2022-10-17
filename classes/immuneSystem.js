@@ -105,7 +105,7 @@ class ImmuneCell extends MovingObject {
                 }
                 
                 if (this.target != null) {
-                    // helper variables
+                    // helper variables  // Like THelper or just helper?
 //                    [this.xSpeed, this.ySpeed] = moveTo(this.x, this.y, this.target.x, this.target.y, this.baseSpeed);
                     var x_sign = (this.target.x - this.x)/Math.abs(this.target.x - this.x);
                     var y_sign = (this.target.y - this.y)/Math.abs(this.target.y - this.y);
