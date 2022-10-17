@@ -395,11 +395,11 @@ class TLymphocyte extends ImmuneCell {
             this.longevity = 100000;
             this.baseSpeed = 0;
             this.upgradePrice = 0;
-            shops.filter((shop)=> this instanceof shop.cellType).forEach((shop) =>{
-                shop.pockets.push(new Pocket(shop, 
-                                             shop.x + BACTERIA_COLORS.indexOf(this.color)*shop.width/BACTERIA_COLORS.length, shop.height+offset, shop.width/BACTERIA_COLORS.length, 2*offset*0.9, 
-                                             this.color))
-            })
+            
+            let pocketX = T_LYMPHOCYTE_SHOP.x + BACTERIA_COLORS.indexOf(this.color) * T_LYMPHOCYTE_SHOP.width / BACTERIA_COLORS.length;
+            T_LYMPHOCYTE_SHOP.pockets.push(
+                new Pocket(T_LYMPHOCYTE_SHOP, pocketX, shop.height + offset, shop.width / BACTERIA_COLORS.length, 2*offset*0.9, this.color))
+            
         }
     }
     
