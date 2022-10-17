@@ -186,3 +186,9 @@ class GameHistory {
         return text;
     }
 }
+class ResetButton extends Button{
+    resetGame(){
+        gameStart = true;
+        gameOverTrue = false;
+    }
+}

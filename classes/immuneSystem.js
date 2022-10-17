@@ -200,26 +200,18 @@ class Eosinophile extends ImmuneCell {
             this.xSpeed = randomUniform(-0.5, 0.5);
             this.ySpeed = this.baseSpeed * 3;
         } else {
-            console.log(targetsList);
             if (targetsList.length > 0) {
 
                 
                 // Move to the random target
-                console.log("gonna go here? my target is", this.target);
                 if (this.target == null || this.target.helmint.health <= 0 || this.target.x > fieldWidth)  
                 {
-                    console.log("yes");
-                    console.log(targetsList, "before");
                     targetsList = randomChoice(targetsList).parts;
-                    console.log(targetsList, "after");
                     this.target = findTarget(this.x, this.y, 
                                              targetsList, 
                                              targetsList.length);
-                    console.log(this.target);
                 }
-                console.log("and there? my target is", this.target);
                 if (this.target != null) {
-                    console.log("yes");
                     // helper variables
                     var x_sign = (this.target.x - this.x)/Math.abs(this.target.x - this.x);
                     var y_sign = (this.target.y - this.y)/Math.abs(this.target.y - this.y);
@@ -285,7 +277,7 @@ class BLymphocyte extends ImmuneCell {
             this.upgradePrice = 300;
         } else if (this.mode === "plasmatic"){
             this.mode = "memory";
-            this.longevity = 100000;
+            this.longevity = BASE_IMMUNITY_CELL_LONGEVITY*4;
             this.baseSpeed = 0;
             this.upgradePrice = 0;
             shops.filter((shop)=> this instanceof shop.cellType).forEach((shop) =>{
@@ -378,7 +370,15 @@ class TLymphocyte extends ImmuneCell {
         super(T_LYMPHOCYTES_IMAGE, x, y, 20, 0.5, 1);
         this.iteration = 0;
         if (color === null){
-            this.color = randomChoice(BACTERIA_COLORS);
+            var probs = []
+            BACTERIA_COLORS.forEach((color) => {
+                probs.push(tissueCells.filter((tissueCell) => tissueCell.vaccine === color).length);
+            })
+            for (var i = 0; i < probs.length; i++){
+                probs[i] += tissueCells.filter((tissueCell) => tissueCell.vaccine == null).length/4;                
+            }
+            
+            this.color = randomChoice(BACTERIA_COLORS, probs);
         } else {
             this.color = color;
         }
