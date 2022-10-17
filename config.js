@@ -83,6 +83,7 @@ const mutationProbability = 0.05;
 const tissueCellDeathRate = 0.000001;
 
 // Immune cells
+
 const NK_PRICE = 150;
 const T_LYMPHOCYTE_PRICE = 300;
 const B_LYMPHOCYTE_PRICE = 200;
@@ -97,6 +98,10 @@ const HELPER_DISCOUNT_RATE = 0.9;
 const HELPER_DAMAGE_INCREASE = 1.1;
 const HELPER_BUYING_COOLDOWN = 30000;
 
+BASE_IMMUNITY_CELL_LONGEVITY = 40000;
+
+
+
 //      Lymphocytes
 const randomTargetNumber = 5;
 const TlymphocyteReproductionNumber = 5;
@@ -109,23 +114,68 @@ const VIRUS_COLOR = "#800080";
 const VIRUS_DOUBLING_TIME = 200;
 var starting_nViruses = 2;
 
+
 const HIV_INFECTION_PROBABILITY = 0.03;
 const HIV_DOUBLING_PROBABILITY = 0.0001;
 const HIV_DAMAGE = 0.05;
 
+
 //      Bacteria
 const bacteriaRadius = 8;
 var starting_nBacteria = 30;
+
 const BACTERIA_BASE_HEALTH = 100;
 BACTERIA_HEALTH_INCREASE = 20;
 BACTERIA_PRICE_INCREASE = 5;
 BACTERIA_NUMBER_INCREASE = 10;
 
+var BASE_BACTERIAL_HEALTH = 100;
+
+// Antibodies
+ANTIBODY_LONGEVITY = 10000;
+ANTIBODY_PRODUCTION_FREQUENCY = 50;
+ANTIBODY_SLOWING_COEFFICIENT = 0.5;
+
+
 // Game parameters
 var livesLeft = 10;
-var money = 200;
+var STARTING_MONEY = 0;
 var basePrice = 0.1;
-var chanceToGetAntigen = 0.05;
+var chanceToGetAntigen = 0.01;
 var garbagePileSlowingCoefficient = 0.4;
 var nVaccinate = 30;
 var ANTIBIOTIC_COURSE_LENGTH = 4;
+
+// Wave forming algorithm parameters
+var BACTERIUM_PRICE = 1; 
+var VIRUS_PRICE = 50;
+var HELMINT_PRICE = 100;
+var ENEMY_PROB_DIST = [1/BACTERIUM_PRICE, 1/VIRUS_PRICE, 1/HELMINT_PRICE];
+var MIN_HELMINT_LENGTH = 3;
+var MAX_HELMINT_LENGTH = 20;
+var HELMINT_WIDTH_MIN_LENGTH_MULTIPLIER = 3;
+var HELMINT_WIDTH_LENGTH_MULTIPLIER = 6;
+var HELMINT_HEALTH_LENGTH_WIDTH_MULTIPLIER = 5;
+var HELMINT_DELAY_HEALTH_MULTIPLIER= 0.2;
+var HELMINT_DELAY_NOISE = 10;
+
+
+
+var PROB_TO_ADD_NEW_COLOR = 0.2;
+var PROB_TO_REMOVE_COLOR = 0.1;
+var VIRUSES_CLASSIFICATION = {
+    blue:{
+        doublingTime: 200,
+        price: 50},
+    green:{
+        doublingTime: 180,
+        price: 55},
+    yellow:{
+        doublingTime: 150, 
+        price: 66},
+    orange:{
+        doublingTime: 100,
+        price: 100}
+}
+var NEW_COLOR_MULTIPLIER = 10;
+var MAX_COLOR_PROB_VAL = 10;

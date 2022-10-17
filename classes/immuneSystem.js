@@ -38,7 +38,7 @@ class Antibody {
         this.y = y;
         this.color = color;
         this.age = 0;
-        this.longevity = 1000;
+        this.longevity = ANTIBODY_LONGEVITY;
         this.attached = null;
     }
     
@@ -56,12 +56,14 @@ class Antibody {
     move(){
         if (this.attached == null){
             this.age++;
-            this.x += randomUniform(-0.5, 0.5);
-            this.y += randomUniform(-0.5, 0.5);
+            this.x += randomUniform(-2, 2);
+            this.x = clip(this.x, 0, fieldWidth);
+            this.y += randomUniform(-2, 2);
+            this.y = clip(this.y, playableFieldStart, playableFieldHeight);
             bacteria.forEach((bacterium) =>{
                 if (bacterium.color === this.color && doCirclesIntersect(bacterium.x, bacterium.y, bacterium.radius, this.x, this.y, 5)){
                     this.attached = bacterium;
-                    this.attached.baseSpeed *=0.8;
+                    this.attached.baseSpeed *=ANTIBODY_SLOWING_COEFFICIENT;
                 } 
         });
         } else {
@@ -72,7 +74,7 @@ class Antibody {
     
 }
 class ImmuneCell extends MovingObject {
-    constructor(texture, x, y, radius, baseSpeed, damage, longevity=20000) {
+    constructor(texture, x, y, radius, baseSpeed, damage, longevity=BASE_IMMUNITY_CELL_LONGEVITY) {
         super(texture, x, y, radius);
         this.xSpeed = 0;
         this.ySpeed = 0;
@@ -198,18 +200,17 @@ class Eosinophile extends ImmuneCell {
             this.xSpeed = randomUniform(-0.5, 0.5);
             this.ySpeed = this.baseSpeed * 3;
         } else {
-
             if (targetsList.length > 0) {
 
-                targetsList = randomChoice(targetsList).parts;
-                nCandidates = targetsList.length;
                 
                 // Move to the random target
-                if (this.target == null || this.target.health <= 0 || this.target.x > fieldWidth)  
+                if (this.target == null || this.target.helmint.health <= 0 || this.target.x > fieldWidth)  
                 {
-                    this.target = findTarget(this.x, this.y, targetsList, Math.min(nCandidates, targetsList.length));
+                    targetsList = randomChoice(targetsList).parts;
+                    this.target = findTarget(this.x, this.y, 
+                                             targetsList, 
+                                             targetsList.length);
                 }
-                
                 if (this.target != null) {
                     // helper variables
                     var x_sign = (this.target.x - this.x)/Math.abs(this.target.x - this.x);
@@ -265,16 +266,18 @@ class BLymphocyte extends ImmuneCell {
         this.label = new Label(this);
         this.killed = false;
         this.upgradePrice = 200;
+        this.counter = 0;
     }
 
     upgrade(){
+        this.label.active = false;
         if (this.mode === "mature"){
             this.mode = "plasmatic";
             this.damage = 0;
             this.upgradePrice = 300;
         } else if (this.mode === "plasmatic"){
             this.mode = "memory";
-            this.longevity = 100000;
+            this.longevity = BASE_IMMUNITY_CELL_LONGEVITY*4;
             this.baseSpeed = 0;
             this.upgradePrice = 0;
             shops.filter((shop)=> this instanceof shop.cellType).forEach((shop) =>{
@@ -301,7 +304,8 @@ class BLymphocyte extends ImmuneCell {
         }
         if (this.mode === "plasmatic"){
             this.y = clip(this.y, playableFieldStart+this.radius, playableFieldHeight-this.radius);
-            antibodies.push(new Antibody(this.x, this.y, this.color));
+            if (this.counter++ % ANTIBODY_PRODUCTION_FREQUENCY == 0)
+                antibodies.push(new Antibody(this.x, this.y, this.color));
         }
     }
 
@@ -362,21 +366,30 @@ class BLymphocyte extends ImmuneCell {
     }
 }
 class TLymphocyte extends ImmuneCell {
-    constructor(x, y, color=null, active=false) {
+    constructor(x, y, mode="killer", color=null, active=false) {
         super(T_LYMPHOCYTES_IMAGE, x, y, 20, 0.5, 1);
         this.iteration = 0;
         if (color === null){
-            this.color = randomChoice(BACTERIA_COLORS);
+            var probs = []
+            BACTERIA_COLORS.forEach((color) => {
+                probs.push(tissueCells.filter((tissueCell) => tissueCell.vaccine === color).length);
+            })
+            for (var i = 0; i < probs.length; i++){
+                probs[i] += tissueCells.filter((tissueCell) => tissueCell.vaccine == null).length/4;                
+            }
+            
+            this.color = randomChoice(BACTERIA_COLORS, probs);
         } else {
             this.color = color;
         }
         this.active = active;
         this.label = new Label(this);
-        this.mode = "killer";
+        this.mode = mode;
         this.upgradePrice = 300;
     }
     
     upgrade(){
+        this.label.active = false;
         if (this.mode === "killer"){
             this.mode = "memory";
             this.longevity = 100000;
@@ -399,7 +412,7 @@ class TLymphocyte extends ImmuneCell {
                 if (!this.active){
                     this.active = true;
                     for (var i = 0; i < TlymphocyteReproductionNumber; i++){
-                        immunityCells.push(new TLymphocyte(this.x, this.y, this.color, true));
+                        immunityCells.push(new TLymphocyte(this.x, this.y, "killer", this.color, true));
                     }
                 }
             } else{

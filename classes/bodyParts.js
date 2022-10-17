@@ -20,8 +20,7 @@ class BodyPart {
         return (x > this.x) && (x < this.x + this.width) && (y > this.y) && (y < this.y + this.height)
     }
 }
-class Shop extends BodyPart {
-  
+class Shop extends BodyPart {  
     constructor(x, y, cellType, price, enemyTexture, cellTexture, isEnemyAnimated, isCellAnimated) {
         super(BONE_MARROW_IMAGE, x, y, shopWidth, shopHeight - 2 * offset);
         this.cellType = cellType;
@@ -45,7 +44,9 @@ class Shop extends BodyPart {
             cell.damage = cell.damage * Math.pow(HELPER_DAMAGE_INCREASE, this.discount);
             immunityCells.push(cell);
             money -= this.price;
+            historyObject.cellsBought[cell.constructor.name] += 1;
         }
+        
     }
 
     reset() {

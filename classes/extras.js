@@ -28,20 +28,19 @@ class Antibiotic extends Button {
     }  
     
     activate(){
-        if (this.available && money - this.price >= 0){
+        if (this.lastWave != wave && this.available && money - this.price >= 0){
             money -= this.price;
             bacteria.filter((bacterium) => bacterium.color === this.color).forEach((bacterium) => {
                 bacterium.health = 1;
             })
-            if (this.lastWave != wave){
-                this.course += 1;
-                this.course = this.course % ANTIBIOTIC_COURSE_LENGTH;
-                if (this.course === 0){
-                    this.lastWave = null;
-                } else {
-                    this.lastWave = wave;
-                }
+            this.course += 1;
+            this.course = this.course % ANTIBIOTIC_COURSE_LENGTH;
+            if (this.course === 0){
+                this.lastWave = null;
+            } else {
+                this.lastWave = wave;
             }
+            historyObject.antibioticsBought += 1;
             
         }
     }
@@ -88,7 +87,8 @@ class Vaccine extends Button{
             for (var i = 0; i < nVaccinate; i++){
                 targetTissueCells.push(randomChoice(tissueCells.filter((cell) => !(cell in targetTissueCells) && cell.infection.length === 0)));
             }
-            targetTissueCells.forEach((cell) => cell.vaccine = this.color);                          
+            targetTissueCells.forEach((cell) => cell.vaccine = this.color);
+            historyObject.vaccinesBought += 1;       
         }
     }
 }
@@ -97,18 +97,20 @@ class Label extends BodyPart{
         super("", labelledObject.x - labelledObject.radius*3, labelledObject.y - labelledObject.radius*3, labelledObject.radius*6, labelledObject.radius*2*0.9)
         this.labelledObject = labelledObject;
         this.active = false;
+        this.upgradeAvailable = false;
     }
     updatePosition(){
         this.x = this.labelledObject.x - this.labelledObject.radius*3;
         this.y = this.labelledObject.y - this.labelledObject.radius*3;
     }
     draw(){
+        this.upgradeAvailable = (this.labelledObject.killed || this.labelledObject.active || this.labelledObject.mode === "plasmatic") && money >= this.labelledObject.upgradePrice;
         this.updatePosition();
         if (this.active){
             ctx.fillStyle = "white";
             ctx.fillRect(this.x, this.y, this.width, this.height);
             ctx.globalAlpha = 0.1;
-            if ((this.labelledObject.killed || this.labelledObject.active || this.labelledObject.mode === "plasmatic") && money >= this.labelledObject.upgradePrice) {
+            if (this.upgradeAvailable) {
                 ctx.fillStyle = "green";
             } else {
                 ctx.fillStyle = "red";
@@ -143,11 +145,50 @@ class Pocket extends Shop{
     }
     buy(){
         if(money - this.price >= 0) {
+            var mode;
+            if (this.cellType == TLymphocyte){
+                mode = "killer";
+            } else if (this.cellType == BLymphocyte){
+                mode = "mature";
+            }
             var cell = new this.cellType(
                 randomUniform(this.shopObj.x, this.shopObj.x + this.shopObj.width),
-                randomUniform(this.shopObj.y, this.shopObj.y + this.shopObj.height), "mature", this.color);
+                randomUniform(this.shopObj.y, this.shopObj.y + this.shopObj.height), mode, 
+                this.color);
             immunityCells.push(cell);
             money -= this.price;
+            historyObject.cellsBought[cell.constructor.name] += 1;
+
         }
+    }
+}
+class GameHistory {
+    constructor(){
+        this.cellsBought = {
+            NaturalKiller: 0,
+            TLymphocyte: 0,
+            BLymphocyte: 0,
+            Neutrophil: 0,
+            Eosinophile: 0,
+            Macrophage: 0
+        }
+        this.bacteriaKilled = 0;
+        this.tissueCellsKilled = 0;
+        this.helmintesKilled = 0;
+        this.vaccinesBought = 0;
+        this.antibioticsBought = 0;
+        this.moneyEarned = 0;
+    }
+    
+    makeReport(){
+        this.moneyEarned = Math.round(this.cellsBought["NaturalKiller"]*150 + this.cellsBought["TLymphocyte"]*300 + this.cellsBought["BLymphocyte"]*200 + this.cellsBought["Neutrophil"]*100 + this.cellsBought["Eosinophile"]*50 + this.cellsBought["Macrophage"]*300 + this.antibioticsBought*100 + this.vaccinesBought*100 + money);
+        var text = "Immune cells bought:\nNatural Killers: " + this.cellsBought["NaturalKiller"] + "\nT-lymphocytes: " + this.cellsBought["TLymphocyte"] + "\nB-lymphocytes: " + this.cellsBought["BLymphocyte"] + "\nNeutrophils: " + this.cellsBought["Neutrophil"] + "\nEosinophiles: " + this.cellsBought["Eosinophile"] + "\nMacrophages: " + this.cellsBought["Macrophage"] + "\n\nEnemies killed:\nBacteria: " + this.bacteriaKilled + "\nInfected Tissue Cells: " + this.tissueCellsKilled + "\nHelmintes: " + this.helmintesKilled + "\n\nBoosters bought:\nAntibiotics: " + this.antibioticsBought + "\nVaccines: " + this.vaccinesBought + "\n\n Money earned: " + this.moneyEarned + "\nCurrent wave: " + wave;
+        return text;
+    }
+}
+class ResetButton extends Button{
+    resetGame(){
+        gameStart = true;
+        gameOverTrue = false;
     }
 }
