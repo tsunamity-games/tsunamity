@@ -4,10 +4,10 @@ var ctx = field.getContext("2d");
 const fieldWidth = field.width;
 const fieldHeight = field.height;
 const shopHeight = 200;
-const shopWidth = 130;
+const shopWidth = 116;
 const buttonWidth = 34;
 const buttonHeight = 34;
-const offset = 10;
+const offset = 5;
 const BACTERIA_COLORS = ["blue", "green", "yellow", "orange"];
 const xLeftOffset = 145;
 
@@ -66,6 +66,9 @@ CELL_IMAGE.src = "./images/cell.png";
 const VIRUS_IMAGE = new Image();
 VIRUS_IMAGE.src = "./images/virus.png";
 
+const HIV_IMAGE = new Image();
+HIV_IMAGE.src = "./images/HIV_texture.png";
+
 // Host cell parameters
 //      Tissue cells
 const tissueCellSize = 30;
@@ -80,7 +83,23 @@ const mutationProbability = 0.05;
 const tissueCellDeathRate = 0.000001;
 
 // Immune cells
+
+const NK_PRICE = 150;
+const T_LYMPHOCYTE_PRICE = 300;
+const B_LYMPHOCYTE_PRICE = 200;
+const T_HELPER_PRICE = 200;
+const NEUTROPHIL_PRICE = 100;
+const MACROPHAGE_PRICE = 100;
+const EOSINOPHILE_PRICE = 50;
+
+const EOSINOPHILES_DAMAGE = 0.1;
+
+const HELPER_DISCOUNT_RATE = 0.9;
+const HELPER_DAMAGE_INCREASE = 1.1;
+const HELPER_BUYING_COOLDOWN = 30000;
+
 BASE_IMMUNITY_CELL_LONGEVITY = 40000;
+
 
 
 //      Lymphocytes
@@ -96,15 +115,27 @@ const VIRUS_DOUBLING_TIME = 200;
 var starting_nViruses = 2;
 
 
+const HIV_INFECTION_PROBABILITY = 0.03;
+const HIV_DOUBLING_PROBABILITY = 0.0001;
+const HIV_DAMAGE = 0.05;
+
+
 //      Bacteria
 const bacteriaRadius = 8;
 var starting_nBacteria = 30;
+
+const BACTERIA_BASE_HEALTH = 100;
+BACTERIA_HEALTH_INCREASE = 20;
+BACTERIA_PRICE_INCREASE = 5;
+BACTERIA_NUMBER_INCREASE = 10;
+
 var BASE_BACTERIAL_HEALTH = 100;
 
 // Antibodies
 ANTIBODY_LONGEVITY = 10000;
 ANTIBODY_PRODUCTION_FREQUENCY = 50;
 ANTIBODY_SLOWING_COEFFICIENT = 0.5;
+
 
 // Game parameters
 var livesLeft = 10;

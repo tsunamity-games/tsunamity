@@ -20,17 +20,19 @@ class BodyPart {
         return (x > this.x) && (x < this.x + this.width) && (y > this.y) && (y < this.y + this.height)
     }
 }
-class Shop extends BodyPart {
-    constructor(texture, x, y, width, height, cellType, price, enemyTexture, cellTexture, isEnemyAnimated, isCellAnimated) {
-        super(texture, x, y, width, height);
+class Shop extends BodyPart {  
+    constructor(x, y, cellType, price, enemyTexture, cellTexture, isEnemyAnimated, isCellAnimated) {
+        super(BONE_MARROW_IMAGE, x, y, shopWidth, shopHeight - 2 * offset);
         this.cellType = cellType;
         this.price = price;
+        this.base_price = price;
         
         this.enemyTexture = enemyTexture;
         this.cellTexture = cellTexture;
         this.isEnemyAnimated = isEnemyAnimated;
         this.isCellAnimated = isCellAnimated;
         this.pockets = [];
+        this.discount = 0;
     }
 
     buy() {
@@ -38,11 +40,18 @@ class Shop extends BodyPart {
             var cell = new this.cellType(
                 randomUniform(this.x, this.x + this.width),
                 randomUniform(this.y, this.y + this.height));
+
+            cell.damage = cell.damage * Math.pow(HELPER_DAMAGE_INCREASE, this.discount);
             immunityCells.push(cell);
             money -= this.price;
             historyObject.cellsBought[cell.constructor.name] += 1;
         }
         
+    }
+
+    reset() {
+        this.price = this.base_price;
+        this.discount = 0;
     }
     
     draw() {
@@ -59,7 +68,10 @@ class Shop extends BodyPart {
         ctx.font = this.width/11 + "px Courier";
         ctx.textAlign = "center";
         ctx.fillText("Produces", this.x + this.width/4, this.y + 3*this.height/10);
-        ctx.fillText("Kills", this.x + 3*this.width/4, this.y + 3*this.height/10);
+
+        const targetText = this.cellType == THelper ? "Buys" : "Kills";
+
+        ctx.fillText(targetText, this.x + 3*this.width/4, this.y + 3*this.height/10);
 
         ctx.drawImage(
             this.cellTexture, 0, 0,
@@ -68,13 +80,13 @@ class Shop extends BodyPart {
             this.x + this.width/4 - 3*this.width/10/2,
             this.y + 4.5*this.height/10,
             3*this.width/10,
-            3*this.height/10)
+            9/4*this.height/10)
         
             
         ctx.drawImage(
             this.enemyTexture, 0, 0,
             this.isEnemyAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
-            this.isEnemyAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
+            this.isEnemyAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
             this.x + 3*this.width/4 - 3*this.width/10/2,
             this.y + 4.5*this.height/10,
             3*this.width/10,

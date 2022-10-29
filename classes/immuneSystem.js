@@ -105,7 +105,7 @@ class ImmuneCell extends MovingObject {
                 }
                 
                 if (this.target != null) {
-                    // helper variables
+                    // helper variables  // Like THelper or just helper?
 //                    [this.xSpeed, this.ySpeed] = moveTo(this.x, this.y, this.target.x, this.target.y, this.baseSpeed);
                     var x_sign = (this.target.x - this.x)/Math.abs(this.target.x - this.x);
                     var y_sign = (this.target.y - this.y)/Math.abs(this.target.y - this.y);
@@ -182,7 +182,7 @@ class Macrophage extends ImmuneCell {
 }
 class Eosinophile extends ImmuneCell {
     constructor(x, y) {
-        super(EOSINOPHILES_IMAGE, x, y, 10, 0.2, 0.01);
+        super(EOSINOPHILES_IMAGE, x, y, 10, 0.2, EOSINOPHILES_DAMAGE);
     } 
     move() {
         super.move();
@@ -395,11 +395,11 @@ class TLymphocyte extends ImmuneCell {
             this.longevity = 100000;
             this.baseSpeed = 0;
             this.upgradePrice = 0;
-            shops.filter((shop)=> this instanceof shop.cellType).forEach((shop) =>{
-                shop.pockets.push(new Pocket(shop, 
-                                             shop.x + BACTERIA_COLORS.indexOf(this.color)*shop.width/BACTERIA_COLORS.length, shop.height+offset, shop.width/BACTERIA_COLORS.length, 2*offset*0.9, 
-                                             this.color))
-            })
+            
+            let pocketX = T_LYMPHOCYTE_SHOP.x + BACTERIA_COLORS.indexOf(this.color) * T_LYMPHOCYTE_SHOP.width / BACTERIA_COLORS.length;
+            T_LYMPHOCYTE_SHOP.pockets.push(
+                new Pocket(T_LYMPHOCYTE_SHOP, pocketX, shop.height + offset, shop.width / BACTERIA_COLORS.length, 2*offset*0.9, this.color))
+            
         }
     }
     
@@ -434,5 +434,108 @@ class TLymphocyte extends ImmuneCell {
         circle(this.x, this.y, 30, false);
         ctx.globalAlpha = 1;
         super.draw();
+    }
+}
+
+class THelper extends ImmuneCell {
+    constructor(x, y) {
+        super(T_LYMPHOCYTES_IMAGE, x, y, 20, 0.5, 0, 100000);
+
+        this.place = this.choosePlace();
+        this.placeReached = false;
+        this.cooldown = HELPER_BUYING_COOLDOWN;
+        this.timeFromTheLastPurchase = 0;
+    }
+
+    choosePlace() {
+        const ROWS = 4;
+        const COLS = 12;
+
+        const gridCellWidth = Math.floor(fieldWidth / COLS);
+        const gridCellHeight = Math.floor((playableFieldHeight) / ROWS);
+        
+        const col = Math.floor(randomUniform(0, COLS));
+        const row = Math.floor(randomUniform(0, ROWS));
+
+        var place = [col * gridCellWidth + randomUniform(-10, 10), playableFieldStart + row * gridCellHeight + randomUniform(-10, 10)];
+        place[0] = clip(place[0], this.radius, fieldWidth - this.radius);
+        place[1] = clip(place[1], playableFieldStart + this.radius, playableFieldHeight - this.radius);
+
+        return place;
+    }
+
+    changeDirection(){
+        if (this.y < shopHeight) {
+            // Get away from shop
+            this.xSpeed = randomUniform(-0.5, 0.5);
+            this.ySpeed = this.baseSpeed * 3;
+        }
+        else {
+            
+            if(this.placeReached) {
+                // Mess around the place
+                this.xSpeed = randomUniform(-0.1, 0.1);
+                this.ySpeed = randomUniform(-0.1, 0.1);
+            }
+            else {
+                // Move closer to place
+                [this.xSpeed, this.ySpeed] = moveTo(this.x, this.y, this.place[0], this.place[1], this.baseSpeed);
+
+                this.xSpeed += randomUniform(-0.1, 0.1);
+                this.ySpeed += randomUniform(-0.1, 0.1);
+            }
+            
+        }
+    }
+
+    move() {
+        if(doCirclesIntersect(this.x, this.y, this.radius, this.place[0], this.place[1], 10)) {
+            this.placeReached = true;
+        }
+
+        super.move();
+    }
+
+    act() {
+        // Evaluate, which type of pathogen is threatening the body
+        var infectedCells = tissueCells.filter((cell) => {return(cell.infection.length > 0)});
+        var infectionRatio = infectedCells.length / tissueCells.length;
+        var shopToBuy;
+
+        if(infectionRatio > 0.1) {
+            shopToBuy = T_LYMPHOCYTE_SHOP;
+            T_LYMPHOCYTE_SHOP
+        }
+        else {
+            shopToBuy = B_LYMPHOCYTE_SHOP;
+        }
+
+        shopToBuy.discount += 1;
+
+        // Buy the cell once in a cooldown
+        if(this.timeFromTheLastPurchase < this.cooldown) {
+            this.timeFromTheLastPurchase += 1;
+        }
+        else {
+            this.timeFromTheLastPurchase = 0;
+    
+            // Buy the corresponding lymphocyte
+            money += shopToBuy.price;
+            shopToBuy.buy();
+        }
+    }
+
+    draw() {
+        super.draw();
+
+        // Draw the progress of buying a lymphocyte
+        if(this.placeReached) {
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "black";
+            
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius + 2, 0, Math.PI*2 * this.timeFromTheLastPurchase / this.cooldown);
+            ctx.stroke();
+        }
     }
 }

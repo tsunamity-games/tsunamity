@@ -135,9 +135,11 @@ class Label extends BodyPart{
 }
 class Pocket extends Shop{
     constructor(shopObj, x, y, width, height, color){
-        super("", x, y, width, height, shopObj.cellType, shopObj.price)
+        super(x, y, shopObj.cellType, shopObj.price)
         this.color = color;
         this.shopObj = shopObj;
+        this.width = width;
+        this.height = height;
     }
     draw(){
         ctx.fillStyle = this.color;

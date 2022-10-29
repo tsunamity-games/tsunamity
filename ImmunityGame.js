@@ -1,4 +1,5 @@
 //-----GAME SETUP FUNCTIONS------
+
 function addTissueCells(tissueCellsList){
     for (var x = offset; x < fieldWidth - tissueCellSize - spaceBetweenTissueCells; x += tissueCellSize+spaceBetweenTissueCells){
             for (var y = shopHeight + offset; y < fieldHeight - buttonHeight - offset -tissueCellSize-spaceBetweenTissueCells; y += tissueCellSize+spaceBetweenTissueCells){
@@ -8,7 +9,8 @@ function addTissueCells(tissueCellsList){
     EdgeCellX = x;
     return tissueCellsList;
 }
-function addBacteria(bacteriaList, n, texture, maxHealth){
+
+function addBacteria(bacteriaList, n, maxHealth, price){
     for (var i=0; i<n; i++){
         var y = randomUniform(shopHeight + offset, playableFieldHeight); 
         var x = -100;
@@ -141,7 +143,6 @@ function chooseEnemy(bacList, virList, helList, coins, waveNumber){
             if (enemyPrice <= coins){
                 virList.push(new Virus(color, VIRUSES_CLASSIFICATION[color].doublingTime, null)); 
                 coins -= enemyPrice;
-
             }
         }
     } else {
@@ -171,6 +172,7 @@ var tissuecells;
 var inplayBacteriaColorsIndices;
 var colorProbs;
 var bacteria;
+var hiv_particles = [];
 var viruses;
 var helmintes;
 var garbagePiles;
@@ -179,17 +181,21 @@ var gameOverTrue;
 var pauseTrue;
 var historyObject;
 var reset;
+      
+const T_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + shopWidth + offset, offset, TLymphocyte, T_LYMPHOCYTE_PRICE, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE, false, true);
+const B_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + 3 * shopWidth + 3 * offset, offset, BLymphocyte, B_LYMPHOCYTE_PRICE, BACTERIA_IMAGE, LYMPHOCYTES_IMAGES.get("green"), true, true);
+      
 function setupGame(){
     immunityCells = [];
     antibodies = [];
     shops = [
-        new Shop(BONE_MARROW_IMAGE, xLeftOffset, offset, shopWidth, shopHeight - 2 * offset, NaturalKiller, 150, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
-        new Shop(BONE_MARROW_IMAGE, xLeftOffset + shopWidth + offset, offset, shopWidth, shopHeight - 2 * offset, TLymphocyte, 300, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
-        new Shop(BONE_MARROW_IMAGE, xLeftOffset + 2*shopWidth + 2*offset, offset, shopWidth, shopHeight - 2 * offset, BLymphocyte, 200, BACTERIA_IMAGE, LYMPHOCYTES_IMAGES.get("green")),
-        new Shop(BONE_MARROW_IMAGE, xLeftOffset + 3 * shopWidth + 3 * offset, offset, shopWidth, shopHeight - 2 * offset, Neutrophil, 100, BACTERIA_IMAGE, NEUTROPHILS_IMAGE),
-        new Shop(BONE_MARROW_IMAGE, xLeftOffset + 4 * shopWidth + 4 * offset, offset, shopWidth, shopHeight - 2 * offset, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE),
-        new Shop(BONE_MARROW_IMAGE, xLeftOffset + 5*shopWidth + 5*offset, offset, shopWidth, shopHeight - 2 * offset, Macrophage, 300, GARBAGE_IMAGE, MACROPHAGES_IMAGE)
-
+        new Shop(xLeftOffset, offset, NaturalKiller, 150, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
+        T_LYMPHOCYTE_SHOP,
+        new Shop(xLeftOffset + 2 * shopWidth + 2 * offset, offset, THelper, T_HELPER_PRICE, T_LYMPHOCYTES_IMAGE, T_LYMPHOCYTES_IMAGE, true, true),
+        B_LYMPHOCYTE_SHOP,
+        new Shop(xLeftOffset + 4 * shopWidth + 4 * offset, offset, Neutrophil, 100, BACTERIA_IMAGE, NEUTROPHILS_IMAGE),
+        new Shop(xLeftOffset + 5 * shopWidth + 5 * offset, offset, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE),
+        new Shop(xLeftOffset + 6 * shopWidth + 6 * offset, offset, Macrophage, 300, GARBAGE_IMAGE, MACROPHAGES_IMAGE)
     ];
     buttons = [];
     for (var i = 0; i < BACTERIA_COLORS.length; i++){
@@ -197,7 +203,7 @@ function setupGame(){
         buttons.push(new Vaccine(BACTERIA_COLORS[i], fieldWidth/2 + offset*(i+1) + buttonWidth*i, playableFieldHeight + offset, buttonWidth, buttonHeight, 100));
     }
 
-    spleen = new Spleen(BONE_MARROW_IMAGE, xLeftOffset+6*shopWidth + 6*offset + 10, offset, shopHeight - 2 * offset, shopHeight - 2 * offset, 16);
+    spleen = new Spleen(BONE_MARROW_IMAGE, xLeftOffset + 7 * shopWidth + 6 * offset + 10, offset, shopHeight - 2 * offset, shopHeight - 2 * offset, 16);
     tissueCells = addTissueCells([]);
     inplayBacteriaColorsIndices = [0];
     colorProbs = [MAX_COLOR_PROB_VAL];
@@ -215,6 +221,7 @@ function setupGame(){
     livesLeft = 10;
     money = STARTING_MONEY;
 }
+
 // Gameplay
 $("#field").click(function(event){
     x = event.pageX - field.offsetLeft;
@@ -320,7 +327,8 @@ var game = setInterval(function(){
     printGameInfo();
         
     shops.forEach((shop) => {
-        shop.draw();
+        shop.reset();
+        
         if (shop.pockets.length > 0)
         shop.pockets = shop.pockets.filter(function hasMemoryCell(pocket){
             var colors = [];
@@ -413,6 +421,10 @@ var game = setInterval(function(){
         immunityCells.forEach((cell) => {
             cell.live();
             cell.move();
+            
+            if(cell instanceof THelper) {
+                cell.act();
+            }
 
             var targetList;
 
@@ -427,9 +439,7 @@ var game = setInterval(function(){
                 targetList = bacteria;
             }
 
-            cell.changeDirection(targetList);
-            cell.draw();
-            
+            cell.changeDirection(targetList);            
             
             // Old cells die
             var oldCells = immunityCells.filter((cell)=>cell.age >= cell.longevity);
@@ -444,6 +454,22 @@ var game = setInterval(function(){
         antibody.move();
         antibody.draw();
     })
+
+    shops.forEach((shop) => {
+        // Set price with discount
+        shop.price = Math.round(shop.base_price * Math.pow(HELPER_DISCOUNT_RATE, shop.discount));
+        shop.draw();
+    });
+
+    immunityCells.forEach((cell) => {
+        cell.draw();
+    });
+
+    hiv_particles.forEach((hiv) => {
+        hiv.act();
+        hiv.draw();
+    });
+    
     
     if(bacteria.length === 0) {
         wave += 1;
@@ -466,6 +492,7 @@ var game = setInterval(function(){
 //        
         var r = formNewWave(wave, bacteria, viruses, helmintes);
         [bacteria, viruses, helmintes] = r; //formNewWave(wave, bacteria, viruses, helmintes);
+
         checkAntibiotics();
     }
     immunityCells.filter(cell => cell instanceof BLymphocyte || cell instanceof TLymphocyte).forEach(cell => cell.label.draw());
@@ -478,3 +505,9 @@ var game = setInterval(function(){
     };
     }
 }, 1);
+
+function stopAllBacteria() {
+    bacteria.forEach((bacterium) => {
+        bacterium.baseSpeed = 0;
+    })
+}
