@@ -137,6 +137,46 @@ LIFES_IMAGE.src = "./images/lifes.png";
 const MONEY_IMAGE = new Image();
 MONEY_IMAGE.src = "./images/sugar.svg";
 
+
+const BONE_MARROW_BACKGROUND_IMAGE = new Image();
+BONE_MARROW_BACKGROUND_IMAGE.src = "./images/boneMarrow.png";
+
+const GREEN_SCROLL = new Image();
+GREEN_SCROLL.src = "./images/greenScroll.png";
+const YELLOW_SCROLL = new Image();
+YELLOW_SCROLL.src = "./images/yellowScroll.png";
+const BLUE_SCROLL = new Image();
+BLUE_SCROLL.src = "./images/blueScroll.png";
+
+const GREEN_MINIMONEY = new Image();
+GREEN_MINIMONEY.src = "./images/greenMiniMoney.png";
+const YELLOW_MINIMONEY = new Image();
+YELLOW_MINIMONEY.src = "./images/yellowMiniMoney.png";
+const BLUE_MINIMONEY = new Image();
+BLUE_MINIMONEY.src = "./images/blueMiniMoney.png";
+
+
+
+var ShopColors = {
+    blue:{
+        scrollImage: BLUE_SCROLL,
+        colorCode: "#005FA4",
+        minimoneyImage: BLUE_MINIMONEY
+    },
+    green:{
+        scrollImage: GREEN_SCROLL,
+        colorCode: "#006956",
+        minimoneyImage: GREEN_MINIMONEY
+    },
+    yellow:{
+        scrollImage: YELLOW_SCROLL,
+        colorCode: "#DC9E00",
+        minimoneyImage: YELLOW_MINIMONEY
+    },
+}
+
+
+
 const BLOOD_IMAGE_1 = new Image();
 BLOOD_IMAGE_1.src = "./images/BloodVessel1.png";
 const BLOOD_IMAGE_2 = new Image();

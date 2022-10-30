@@ -2,6 +2,24 @@
 function drawField(){
     ctx.clearRect(0, 0, fieldWidth, fieldHeight);
     
+    
+    // Blood
+    ctx.drawImage(
+        BLOOD_IMAGE_7, 
+        (1211/1440)*fieldWidth, 
+        (320/1080)*fieldHeight, 
+        (96/1440)*fieldWidth, 
+        (290/1080)*fieldHeight);
+    
+    // Bone marrow
+    ctx.drawImage(
+        BONE_MARROW_BACKGROUND_IMAGE, 
+        0, 
+        (240/1080)*fieldHeight, 
+        (1085/1440)*fieldWidth, 
+        (319/1080)*fieldHeight);
+    
+    
     // Right Menu
     ctx.fillStyle = rightMenuColor;
     ctx.fillRect(rightMenuX, 0, rightMenuWidth, fieldHeight);
@@ -21,12 +39,6 @@ function drawField(){
         (329/1080)*fieldHeight, 
         (165/1440)*fieldWidth, 
         (127/1080)*fieldHeight);
-    ctx.drawImage(
-        BLOOD_IMAGE_7, 
-        (1211/1440)*fieldWidth, 
-        (320/1080)*fieldHeight, 
-        (96/1440)*fieldWidth, 
-        (290/1080)*fieldHeight);
     
     
     
@@ -39,8 +51,11 @@ function drawField(){
             LIFES_IMAGE, fieldWidth*0.02, (topMenuHeight-lifesSize)/2, lifesSize*1.1, lifesSize);
     ctx.fillStyle = "Black";
     ctx.textBaseline = "middle";
-    ctx.font = "bold 16px Courier";
-    ctx.fillText(livesLeft, fieldWidth*0.02+lifesSize*1.1/2, topMenuHeight/2);
+    ctx.textAlign = "center";
+    ctx.font = "bold " + lifesSize*1.1*0.5 + "px Courier";
+    ctx.fillText(livesLeft, 
+                 fieldWidth*0.02+lifesSize*1.1/2, 
+                 topMenuHeight/2);
         
     
     // Waves
@@ -76,7 +91,8 @@ function drawField(){
               moneyRectangleHeight, 
               leftRadius = 8, rightRadius = 8, fill = true, stroke = true);
     ctx.fillStyle = "Black";
-    ctx.fillText(Math.round(money), moneyRectangleX+moneyRectangleWidth*0.9, moneyRectangleY+moneyRectangleHeight/2);
+    ctx.fillText(Math.round(money), 
+                 moneyRectangleX+moneyRectangleWidth*0.9, moneyRectangleY+moneyRectangleHeight/2);
     ctx.drawImage(
             MONEY_IMAGE, 
         moneyRectangleX + moneyRectangleWidth*0.1, 
@@ -91,7 +107,6 @@ function drawField(){
     ctx.fillRect(playableFieldX, playableFieldY, playableFieldWidth, playableFieldHeight);
     
     // Blood over
-    ctx.fillStyle = bloodColor;
     ctx.drawImage(
         BLOOD_IMAGE_2, 
         (9/1440)*fieldWidth, 
@@ -106,8 +121,8 @@ function drawField(){
         (102/1080)*fieldHeight);
     ctx.drawImage(
         BLOOD_IMAGE_5, 
-        (842/1440)*fieldWidth, 
-        (937/1080)*fieldHeight, 
+        (830/1440)*fieldWidth, 
+        (930/1080)*fieldHeight, 
         (296/1440)*fieldWidth, 
         (147/1080)*fieldHeight);
     ctx.drawImage(
@@ -116,6 +131,39 @@ function drawField(){
         (299/1080)*fieldHeight, 
         ((1440-1243)/1440)*fieldWidth, 
         (118/1080)*fieldHeight);
+    
+    // Shop names
+    var linesY = (165/1080)*fieldHeight;
+    ctx.textBaseline = "top";
+    ctx.textAlign = "left";
+
+    ctx.strokeStyle = ShopColors.yellow.colorCode;
+    ctx.beginPath();
+    ctx.moveTo((37/1440)*fieldWidth, linesY);
+    ctx.lineTo(((37+258)/1440)*fieldWidth, linesY);
+    ctx.stroke();
+    ctx.font = "bold " + (37/1080)*fieldHeight + "px Courier";
+    ctx.fillStyle = ShopColors.yellow.colorCode;  
+    ctx.fillText("Viruses", (37/1440)*fieldWidth, (120/1080)*fieldHeight);
+
+    
+    ctx.strokeStyle = ShopColors.green.colorCode;
+    ctx.beginPath();
+    ctx.moveTo((312/1440)*fieldWidth, linesY)
+    ctx.lineTo(((312+258)/1440)*fieldWidth, linesY)
+    ctx.stroke();
+    ctx.font = "bold " + (37/1080)*fieldHeight + "px Courier";
+    ctx.fillStyle = ShopColors.green.colorCode;  
+    ctx.fillText("Bacteria", (312/1440)*fieldWidth, (120/1080)*fieldHeight);
+    
+    ctx.strokeStyle = ShopColors.blue.colorCode;
+    ctx.beginPath();
+    ctx.moveTo((595/1440)*fieldWidth, linesY);
+    ctx.lineTo(((595+391)/1440)*fieldWidth, linesY);
+    ctx.stroke();
+    ctx.font = "bold " + (37/1080)*fieldHeight + "px Courier";
+    ctx.fillStyle = ShopColors.blue.colorCode;  
+    ctx.fillText("Other", (595/1440)*fieldWidth, (120/1080)*fieldHeight)
     
     reset.draw();
     
@@ -188,7 +236,7 @@ function stopGame(why){
     ctx.fillStyle = "black";
     if (why == "Game Over"){
         ctx.font = "40px Courier";
-        ctx.fillText(why, fieldWidth/2, fieldHeight/3)
+        ctx.fillText(why, fieldWidth/2, fieldHeight/3);
         ctx.font = "20px Courier";
         var lines = historyObject.makeReport().split('\n');
         for (var i = 0; i < lines.length; i++)
@@ -322,21 +370,23 @@ var historyObject;
 var reset;
 var fullWaveSize;
       
-const T_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + shopWidth + spaceBetweenShops, shopY, TLymphocyte, T_LYMPHOCYTE_PRICE, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE, false, true);
-const B_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + 3 * shopWidth + 3 * spaceBetweenShops, shopY, BLymphocyte, B_LYMPHOCYTE_PRICE, BACTERIA_IMAGE, LYMPHOCYTES_IMAGES.get("green"), true, true);
+const T_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + shopWidth + spaceBetweenShops, shopY, TLymphocyte, T_LYMPHOCYTE_PRICE, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE, false, true, "yellow");
+const B_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + 3 * shopWidth + 3 * spaceBetweenShops, shopY, BLymphocyte, B_LYMPHOCYTE_PRICE, BACTERIA_IMAGE, LYMPHOCYTES_IMAGES.get("green"), true, true, "green");
       
 function setupGame(){
     immunityCells = [];
     antibodies = [];
     shops = [
-        new Shop(xLeftOffset, shopY, NaturalKiller, 150, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE),
+        new Shop(xLeftOffset, shopY, NaturalKiller, 150, VIRUS_IMAGE, T_LYMPHOCYTES_IMAGE, true, true, "yellow"),
         T_LYMPHOCYTE_SHOP,
-        new Shop(xLeftOffset + 2 * shopWidth + 2 * spaceBetweenShops, 
-                 shopY, THelper, T_HELPER_PRICE, T_LYMPHOCYTES_IMAGE, T_LYMPHOCYTES_IMAGE, true, true),
+        new Shop(xLeftOffset + 2 * shopWidth + 2 * spaceBetweenShops, shopY, Neutrophil, 100, BACTERIA_IMAGE, NEUTROPHILS_IMAGE, true, true, "green"),
         B_LYMPHOCYTE_SHOP,
-        new Shop(xLeftOffset + 4 * shopWidth + 4 * spaceBetweenShops, shopY, Neutrophil, 100, BACTERIA_IMAGE, NEUTROPHILS_IMAGE),
-        new Shop(xLeftOffset + 5 * shopWidth + 5 * spaceBetweenShops, shopY, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE),
-        new Shop(xLeftOffset + 6 * shopWidth + 6 * spaceBetweenShops, shopY, Macrophage, 300, GARBAGE_IMAGE, MACROPHAGES_IMAGE)
+        new Shop(xLeftOffset + 4 * shopWidth + 4 * spaceBetweenShops, 
+                 shopY, THelper, T_HELPER_PRICE, T_LYMPHOCYTES_IMAGE, T_LYMPHOCYTES_IMAGE, true, true, "blue"),
+
+        new Shop(xLeftOffset + 6 * shopWidth + 6 * spaceBetweenShops, shopY, Macrophage, 300, GARBAGE_IMAGE, MACROPHAGES_IMAGE, true, true, "blue"),
+        new Shop(xLeftOffset + 5 * shopWidth + 5 * spaceBetweenShops, shopY, Eosinophile, 50, HELMINTH_IMAGE, EOSINOPHILES_IMAGE, true, true, "blue")
+        
     ];
     buttons = [];
     for (var i = 0; i < BACTERIA_COLORS.length; i++){
@@ -372,7 +422,7 @@ function setupGame(){
     gameOverTrue = false;  
     pauseTrue = false;
     historyObject = new GameHistory();
-    reset = new ResetButton("red", rightMenuX+rightMenuWidth/2-30, 5, 60, 60, "Restart");
+    reset = new ResetButton("red", rightMenuX+rightMenuWidth/2-30, 5, 60, 60, "R");
     livesLeft = 10;
     money = STARTING_MONEY;
 }

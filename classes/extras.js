@@ -13,6 +13,7 @@ class Button extends BodyPart {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "black";
+        ctx.font = this.width*0.7 + "px Courier"
         circle(this.x+this.width/2, this.y+this.height/2, this.width/2, false);
         ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
     }
@@ -61,6 +62,7 @@ class Antibiotic extends Button {
         ctx.textBaseline = "middle";
         ctx.fillStyle = "black";
         circle(this.x+this.width/2, this.y+this.height/2, this.width/2, false);
+        ctx.font = this.width*0.7 + "px Courier"
         ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
         if (!this.available){
             ctx.strokeStyle = "red";

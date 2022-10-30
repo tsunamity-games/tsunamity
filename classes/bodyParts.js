@@ -9,7 +9,7 @@ class BodyPart {
     
     draw() {
         ctx.drawImage(
-            this.texture, 0, 0, STATIC_IMAGE_WIDTH, STATIC_IMAGE_HEIGHT,
+            this.texture, 
             this.x,
             this.y,
             this.width,
@@ -21,11 +21,12 @@ class BodyPart {
     }
 }
 class Shop extends BodyPart {  
-    constructor(x, y, cellType, price, enemyTexture, cellTexture, isEnemyAnimated, isCellAnimated) {
-        super(BONE_MARROW_IMAGE, 
+    constructor(x, y, cellType, price, enemyTexture, cellTexture, isEnemyAnimated, isCellAnimated, color) {
+        super(ShopColors[color]["scrollImage"], 
               x, y, 
               shopWidth, 
               shopHeight);
+        this.color = color;
         this.cellType = cellType;
         this.price = price;
         this.base_price = price;
@@ -60,43 +61,54 @@ class Shop extends BodyPart {
     draw() {
         super.draw();
     
-        ctx.fillStyle = "Black";
+        ctx.fillStyle =  ShopColors[this.color]["colorCode"];
         ctx.textBaseline = "top";
         
         // Name of the cell type sold
-        ctx.font = this.width/10 + "px Courier";
+        ctx.font = "bold " + this.width/9 + "px Courier";
         ctx.textAlign = "center";
-        ctx.fillText(this.cellType.name, this.x + this.width / 2, this.y + this.height/10);
+        ctx.fillText(this.cellType.name, this.x + this.width / 2, this.y + this.height/8);
         
-        ctx.font = this.width/11 + "px Courier";
-        ctx.textAlign = "center";
-        ctx.fillText("Produces", this.x + this.width/4, this.y + 3*this.height/10);
-
-        const targetText = this.cellType == THelper ? "Buys" : "Kills";
-
-        ctx.fillText(targetText, this.x + 3*this.width/4, this.y + 3*this.height/10);
-
+//        ctx.font = this.width/11 + "px Courier";
+//        ctx.textAlign = "center";
+//        ctx.fillText("Produces", this.x + this.width/4, this.y + 3*this.height/10);
+//
+//        const targetText = this.cellType == THelper ? "Buys" : "Kills";
+//
+//        ctx.fillText(targetText, this.x + 3*this.width/4, this.y + 3*this.height/10);
+//
         ctx.drawImage(
             this.cellTexture, 0, 0,
             this.isCellAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
             this.isCellAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
-            this.x + this.width/4 - 3*this.width/10/2,
-            this.y + 4.5*this.height/10,
-            3*this.width/10,
-            9/4*this.height/10)
+            this.x + this.width/2 - 6*this.width/10/2,
+            this.y + this.height/2 - 4.5/2*this.height/10,
+            6*this.width/10,
+            9/2*this.height/10)
+//        
+//            
+//        ctx.drawImage(
+//            this.enemyTexture, 0, 0,
+//            this.isEnemyAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
+//            this.isEnemyAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
+//            this.x + 3*this.width/4 - 3*this.width/10/2,
+//            this.y + 4.5*this.height/10,
+//            3*this.width/10,
+//            9/4*this.height/10)
         
-            
-        ctx.drawImage(
-            this.enemyTexture, 0, 0,
-            this.isEnemyAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
-            this.isEnemyAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
-            this.x + 3*this.width/4 - 3*this.width/10/2,
-            this.y + 4.5*this.height/10,
-            3*this.width/10,
-            9/4*this.height/10)
+        ctx.drawImage(ShopColors[this.color]["minimoneyImage"],
+                      this.x + 2 * this.width / 10,
+                      this.y + 8*this.height/10,
+                      this.width*(23/111),
+                      this.height*(22/158)
+                     )
+        ctx.font = "bold " + (22/158)*this.height + "px Courier";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "top";
         
-        ctx.font = this.width/9 + "px Courier";
-        ctx.fillText("Price: " + this.price, this.x + this.width / 2, this.y + 8*this.height/10);
+        ctx.fillText(this.price, 
+                     this.x + 2 * this.width / 10 + this.width*(23/111), 
+                     this.y + 8*this.height/10);
         }
 }
 class SpleenSection{
