@@ -35,6 +35,8 @@ const spleenY = 0.1389*fieldHeight;
 const spleenSize = 0.11944*fieldWidth;
 const spleenColor = "#E78080"
 
+
+
 // Shops
 const shopY =  0.172*fieldHeight;
 const shopWidth =  0.085417*fieldWidth;
@@ -135,6 +137,20 @@ LIFES_IMAGE.src = "./images/lifes.png";
 const MONEY_IMAGE = new Image();
 MONEY_IMAGE.src = "./images/sugar.svg";
 
+const BLOOD_IMAGE_1 = new Image();
+BLOOD_IMAGE_1.src = "./images/BloodVessel1.png";
+const BLOOD_IMAGE_2 = new Image();
+BLOOD_IMAGE_2.src = "./images/BloodVessel2.png";
+const BLOOD_IMAGE_3 = new Image();
+BLOOD_IMAGE_3.src = "./images/BloodVessel3.png";
+const BLOOD_IMAGE_4 = new Image();
+BLOOD_IMAGE_4.src = "./images/BloodVessel4.png";
+const BLOOD_IMAGE_5 = new Image();
+BLOOD_IMAGE_5.src = "./images/BloodVessel5.png";
+const BLOOD_IMAGE_6 = new Image();
+BLOOD_IMAGE_6.src = "./images/BloodVessel6.png";
+const BLOOD_IMAGE_7 = new Image();
+BLOOD_IMAGE_7.src = "./images/BloodVessel7.png";
 
 
 // Host cell parameters

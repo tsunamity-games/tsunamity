@@ -193,7 +193,7 @@ class Eosinophile extends ImmuneCell {
         });
     }
     changeDirection(targetsList, nCandidates=randomTargetNumber){
-        if (this.y < shopHeight) {
+        if (this.y < playableFieldY) {
             // Get away from shop
             this.xSpeed = randomUniform(-0.5, 0.5);
             this.ySpeed = this.baseSpeed * 3;

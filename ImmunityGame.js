@@ -9,6 +9,26 @@ function drawField(){
     // Blood
     ctx.fillStyle = bloodColor;
     ctx.fillRect(spleenTrunkX, 0, spleenTrunkWidth, fieldHeight);
+    ctx.drawImage(
+        BLOOD_IMAGE_1, 
+        (16/1440)*fieldWidth, 
+        (333/1080)*fieldHeight, 
+        (166/1440)*fieldWidth, 
+        (176/1080)*fieldHeight);
+    ctx.drawImage(
+        BLOOD_IMAGE_4, 
+        (919/1440)*fieldWidth, 
+        (329/1080)*fieldHeight, 
+        (165/1440)*fieldWidth, 
+        (127/1080)*fieldHeight);
+    ctx.drawImage(
+        BLOOD_IMAGE_7, 
+        (1211/1440)*fieldWidth, 
+        (320/1080)*fieldHeight, 
+        (96/1440)*fieldWidth, 
+        (290/1080)*fieldHeight);
+    
+    
     
     // Top menu
     ctx.fillStyle = topMenuColor;
@@ -21,6 +41,7 @@ function drawField(){
     ctx.textBaseline = "middle";
     ctx.font = "bold 16px Courier";
     ctx.fillText(livesLeft, fieldWidth*0.02+lifesSize*1.1/2, topMenuHeight/2);
+        
     
     // Waves
     ctx.fillStyle = wavesBackColor;
@@ -69,6 +90,33 @@ function drawField(){
     ctx.fillStyle = "white";
     ctx.fillRect(playableFieldX, playableFieldY, playableFieldWidth, playableFieldHeight);
     
+    // Blood over
+    ctx.fillStyle = bloodColor;
+    ctx.drawImage(
+        BLOOD_IMAGE_2, 
+        (9/1440)*fieldWidth, 
+        (420/1080)*fieldHeight, 
+        (88/1440)*fieldWidth, 
+        (70/1080)*fieldHeight);
+    ctx.drawImage(
+        BLOOD_IMAGE_3, 
+        (481/1440)*fieldWidth, 
+        (362/1080)*fieldHeight, 
+        (561/1440)*fieldWidth, 
+        (102/1080)*fieldHeight);
+    ctx.drawImage(
+        BLOOD_IMAGE_5, 
+        (842/1440)*fieldWidth, 
+        (937/1080)*fieldHeight, 
+        (296/1440)*fieldWidth, 
+        (147/1080)*fieldHeight);
+    ctx.drawImage(
+        BLOOD_IMAGE_6, 
+        (1243/1440)*fieldWidth, 
+        (299/1080)*fieldHeight, 
+        ((1440-1243)/1440)*fieldWidth, 
+        (118/1080)*fieldHeight);
+    
     reset.draw();
     
 }
@@ -85,7 +133,6 @@ function addTissueCells(tissueCellsList){
     EdgeCellX = x;
     return tissueCellsList;
 }
-
 function addBacteria(bacteriaList, n, maxHealth, price){
     for (var i=0; i<n; i++){
         var y = randomUniform(playableFieldY, playableFieldHeight); 
