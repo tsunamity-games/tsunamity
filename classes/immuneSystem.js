@@ -57,9 +57,9 @@ class Antibody {
         if (this.attached == null){
             this.age++;
             this.x += randomUniform(-2, 2);
-            this.x = clip(this.x, 0, fieldWidth);
+            this.x = clip(this.x, playableFieldX, playableFieldX+playableFieldWidth);
             this.y += randomUniform(-2, 2);
-            this.y = clip(this.y, playableFieldStart, playableFieldHeight);
+            this.y = clip(this.y, playableFieldY, playableFieldY+playableFieldHeight);
             bacteria.forEach((bacterium) =>{
                 if (bacterium.color === this.color && doCirclesIntersect(bacterium.x, bacterium.y, bacterium.radius, this.x, this.y, 5)){
                     this.attached = bacterium;
@@ -91,7 +91,7 @@ class ImmuneCell extends MovingObject {
     }
     
     changeDirection(targetsList, nCandidates=randomTargetNumber) {
-        if (this.y < shopHeight && this.x < spleen.x) {
+        if (this.y < playableFieldY && this.x < spleen.x) {
             // Get away from shop
             this.xSpeed = randomUniform(-0.5, 0.5);
             this.ySpeed = this.baseSpeed * 3;
@@ -99,14 +99,12 @@ class ImmuneCell extends MovingObject {
 
             if (targetsList.length > 0) {
                 // Move to the random bacterium
-                if (this.target == null || this.target.health <= 0 || this.target.x > fieldWidth)  
+                if (this.target == null || this.target.health <= 0 || this.target.x > playableFieldX+playableFieldWidth)  
                 {
                     this.target = findTarget(this.x, this.y, targetsList, Math.min(nCandidates, targetsList.length));
                 }
                 
                 if (this.target != null) {
-                    // helper variables  // Like THelper or just helper?
-//                    [this.xSpeed, this.ySpeed] = moveTo(this.x, this.y, this.target.x, this.target.y, this.baseSpeed);
                     var x_sign = (this.target.x - this.x)/Math.abs(this.target.x - this.x);
                     var y_sign = (this.target.y - this.y)/Math.abs(this.target.y - this.y);
                     var ratio = (this.target.y - this.y)/(this.target.x - this.x);
@@ -140,7 +138,7 @@ class ImmuneCell extends MovingObject {
         this.x = clip(this.x, this.radius, fieldWidth - this.radius);
     }
     live(){
-        if (this.y > playableFieldStart){
+        if (this.y > playableFieldY){
             this.age++;
         }
     }
@@ -280,11 +278,9 @@ class BLymphocyte extends ImmuneCell {
             this.longevity = BASE_IMMUNITY_CELL_LONGEVITY*4;
             this.baseSpeed = 0;
             this.upgradePrice = 0;
-            shops.filter((shop)=> this instanceof shop.cellType).forEach((shop) =>{
-                shop.pockets.push(new Pocket(shop, 
-                                             shop.x + BACTERIA_COLORS.indexOf(this.color)*shop.width/BACTERIA_COLORS.length, shop.height+offset, shop.width/BACTERIA_COLORS.length, 2*offset*0.9, 
+            B_LYMPHOCYTE_SHOP.pockets.push(new Pocket(B_LYMPHOCYTE_SHOP, 
+                                             B_LYMPHOCYTE_SHOP.x + BACTERIA_COLORS.indexOf(this.color)*B_LYMPHOCYTE_SHOP.width/BACTERIA_COLORS.length, shopY + B_LYMPHOCYTE_SHOP.height+10, B_LYMPHOCYTE_SHOP.width/BACTERIA_COLORS.length, 2*10*0.9, 
                                              this.color)) 
-            })
         }
     }
     
@@ -303,14 +299,14 @@ class BLymphocyte extends ImmuneCell {
             })    
         }
         if (this.mode === "plasmatic"){
-            this.y = clip(this.y, playableFieldStart+this.radius, playableFieldHeight-this.radius);
+            this.y = clip(this.y, playableFieldY+this.radius, playableFieldY+playableFieldHeight-this.radius);
             if (this.counter++ % ANTIBODY_PRODUCTION_FREQUENCY == 0)
                 antibodies.push(new Antibody(this.x, this.y, this.color));
         }
     }
 
-    goToSplin(){
-        if (this.y < shopHeight) {
+    goToSpleen(){
+        if (this.y < (shopY + shopHeight) + (playableFieldY-(shopY + shopHeight))/2) {
             // Get away from shop
             this.xSpeed = 0;
             this.ySpeed = this.baseSpeed * 3;}
@@ -324,14 +320,14 @@ class BLymphocyte extends ImmuneCell {
     changeDirection(targetsList, nCandidates=randomTargetNumber){
         if (this.mode === "naive"){
             if (this.x < spleen.x){
-                this.goToSplin();
+                this.goToSpleen();
             } else if (spleen.sections.filter((section)=> section.antigen != null).length > 0){
                 super.changeDirection(spleen.sections.filter((section)=> section.antigen != null), nCandidates=spleen.sections.length);
             } else {
                 super.changeDirection(spleen.sections, spleen.sections.length);
             }
             if (this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size/2)){
-                if (this.target.antigen != null && doCirclesIntersect(this.target.x, this.target.y, this.target.size/2, this.target.antigen.x, this.target.antigen.y, this.target.antigen.radius) && randomUniform(0, 1) < 0.1){
+                if (this.target.antigen != null && doCirclesIntersect(this.target.x, this.target.y, this.target.size/2, this.target.antigen.x, this.target.antigen.y, this.target.antigen.radius) && randomUniform(0, 1) < 0.01){
                     this.texture = LYMPHOCYTES_IMAGES.get(this.target.antigen.color);
                     this.color = this.target.antigen.color;
                     this.mode = "mature";
@@ -398,7 +394,10 @@ class TLymphocyte extends ImmuneCell {
             
             let pocketX = T_LYMPHOCYTE_SHOP.x + BACTERIA_COLORS.indexOf(this.color) * T_LYMPHOCYTE_SHOP.width / BACTERIA_COLORS.length;
             T_LYMPHOCYTE_SHOP.pockets.push(
-                new Pocket(T_LYMPHOCYTE_SHOP, pocketX, shop.height + offset, shop.width / BACTERIA_COLORS.length, 2*offset*0.9, this.color))
+                new Pocket(T_LYMPHOCYTE_SHOP, pocketX, 
+                           shopY + T_LYMPHOCYTE_SHOP.height + 10, 
+                           T_LYMPHOCYTE_SHOP.width / BACTERIA_COLORS.length, 
+                           2*10*0.9, this.color))
             
         }
     }
@@ -451,15 +450,16 @@ class THelper extends ImmuneCell {
         const ROWS = 4;
         const COLS = 12;
 
-        const gridCellWidth = Math.floor(fieldWidth / COLS);
-        const gridCellHeight = Math.floor((playableFieldHeight) / ROWS);
+        const gridCellWidth = Math.floor(playableFieldWidth / COLS);
+        const gridCellHeight = Math.floor(playableFieldHeight / ROWS);
         
         const col = Math.floor(randomUniform(0, COLS));
         const row = Math.floor(randomUniform(0, ROWS));
 
-        var place = [col * gridCellWidth + randomUniform(-10, 10), playableFieldStart + row * gridCellHeight + randomUniform(-10, 10)];
-        place[0] = clip(place[0], this.radius, fieldWidth - this.radius);
-        place[1] = clip(place[1], playableFieldStart + this.radius, playableFieldHeight - this.radius);
+        var place = [playableFieldX + col * gridCellWidth + randomUniform(-10, 10), 
+                     playableFieldY + playableFieldHeight + row * gridCellHeight + randomUniform(-10, 10)];
+        place[0] = clip(place[0], playableFieldX + this.radius, playableFieldX+playableFieldWidth - this.radius);
+        place[1] = clip(place[1], playableFieldY + this.radius, playableFieldY + playableFieldHeight - this.radius);
 
         return place;
     }

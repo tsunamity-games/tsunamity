@@ -3,13 +3,70 @@ const field = document.getElementById("field");
 var ctx = field.getContext("2d");
 const fieldWidth = field.width;
 const fieldHeight = field.height;
-const shopHeight = 200;
-const shopWidth = 116;
-const buttonWidth = 34;
-const buttonHeight = 34;
-const offset = 5;
+
+// Playable field
+const playableFieldX = 0.0208*fieldWidth;
+const playableFieldY = 0.4*fieldHeight;
+const playableFieldHeight = 0.533*fieldHeight;
+const playableFieldWidth = 0.86*fieldWidth;
+const playableFieldBorderColor = "#422D0D"
+const tissueCellsLeftOffset = 0.007263922*playableFieldWidth;
+const tissueCellsUpOffset = 0.017452*playableFieldHeight;
+
+// Right menu
+const rightMenuColor = "#2C363E";
+const rightMenuX = 0.9*fieldWidth;
+const rightMenuWidth = 0.076388*fieldWidth;
+
+// Antibiotics & vaccines
+const buttonWidth = 0.02777*fieldHeight;
+const buttonHeight = 0.02777*fieldHeight;
+const antibioticsX = rightMenuX + rightMenuWidth/2 - buttonWidth/2;
+const topAntibioticY =  0.424*fieldHeight;
+const spaceBetweenAntibioticButtons = 0.01667*fieldHeight;
+const topVaccineY = 0.6842*fieldHeight;
+
+// Spleen
+const spleenTrunkX = 0.706*fieldWidth;
+const spleenTrunkWidth = 0.1743*fieldWidth;
+const bloodColor = "#CF0000";
+const spleenX = 0.734*fieldWidth;
+const spleenY = 0.1389*fieldHeight;
+const spleenSize = 0.11944*fieldWidth;
+const spleenColor = "#E78080"
+
+// Shops
+const shopY =  0.172*fieldHeight;
+const shopWidth =  0.085417*fieldWidth;
+const shopHeight = 0.16*fieldHeight;
+const spaceBetweenShops = 0.0125*fieldWidth;
 const BACTERIA_COLORS = ["blue", "green", "yellow", "orange"];
-const xLeftOffset = 145;
+const xLeftOffset = playableFieldX;
+
+// Top menu
+const topMenuColor = "#142029";
+const topMenuHeight = fieldHeight*0.075;
+const lifesSize = topMenuHeight*0.6;
+
+const wavesBackColor = "#009EEB";
+const wavesFillingColor = "#01567F";
+const wavesFillingOpacity = 0.6;
+const wavesRectangleX = fieldWidth*0.11875;
+const wavesRectangleY = topMenuHeight*0.25;
+const wavesRectangleWidth = fieldWidth*0.0970;
+const wavesRectangleHeight = topMenuHeight*0.5;
+
+const moneyRectangleColor = "#E6BE4A";
+const moneyRectangleX = 0.35*fieldWidth;
+const moneyRectangleY = wavesRectangleY;
+const moneyRectangleWidth = wavesRectangleWidth;
+const moneyRectangleHeight = wavesRectangleHeight;
+
+
+
+// fieldwidth = 1440 
+// fieldheight = 1068
+
 
 // Animation parameters
 const N_ANIMATION_FRAMES = 5;
@@ -60,8 +117,11 @@ HELMINTH_IMAGE.src = "./images/helminth.png";
 const BONE_MARROW_IMAGE = new Image();
 BONE_MARROW_IMAGE.src = "./images/bone_marrow.png";
 
-const CELL_IMAGE = new Image();
-CELL_IMAGE.src = "./images/cell.png";
+const CELL_IMAGES = [new Image(), new Image(), new Image(), new Image()];
+for (var i=1; i < CELL_IMAGES.length+1; i++){
+    CELL_IMAGES[i-1].src = "./images/Cell" + i + ".png";
+    //CELL_IMAGES[i-1].src = "./cell.png";
+}
 
 const VIRUS_IMAGE = new Image();
 VIRUS_IMAGE.src = "./images/virus.png";
@@ -69,14 +129,23 @@ VIRUS_IMAGE.src = "./images/virus.png";
 const HIV_IMAGE = new Image();
 HIV_IMAGE.src = "./images/HIV_texture.png";
 
+const LIFES_IMAGE = new Image();
+LIFES_IMAGE.src = "./images/lifes.png";
+
+const MONEY_IMAGE = new Image();
+MONEY_IMAGE.src = "./images/sugar.svg";
+
+
+
 // Host cell parameters
 //      Tissue cells
-const tissueCellSize = 30;
-const spaceBetweenTissueCells = 5;
+const tissueCellSize = 0.0282558*playableFieldWidth;
+const nTissueCellRows = 15;
+const nTissueCellColumns = 33;
+const spaceBetweenTissueCellsHorizontal = 0.00139*fieldWidth;
+const spaceBetweenTissueCellsVertical = 0.003472*playableFieldHeight;
 var EdgeCellX;
-const nTissueCellRows = 14;
-const playableFieldStart = shopHeight + offset;
-const playableFieldHeight = playableFieldStart + nTissueCellRows*(tissueCellSize + spaceBetweenTissueCells)-spaceBetweenTissueCells;
+
 const TISSUE_CELL_COLOR = "#facdf3";
 const cancerMutationsThreshold = 50;
 const mutationProbability = 0.05;
@@ -87,19 +156,19 @@ const tissueCellDeathRate = 0.000001;
 const NK_PRICE = 150;
 const T_LYMPHOCYTE_PRICE = 300;
 const B_LYMPHOCYTE_PRICE = 200;
-const T_HELPER_PRICE = 200;
+const T_HELPER_PRICE = 500;
 const NEUTROPHIL_PRICE = 100;
 const MACROPHAGE_PRICE = 100;
 const EOSINOPHILE_PRICE = 50;
 
-const EOSINOPHILES_DAMAGE = 0.1;
+const EOSINOPHILES_DAMAGE = 0.01;
 
-const HELPER_DISCOUNT_RATE = 0.9;
+const HELPER_DISCOUNT_RATE = 1;
 const HELPER_DAMAGE_INCREASE = 1.1;
 const HELPER_BUYING_COOLDOWN = 30000;
 
 BASE_IMMUNITY_CELL_LONGEVITY = 40000;
-
+const HIV_LONGEVITY = 10000;
 
 
 //      Lymphocytes
@@ -150,7 +219,8 @@ var ANTIBIOTIC_COURSE_LENGTH = 4;
 var BACTERIUM_PRICE = 1; 
 var VIRUS_PRICE = 50;
 var HELMINT_PRICE = 100;
-var ENEMY_PROB_DIST = [1/BACTERIUM_PRICE, 1/VIRUS_PRICE, 1/HELMINT_PRICE];
+var HIV_PRICE = 10;
+var ENEMY_PROB_DIST = [1/BACTERIUM_PRICE, 1/VIRUS_PRICE, 1/HELMINT_PRICE, 0/HIV_PRICE];
 var MIN_HELMINT_LENGTH = 3;
 var MAX_HELMINT_LENGTH = 20;
 var HELMINT_WIDTH_MIN_LENGTH_MULTIPLIER = 3;

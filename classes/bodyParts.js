@@ -3,8 +3,8 @@ class BodyPart {
         this.texture = texture;
         this.x = x;
         this.y = y;
-        this.height = height;
         this.width = width;
+        this.height = height;
     }
     
     draw() {
@@ -22,7 +22,10 @@ class BodyPart {
 }
 class Shop extends BodyPart {  
     constructor(x, y, cellType, price, enemyTexture, cellTexture, isEnemyAnimated, isCellAnimated) {
-        super(BONE_MARROW_IMAGE, x, y, shopWidth, shopHeight - 2 * offset);
+        super(BONE_MARROW_IMAGE, 
+              x, y, 
+              shopWidth, 
+              shopHeight);
         this.cellType = cellType;
         this.price = price;
         this.base_price = price;
@@ -100,35 +103,35 @@ class SpleenSection{
     constructor(x, y, size){
         this.x = x + size/2;
         this.y = y + size/2;
-        this.size = size; // width = height = size
+        this.size = size*0.5; // width = height = size
         this.antigen = null;
         this.texture = BONE_MARROW_IMAGE;
     }
     
     draw(){
-        ctx.drawImage(
-            this.texture, 0, 0, STATIC_IMAGE_WIDTH, STATIC_IMAGE_HEIGHT,
-            this.x - this.size / 2,
-            this.y - this.size / 2,
-            this.size,
-            this.size)
+        ctx.fillStyle = "white";
+        ctx.fillRect(this.x - this.size/2, this.y-this.size/2, this.size, this.size);
     }
 }   
 class Spleen extends BodyPart{
-    constructor(color, x, y, width, height, nSections){
-        super(color, x, y, width, height);
+    constructor(x, y, width, height, nSections){
+        super(null, x, y, width, height);
         this.sections = [];
         var sectionSize = this.width/((nSections - 4)/4 + 2);
         for (var i = 0; i < this.width/sectionSize; i ++){
             for (var j = 0; j < this.width/sectionSize; j ++){
                 if (i === 0 || j === 0 || i === this.width/sectionSize-1 || j === this.width/sectionSize-1){
-                    this.sections.push(new SpleenSection(this.x + i*sectionSize, this.y+j*sectionSize, this.width/((nSections - 4)/4 + 2)));
+                    this.sections.push(new SpleenSection(
+                        this.x + i*sectionSize, 
+                        this.y+j*sectionSize, 
+                        this.width/((nSections - 4)/4 + 2)));
                 }
             }    
         }
     }
     draw(){
-        super.draw();
+        ctx.fillStyle = spleenColor;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
         this.sections.forEach((section) => section.draw());
     }
 }
@@ -139,7 +142,7 @@ class TissueCell{
         this.size = size;
         this.infection = [];
         this.health = 100;
-        this.texture = CELL_IMAGE;
+        this.texture = randomChoice(CELL_IMAGES);
         this.vaccine = null;
         this.nMutations;
         if (ancestor === null){
@@ -154,9 +157,9 @@ class TissueCell{
     
     draw(){
         if (this.size < tissueCellSize){this.size = Math.min(this.size + 0.05, tissueCellSize)};
-        
+            
         ctx.drawImage(
-            this.texture, 0, 0, STATIC_IMAGE_WIDTH, STATIC_IMAGE_HEIGHT,
+            this.texture, 0, 0, 34, 34,
             this.x + (tissueCellSize - this.size) / 2,
             this.y + (tissueCellSize - this.size) / 2,
             this.size,

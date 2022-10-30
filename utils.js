@@ -78,6 +78,30 @@ function star(cx, cy, nSpikes, outerRadius, innerRadius, color){
       ctx.fillStyle=color;
       ctx.fill();
     }
+function roundRect(ctx, x, y, width, height, leftRadius, rightRadius, fill = false, stroke = true) {
+      if (typeof leftRadius === 'number') {
+        radius = {tl: leftRadius, tr: rightRadius, br: rightRadius, bl: leftRadius};
+      } else {
+        radius = {...{tl: 0, tr: 0, br: 0, bl: 0}, ...radius};
+      }
+      ctx.beginPath();
+      ctx.moveTo(x + radius.tl, y);
+      ctx.lineTo(x + width - radius.tr, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+      ctx.lineTo(x + width, y + height - radius.br);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+      ctx.lineTo(x + radius.bl, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+      ctx.lineTo(x, y + radius.tl);
+      ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+      ctx.closePath();
+      if (fill) {
+        ctx.fill();
+      }
+      if (stroke) {
+        ctx.stroke();
+      }
+    }
 
 //--------OTHER SUPPORT----------
 function clip(x, min, max) {
@@ -132,5 +156,5 @@ function doCirclesIntersect(x1, y1, r1, x2, y2, r2) {
     return (centersDistance <= Math.pow(r1 + r2, 2));
 }
 function tissueCellsDistance(c1, c2){
-    return (Math.abs(c1.x - c2.x) + Math.abs(c1.y-c2.y))/(tissueCellSize + spaceBetweenTissueCells);
+    return (Math.abs(c1.x - c2.x) + Math.abs(c1.y-c2.y))/(tissueCellSize + spaceBetweenTissueCellsHorizontal);
 }

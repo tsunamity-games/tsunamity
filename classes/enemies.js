@@ -4,7 +4,7 @@ class Virus{
         this.doublingTime = doublingTime;
         this.timeToDouble = 0;
         if (host === null){
-            this.host = randomChoice(tissueCells.filter(function isOnEdge(cell){return cell.x === offset;}));} 
+            this.host = randomChoice(tissueCells.filter(function isOnEdge(cell){return cell.x === playableFieldX+tissueCellsLeftOffset;}));} 
         else {
             this.host = host;
         }
@@ -62,12 +62,12 @@ class Bacterium extends MovingObject {
         super.move();
 
         // If a bacterium went through the right wall, you lose a point
-        if (this.x > fieldWidth) {
+        if (this.x > playableFieldX+playableFieldWidth) {
              --livesLeft; 
         };
       
         if (this.mode === "enemy"){
-            this.y = clip(this.y, playableFieldStart + this.radius, playableFieldHeight - this.radius);            
+            this.y = clip(this.y, playableFieldY + this.radius, playableFieldY+playableFieldHeight - this.radius);            
         }
     }
 
@@ -146,9 +146,9 @@ class Helmint {
             var segment = this.parts.pop();
             if (this.parts.length > 0){
                 var newY = this.parts[0].y + randomUniform(-this.overlay, this.overlay);
-                newY = clip(newY, playableFieldStart + this.width/2, playableFieldHeight-this.width/2);
+                newY = clip(newY, playableFieldY + this.width/2, playableFieldY + playableFieldHeight-this.width/2);
                 var newX = this.parts[0].x + Math.sqrt(Math.pow(this.overlay, 2) -  Math.pow(this.parts[0].y-newY, 2));
-                if (newX > fieldWidth){
+                if (newX > playableFieldX+playableFieldWidth){
                     livesLeft--;
                 } else {
                     segment.x = newX;
@@ -215,8 +215,8 @@ class IntracellularPathogen extends MovingObject {
             this.y = this.target.y + randomUniform(-3, 3);
         }
         
-        this.x = clip(this.x, this.radius, fieldWidth - this.radius)
-        this.y = clip(this.y, playableFieldStart + this.radius, fieldHeight - this.radius)
+        this.x = clip(this.x, this.radius, playableFieldX + playableFieldWidth - this.radius)
+        this.y = clip(this.y, playableFieldY + this.radius, playableFieldY + playableFieldHeight - this.radius)
 
     }
 
@@ -229,8 +229,9 @@ class IntracellularPathogen extends MovingObject {
 
 class HIV extends IntracellularPathogen {
     constructor(texture, x, y) {
-        var radius = 1;
+        var radius = 3;
         super(texture, x, y, radius, [TLymphocyte, Macrophage, THelper]);
+        this.age = 0;
     }
 
     act() {
@@ -249,6 +250,8 @@ class HIV extends IntracellularPathogen {
             if(this.target.age > this.target.longevity) {
                 this.target = null;
             }
+        } else {
+            this.age++;
         }
     }
 }
