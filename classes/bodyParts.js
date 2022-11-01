@@ -21,7 +21,7 @@ class BodyPart {
     }
 }
 class Shop extends BodyPart {  
-    constructor(x, y, cellType, price, enemyTexture, cellTexture, isEnemyAnimated, isCellAnimated, color) {
+    constructor(x, y, cellType, price, cellTexture, isEnemyAnimated, isCellAnimated, color) {
         super(ShopColors[color]["scrollImage"], 
               x, y, 
               shopWidth, 
@@ -31,7 +31,6 @@ class Shop extends BodyPart {
         this.price = price;
         this.base_price = price;
         
-        this.enemyTexture = enemyTexture;
         this.cellTexture = cellTexture;
         this.isEnemyAnimated = isEnemyAnimated;
         this.isCellAnimated = isCellAnimated;
@@ -68,15 +67,7 @@ class Shop extends BodyPart {
         ctx.font = "bold " + this.width/9 + "px Courier";
         ctx.textAlign = "center";
         ctx.fillText(this.cellType.name, this.x + this.width / 2, this.y + this.height/8);
-        
-//        ctx.font = this.width/11 + "px Courier";
-//        ctx.textAlign = "center";
-//        ctx.fillText("Produces", this.x + this.width/4, this.y + 3*this.height/10);
-//
-//        const targetText = this.cellType == THelper ? "Buys" : "Kills";
-//
-//        ctx.fillText(targetText, this.x + 3*this.width/4, this.y + 3*this.height/10);
-//
+ 
         ctx.drawImage(
             this.cellTexture, 0, 0,
             this.isCellAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
@@ -85,16 +76,7 @@ class Shop extends BodyPart {
             this.y + this.height/2 - 4.5/2*this.height/10,
             6*this.width/10,
             9/2*this.height/10)
-//        
-//            
-//        ctx.drawImage(
-//            this.enemyTexture, 0, 0,
-//            this.isEnemyAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
-//            this.isEnemyAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
-//            this.x + 3*this.width/4 - 3*this.width/10/2,
-//            this.y + 4.5*this.height/10,
-//            3*this.width/10,
-//            9/4*this.height/10)
+
         
         ctx.drawImage(ShopColors[this.color]["minimoneyImage"],
                       this.x + 2 * this.width / 10,

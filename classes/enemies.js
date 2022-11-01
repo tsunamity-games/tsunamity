@@ -54,7 +54,7 @@ class Bacterium extends MovingObject {
         this.health = maxHealth;
         this.mode = "enemy";
         this.spleenSection;
-        this.baseSpeed = 0.2;
+        this.baseSpeed = BACTERIUM_BASE_SPEED;
     }
 
 

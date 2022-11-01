@@ -248,12 +248,9 @@ const HIV_DAMAGE = 0.05;
 //      Bacteria
 const bacteriaRadius = 8;
 var starting_nBacteria = 30;
+const BACTERIUM_BASE_SPEED = 0.2*0.86;
 
 const BACTERIA_BASE_HEALTH = 100;
-BACTERIA_HEALTH_INCREASE = 20;
-BACTERIA_PRICE_INCREASE = 5;
-BACTERIA_NUMBER_INCREASE = 10;
-
 var BASE_BACTERIAL_HEALTH = 100;
 
 // Antibodies
@@ -265,7 +262,7 @@ ANTIBODY_SLOWING_COEFFICIENT = 0.5;
 // Game parameters
 var livesLeft = 10;
 var STARTING_MONEY = 0;
-var basePrice = 0.1;
+var baseIncome = 0.1;
 var chanceToGetAntigen = 0.01;
 var garbagePileSlowingCoefficient = 0.4;
 var nVaccinate = 30;

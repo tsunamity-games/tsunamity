@@ -135,7 +135,7 @@ class ImmuneCell extends MovingObject {
         else{
             super.move();
         }
-        this.x = clip(this.x, this.radius, fieldWidth - this.radius);
+        this.x = clip(this.x, playableFieldX+this.radius, playableFieldX + playableFieldWidth - this.radius);
     }
     live(){
         if (this.y > playableFieldY){
@@ -202,7 +202,7 @@ class Eosinophile extends ImmuneCell {
 
                 
                 // Move to the random target
-                if (this.target == null || this.target.helmint.health <= 0 || this.target.x > fieldWidth)  
+                if (this.target == null || this.target.helmint.health <= 0 || this.target.x > playableFieldX+playableFieldWidth)  
                 {
                     targetsList = randomChoice(targetsList).parts;
                     this.target = findTarget(this.x, this.y, 
@@ -273,6 +273,7 @@ class BLymphocyte extends ImmuneCell {
             this.mode = "plasmatic";
             this.damage = 0;
             this.upgradePrice = 300;
+            this.target = null;
         } else if (this.mode === "plasmatic"){
             this.mode = "memory";
             this.longevity = BASE_IMMUNITY_CELL_LONGEVITY*4;
@@ -394,12 +395,14 @@ class TLymphocyte extends ImmuneCell {
             
             let pocketX = T_LYMPHOCYTE_SHOP.x + BACTERIA_COLORS.indexOf(this.color) * T_LYMPHOCYTE_SHOP.width / BACTERIA_COLORS.length;
             T_LYMPHOCYTE_SHOP.pockets.push(
-                new Pocket(T_LYMPHOCYTE_SHOP, pocketX, 
+                new Pocket(T_LYMPHOCYTE_SHOP, 
+                           pocketX, 
                            shopY + T_LYMPHOCYTE_SHOP.height + 10, 
                            T_LYMPHOCYTE_SHOP.width / BACTERIA_COLORS.length, 
-                           2*10*0.9, this.color))
+                           2*10*0.9, this.color));
             
         }
+
     }
     
     move() {
