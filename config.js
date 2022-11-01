@@ -1,8 +1,14 @@
 // Field parameters
 const field = document.getElementById("field");
 var ctx = field.getContext("2d");
+
+const WIDTH_HEIGHT_RATIO = 1440 / 1068;
+ctx.width = Math.round(field.width * WIDTH_HEIGHT_RATIO);
+
 const fieldWidth = field.width;
 const fieldHeight = field.height;
+
+
 
 // Playable field
 const playableFieldX = 0.0208*fieldWidth;
