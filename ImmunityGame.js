@@ -429,8 +429,11 @@ function setupGame(){
 
 // Gameplay
 $("#field").click(function(event){
-    x = event.pageX - field.offsetLeft;
-    y = event.pageY - field.offsetTop;
+    const WIDTH_RATIO = fieldWidth / $("#field").width();
+    const HEIGHT_RATIO = fieldHeight / $("#field").height();
+
+    x = WIDTH_RATIO * (event.pageX - field.offsetLeft);
+    y = HEIGHT_RATIO * (event.pageY - field.offsetTop);
 
     // If any of the shops clicked, try to buy cell;
     shops.forEach((shop) => {
