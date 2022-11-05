@@ -224,7 +224,8 @@ function printGameInfo(){
     ctx.fillText("Money: "+ Math.floor(money), offset, offset+20);
     ctx.fillText("Lives: "+ livesLeft, offset, offset+40);
     reset.draw();
-            }
+}
+
 function stopGame(why){
     ctx.fillStyle = "Black";
     ctx.textAlign = "center";
@@ -247,6 +248,7 @@ function stopGame(why){
     }
     ctx.globalAlpha = 1;
 }
+
 function checkAntibiotics(){
     buttons.filter((button) => button instanceof Antibiotic).forEach((anti) => {
         if ((anti.lastWave != null) && this.wave > anti.lastWave + 1){
@@ -285,6 +287,7 @@ function formNewWave(waveNumber, oldBac, oldVir, oldHel, oldHIV){
     }
     return [newBac, newVir, newHel, newHIV];
 }
+
 function chooseEnemy(bacList, virList, helList, hivList, coins, waveNumber){
     var candidates = [Bacterium];
     if (waveNumber > 3){
