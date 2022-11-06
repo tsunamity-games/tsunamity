@@ -95,6 +95,9 @@ const ANIMATED_IMAGE_HEIGHT = 80;
 const STATIC_IMAGE_WIDTH = 200;
 const STATIC_IMAGE_HEIGHT = 200;
 
+const SCROLL_IMAGE = new Image();
+SCROLL_IMAGE.src = "./images/scroll.png";
+
 const LYMPHOCYTES_IMAGES = new Map();  // Map from color to image of lymphocytes
 const BACTERIA_IMAGES = new Map();  // Map from color to image of bacteria
 

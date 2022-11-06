@@ -233,10 +233,14 @@ function stopGame(why){
     ctx.fillStyle = "Black";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "lightgreen";
-    ctx.globalAlpha = 0.01;
-    ctx.fillRect(fieldWidth*0.35, fieldHeight*0.3, fieldWidth*0.3, fieldHeight*0.63);
-    ctx.globalAlpha = 1;
+
+    ctx.drawImage(
+        SCROLL_IMAGE, 
+        fieldWidth*0.35, 
+        fieldHeight*0.3, 
+        fieldWidth*0.3, 
+        fieldHeight*0.63);
+
     ctx.fillStyle = "black";
     if (why == "Game Over"){
         ctx.font = "40px Courier";
