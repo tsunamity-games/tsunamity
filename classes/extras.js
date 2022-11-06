@@ -1,20 +1,39 @@
 class Button extends BodyPart {
-    constructor(color, x, y, width, height, text) {
+    constructor(color, x, y, width, height, text, isCircle=true) {
         super("", x, y, width, height);
         this.color = color;
         this.text = text;
+        this.isCircle = isCircle;
     }
     
     draw(){
         ctx.fillStyle = this.color;
-        ctx.globalAlpha = 0.1;
-        circle(this.x+this.width/2, this.y+this.height/2, this.width/2, true);
+        ctx.globalAlpha = 0.5;
+
+        if(this.isCircle) {
+            circle(this.x+this.width/2, this.y+this.height/2, this.width/2, true);
+        }
+        else {
+            ctx.fillRect(this.x, this.y, this.width, this.height);   
+            ctx.strokeStyle = "white";
+            ctx.globalAlpha = 1;
+            ctx.strokeRect(this.x, this.y, this.width, this.height)
+        }
+        
         ctx.globalAlpha = 1;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillStyle = "black";
-        ctx.font = this.width*0.7 + "px Courier"
-        circle(this.x+this.width/2, this.y+this.height/2, this.width/2, false);
+
+        if(this.isCircle) {
+            circle(this.x+this.width/2, this.y+this.height/2, this.width/2, false);
+            ctx.fillStyle = "black";
+            ctx.font = this.height * 0.7 + "px Courier"
+        }
+        else {
+            ctx.fillStyle = "white";
+            ctx.font = this.height * 0.4 + "px Courier"
+        }
+        
         ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
     }
     

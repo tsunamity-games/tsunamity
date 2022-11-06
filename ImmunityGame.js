@@ -166,7 +166,7 @@ function drawField(){
     ctx.fillText("Other", (595/1440)*fieldWidth, (120/1080)*fieldHeight)
     
     reset.draw();
-    
+    toMainMenu.draw();  
 }
 
 //-----GAME SETUP FUNCTIONS------
@@ -181,6 +181,7 @@ function addTissueCells(tissueCellsList){
     EdgeCellX = x;
     return tissueCellsList;
 }
+
 function addBacteria(bacteriaList, n, maxHealth, price){
     for (var i=0; i<n; i++){
         var y = randomUniform(playableFieldY, playableFieldHeight); 
@@ -189,13 +190,14 @@ function addBacteria(bacteriaList, n, maxHealth, price){
         bacteriaList.push(new Bacterium(color, x, y, bacteriaRadius, maxHealth));
     };
     return bacteriaList;
-}       
+}
 function addViruses(virusesList, n, color, doublingTime){
     for (var i=0; i < n; i++){
         virusesList.push(new Virus(randomChoice(BACTERIA_COLORS), doublingTime, null))
     }
     return virusesList;
 }
+
 function drawBlood(){
     var pointsBranch1 = 
         [[369, 378], [418, 346], [491, 333], [567, 313], [638, 260], [702, 193], 
@@ -215,6 +217,7 @@ function drawBlood(){
     
     ctx.stroke();
 }
+
 function printGameInfo(){
     ctx.fillStyle = "Black";
     ctx.textBaseline = "top";
@@ -257,6 +260,7 @@ function checkAntibiotics(){
     }
     );
 }
+
 function formNewWave(waveNumber, oldBac, oldVir, oldHel, oldHIV){
     var newBac = oldBac;
     var newVir = oldVir;
@@ -372,25 +376,37 @@ var pauseTrue;
 var historyObject;
 var reset;
 var fullWaveSize;
-      
+
+var gameState = "menu";
+
+const MENU_BUTTONS = [
+    new Button(MAIN_MENU_RIGHT_PANEL_COLOR, MAIN_MENU_BUTTONS_X, MAIN_MENU_BUTTONS_Y,
+           MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, "Start game", isCircle=false),
+    new Button(MAIN_MENU_RIGHT_PANEL_COLOR, MAIN_MENU_BUTTONS_X, MAIN_MENU_BUTTONS_Y + MAIN_MENU_BUTTONS_HEIGHT + SPACE_BETWEEN_MAIN_MENU_BUTTONS,
+           MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, "Tutorial", isCircle=false),
+    new Button(MAIN_MENU_RIGHT_PANEL_COLOR, MAIN_MENU_BUTTONS_X, MAIN_MENU_BUTTONS_Y + 2 * (MAIN_MENU_BUTTONS_HEIGHT + SPACE_BETWEEN_MAIN_MENU_BUTTONS),
+           MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, "Settings", isCircle=false),
+]
+
 const T_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + shopWidth + spaceBetweenShops, shopY, TLymphocyte, T_LYMPHOCYTE_PRICE, T_LYMPHOCYTES_IMAGE, false, true, "yellow");
 const B_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + 3 * shopWidth + 3 * spaceBetweenShops, shopY, BLymphocyte, B_LYMPHOCYTE_PRICE, LYMPHOCYTES_IMAGES.get("green"), true, true, "green");
+
+shops = [
+    new Shop(xLeftOffset, shopY, NaturalKiller, 150, T_LYMPHOCYTES_IMAGE, true, true, "yellow"),
+    T_LYMPHOCYTE_SHOP,
+    new Shop(xLeftOffset + 2 * shopWidth + 2 * spaceBetweenShops, shopY, Neutrophil, 100, NEUTROPHILS_IMAGE, true, true, "green"),
+    B_LYMPHOCYTE_SHOP,
+    new Shop(xLeftOffset + 4 * shopWidth + 4 * spaceBetweenShops, 
+             shopY, THelper, T_HELPER_PRICE, T_LYMPHOCYTES_IMAGE, true, true, "blue"),
+
+    new Shop(xLeftOffset + 6 * shopWidth + 6 * spaceBetweenShops, shopY, Macrophage, 300, MACROPHAGES_IMAGE, true, true, "blue"),
+    new Shop(xLeftOffset + 5 * shopWidth + 5 * spaceBetweenShops, shopY, Eosinophile, 50, EOSINOPHILES_IMAGE, true, true, "blue")
+    
+];
       
 function setupGame(){
     immunityCells = [];
     antibodies = [];
-    shops = [
-        new Shop(xLeftOffset, shopY, NaturalKiller, 150, T_LYMPHOCYTES_IMAGE, true, true, "yellow"),
-        T_LYMPHOCYTE_SHOP,
-        new Shop(xLeftOffset + 2 * shopWidth + 2 * spaceBetweenShops, shopY, Neutrophil, 100, NEUTROPHILS_IMAGE, true, true, "green"),
-        B_LYMPHOCYTE_SHOP,
-        new Shop(xLeftOffset + 4 * shopWidth + 4 * spaceBetweenShops, 
-                 shopY, THelper, T_HELPER_PRICE, T_LYMPHOCYTES_IMAGE, true, true, "blue"),
-
-        new Shop(xLeftOffset + 6 * shopWidth + 6 * spaceBetweenShops, shopY, Macrophage, 300, MACROPHAGES_IMAGE, true, true, "blue"),
-        new Shop(xLeftOffset + 5 * shopWidth + 5 * spaceBetweenShops, shopY, Eosinophile, 50, EOSINOPHILES_IMAGE, true, true, "blue")
-        
-    ];
     buttons = [];
     for (var i = 0; i < BACTERIA_COLORS.length; i++){
         buttons.push(
@@ -425,7 +441,8 @@ function setupGame(){
     gameOverTrue = false;  
     pauseTrue = false;
     historyObject = new GameHistory();
-    reset = new ResetButton("red", rightMenuX+rightMenuWidth/2-30, 5, 60, 60, "R");
+    reset = new ResetButton("red", rightMenuX+rightMenuWidth/2 - 120, 10, 60, 60, "R");
+    toMainMenu = new Button("white", rightMenuX+rightMenuWidth/2 - 30, 10, 60, 60, "Q");
     livesLeft = 10;
     money = STARTING_MONEY;
 }
@@ -438,50 +455,68 @@ $("#field").click(function(event){
     x = WIDTH_RATIO * (event.pageX - field.offsetLeft);
     y = HEIGHT_RATIO * (event.pageY - field.offsetTop);
 
-    // If any of the shops clicked, try to buy cell;
-    shops.forEach((shop) => {
-        if(shop.isIntersected(x, y)) {
-            shop.buy();
-        }
-        shop.pockets.forEach((pocket) => {
-            if(pocket.isIntersected(x, y)) {
-                pocket.buy();
-            }
-        })
-    })
-    
-    // If any of the buttons are clicked, do their thing
-    buttons.forEach((button)=>{
-        if (button.isIntersected(x, y)){
-            button.activate();
-        }
-    })
-    
-    // If B or T-lymphocyte is clicked, suggest upgrade
-    try{immunityCells.forEach((cell) => {
-        if ((cell instanceof BLymphocyte || cell instanceof TLymphocyte) && cell.mode != "memory"){
-            if (cell.label.active && cell.label.isIntersected(x, y) && money >= cell.upgradePrice && cell.label.upgradeAvailable){
-                money -= cell.upgradePrice;
-                cell.upgrade();
-                throw 'Break';
+    switch(gameState) {
+        case "game":
+            // If any of the shops clicked, try to buy cell;
+            shops.forEach((shop) => {
+                if(shop.isIntersected(x, y)) {
+                    shop.buy();
+                }
+                shop.pockets.forEach((pocket) => {
+                    if(pocket.isIntersected(x, y)) {
+                        pocket.buy();
+                    }
+                })
+            })
+            
+            // If any of the buttons are clicked, do their thing
+            buttons.forEach((button)=>{
+                if (button.isIntersected(x, y)){
+                    button.activate();
+                }
+            })
+            
+            // If B or T-lymphocyte is clicked, suggest upgrade
+            try{immunityCells.forEach((cell) => {
+                if ((cell instanceof BLymphocyte || cell instanceof TLymphocyte) && cell.mode != "memory"){
+                    if (cell.label.active && cell.label.isIntersected(x, y) && money >= cell.upgradePrice && cell.label.upgradeAvailable){
+                        money -= cell.upgradePrice;
+                        cell.upgrade();
+                        throw 'Break';
 
-            }
-            else if (cell.isIntersected(x, y) && cell.mode != "memory"){
-                cell.label.active = true;     
-                throw 'Break';
+                    }
+                    else if (cell.isIntersected(x, y) && cell.mode != "memory"){
+                        cell.label.active = true;     
+                        throw 'Break';
 
-            } else {
-                cell.label.active = false;
+                    } else {
+                        cell.label.active = false;
+                    }
+                }
+            })} catch (e) {
+                if (e !== 'Break') 
+                    throw e;
             }
-        }
-    })} catch (e) {
-        if (e !== 'Break') 
-            throw e;
+            
+            if (reset.isIntersected(x, y)){
+                reset.resetGame();
+            }
+
+            if(toMainMenu.isIntersected(x, y)) {
+                gameState = "menu";
+            }
+            break;
+        case "menu":
+            if(MENU_BUTTONS[0].isIntersected(x, y)) {
+                gameStart = true;
+                setupGame();
+                gameState = "game";
+            }
+            break;
+        case "tutorial":
+            break;
     }
     
-    if (reset.isIntersected(x, y)){
-        reset.resetGame();
-    }
     
 });
 
@@ -504,6 +539,7 @@ var keyActions = {
     27: "pause",
     85: "upgrade"
 };
+
 $("body").keydown(function(event){
     var action = keyActions[event.keyCode];
     if (action != undefined){
@@ -521,9 +557,11 @@ $("body").keydown(function(event){
             })
     }       
     }      
-            });
+});
+
 gameStart = true;
-var game = setInterval(function(){
+
+function playGame() {
     if (gameStart){
         setupGame();
         gameStart = false;
@@ -553,6 +591,7 @@ var game = setInterval(function(){
     
     spleen.draw();
     var nextTurnTissueCells = [];
+
     tissueCells.forEach((cell) => {
         if(cell.health > 0 && randomUniform(0, 1) > tissueCellDeathRate) {
             cell.draw()
@@ -570,6 +609,7 @@ var game = setInterval(function(){
             viruses = viruses.filter((virus) => virus.host != cell);
         }
     })
+
     tissueCells = nextTurnTissueCells;
     garbagePiles.forEach((pile) => {pile.draw()})
     garbagePiles = garbagePiles.filter((pile) => pile.health > 0);
@@ -703,6 +743,47 @@ var game = setInterval(function(){
     if (livesLeft <= 0){
         gameOverTrue=true;
     };
+    }
+}
+
+function drawMenu() {
+    // Top panel
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, fieldWidth, 80);
+
+    // Left panel
+    ctx.fillStyle = MAIN_MENU_LEFT_PANEL_COLOR;
+    ctx.fillRect(0, 80, 884, fieldHeight - 80);
+
+    // Right panel
+    ctx.fillStyle = MAIN_MENU_RIGHT_PANEL_COLOR;
+    ctx.fillRect(884, 80, fieldWidth - 884, fieldHeight - 80);
+
+    ctx.fillStyle = "white";
+    ctx.font = 20 + "px Courier";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "left";
+
+    for (var i = 0; i < AUTHORS_INFO.length; i++){
+        ctx.fillText(AUTHORS_INFO[i], 884 + 123.5, 966 + (i * 30));
+    }
+
+    MENU_BUTTONS.forEach((button) => {
+        button.draw();
+    })
+
+}
+
+var game = setInterval(function(){
+    switch(gameState) {
+        case "game":
+            playGame();
+            break;
+        case "menu":
+            drawMenu();
+            break;
+        default:
+            break;
     }
 }, 1);
 

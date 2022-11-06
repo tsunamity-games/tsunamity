@@ -70,6 +70,18 @@ const moneyRectangleY = wavesRectangleY;
 const moneyRectangleWidth = wavesRectangleWidth;
 const moneyRectangleHeight = wavesRectangleHeight;
 
+// Main menu
+const MAIN_MENU_RIGHT_PANEL_COLOR = "#828282";
+const MAIN_MENU_LEFT_PANEL_COLOR = "#434343";
+const MAIN_MENU_BUTTONS_X =  1012 / 1440 * fieldWidth;
+const MAIN_MENU_BUTTONS_Y =  0.172 * fieldHeight;
+const MAIN_MENU_BUTTONS_WIDTH = 300 / 1440 * fieldWidth;
+const MAIN_MENU_BUTTONS_HEIGHT = 100 / 1068 * fieldHeight;
+const SPACE_BETWEEN_MAIN_MENU_BUTTONS = 50 / 1068 * fieldHeight;
+
+const AUTHORS_INFO = ["Dmitry Biba & Vladimir Shitov",
+                      "Design by Anastasia Troshina",
+                      "BioMolText 2022"];
 
 
 // fieldwidth = 1440 
