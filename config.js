@@ -191,6 +191,12 @@ var ShopColors = {
         colorCode: "#DC9E00",
         minimoneyImage: YELLOW_MINIMONEY
     },
+    // This one is not displayed, but prevents error when creating orange pocket
+    orange:{
+        scrollImage: YELLOW_SCROLL,
+        colorCode: "#DC9E00",
+        minimoneyImage: YELLOW_MINIMONEY
+    },
 }
 
 
