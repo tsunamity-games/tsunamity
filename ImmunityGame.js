@@ -244,8 +244,9 @@ function stopGame(why){
     ctx.fillStyle = "black";
 
     if(why instanceof Array) {  // Tutorial's text is a list of strings
+        ctx.font = "22px Courier";
         for (var i = 0; i < why.length; i++)
-                ctx.fillText(why[i], fieldWidth/2, fieldHeight/2 + ((i-3)*20));        
+                ctx.fillText(why[i], fieldWidth/2, fieldHeight/2 + ((i-3)*29));        
     } else {
         if (why == "Game Over"){
             ctx.font = "40px Courier";
@@ -387,6 +388,7 @@ var historyObject;
 var reset;
 var fullWaveSize;
 var tutorialState = 0;
+var waitingForClick = false;
 var gameState = "menu";
 
 const MENU_BUTTONS = [
@@ -478,6 +480,8 @@ $("#field").click(function(event){
             }
             
             if(MENU_BUTTONS[1].isIntersected(x, y)) {
+                gameStart = true;
+                setupGame(tutorial=true);
                 gameState = "tutorial";
             }
             break;
@@ -530,6 +534,10 @@ $("#field").click(function(event){
             if(toMainMenu.isIntersected(x, y)) {
                 gameState = "menu";
             }
+
+            if(gameState == "tutorial" && waitingForClick) {
+                tutorialState += 1;
+            }
             break;
     }
     
@@ -577,8 +585,36 @@ $("body").keydown(function(event){
 
 gameStart = true;
 
+handleTutorialState = function(tutorialState) {
+    console.log("Handling state " + tutorialState);
+    switch(tutorialState) {
+        case 0:
+            for(var i=0; i < 5; i++) {
+                playGame(tutorial=true);
+            }
+            tutorialState += 1;
+            break;
+        case 1:
+            text = ["Почувствуй себя", "в роли иммунной системы!", "Защищай организм", "от болезней",
+                    "", "", "Кликни в любое место", "чтобы продолжить"];
+            stopGame(text);
+            waitingForClick = true;
+            break;
+
+        case 2:
+            waitingForClick = false;
+            text = ["Ничоси, работает"];
+            stopGame(text);
+            break;
+        
+    }
+
+    return tutorialState;
+}
+
 function playGame(tutorial=false) {
     if(gameStart){
+        console.log("Setting up game");
         setupGame(tutorial);
         gameStart = false;
     } else if (gameOverTrue){
@@ -799,7 +835,7 @@ var game = setInterval(function(){
             drawMenu();
             break;
         case "tutorial":
-            playGame(tutorial=true);
+            tutorialState = handleTutorialState(tutorialState);
             break;
         default:
             break;
