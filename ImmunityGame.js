@@ -242,18 +242,24 @@ function stopGame(why){
         fieldHeight*0.63);
 
     ctx.fillStyle = "black";
-    if (why == "Game Over"){
-        ctx.font = "40px Courier";
-        ctx.fillText(why, fieldWidth/2, fieldHeight/3);
-        ctx.font = "20px Courier";
-        var lines = historyObject.makeReport().split('\n');
-        for (var i = 0; i < lines.length; i++)
-            ctx.fillText(lines[i], fieldWidth/2, fieldHeight/2 + ((i-3)*20));        
+
+    if(why instanceof Array) {  // Tutorial's text is a list of strings
+        for (var i = 0; i < why.length; i++)
+                ctx.fillText(why[i], fieldWidth/2, fieldHeight/2 + ((i-3)*20));        
     } else {
-        ctx.font = "60px Courier";
-        ctx.fillText(why, fieldWidth/2, fieldHeight/2);
+        if (why == "Game Over"){
+            ctx.font = "40px Courier";
+            ctx.fillText(why, fieldWidth/2, fieldHeight/3);
+            ctx.font = "20px Courier";
+            var lines = historyObject.makeReport().split('\n');
+            for (var i = 0; i < lines.length; i++)
+                ctx.fillText(lines[i], fieldWidth/2, fieldHeight/2 + ((i-3)*20));        
+        } else {
+            ctx.font = "60px Courier";
+            ctx.fillText(why, fieldWidth/2, fieldHeight/2);
+        }
     }
-    ctx.globalAlpha = 1;
+
 }
 
 function checkAntibiotics(){
@@ -380,7 +386,7 @@ var pauseTrue;
 var historyObject;
 var reset;
 var fullWaveSize;
-
+var tutorialState = 0;
 var gameState = "menu";
 
 const MENU_BUTTONS = [
@@ -402,13 +408,12 @@ shops = [
     B_LYMPHOCYTE_SHOP,
     new Shop(xLeftOffset + 4 * shopWidth + 4 * spaceBetweenShops, 
              shopY, THelper, T_HELPER_PRICE, T_LYMPHOCYTES_IMAGE, true, true, "blue"),
-
     new Shop(xLeftOffset + 6 * shopWidth + 6 * spaceBetweenShops, shopY, Macrophage, 300, MACROPHAGES_IMAGE, true, true, "blue"),
     new Shop(xLeftOffset + 5 * shopWidth + 5 * spaceBetweenShops, shopY, Eosinophile, 50, EOSINOPHILES_IMAGE, true, true, "blue")
     
 ];
       
-function setupGame(){
+function setupGame(tutorial=false){
     immunityCells = [];
     antibodies = [];
     buttons = [];
@@ -440,7 +445,12 @@ function setupGame(){
     hiv_particles = [];
     garbagePiles = [];
     wave = 1;
-    [bacteria, viruses, helmintes, hiv_particles] = formNewWave(wave, bacteria, viruses, helmintes, hiv_particles);
+    if(!tutorial) {
+        [bacteria, viruses, helmintes, hiv_particles] = formNewWave(wave, bacteria, viruses, helmintes, hiv_particles);
+    } else {
+        bacteria.push(new Bacterium("blue", 0, fieldHeight / 2, bacteriaRadius, BASE_BACTERIAL_HEALTH, BACTERIUM_PRICE));
+    }
+    
     fullWaveSize = bacteria.length;
     gameOverTrue = false;  
     pauseTrue = false;
@@ -460,7 +470,18 @@ $("#field").click(function(event){
     y = HEIGHT_RATIO * (event.pageY - field.offsetTop);
 
     switch(gameState) {
-        case "game":
+        case "menu":
+            if(MENU_BUTTONS[0].isIntersected(x, y)) {
+                gameStart = true;
+                setupGame();
+                gameState = "game";
+            }
+            
+            if(MENU_BUTTONS[1].isIntersected(x, y)) {
+                gameState = "tutorial";
+            }
+            break;
+        default:  // game and tutorial
             // If any of the shops clicked, try to buy cell;
             shops.forEach((shop) => {
                 if(shop.isIntersected(x, y)) {
@@ -510,15 +531,6 @@ $("#field").click(function(event){
                 gameState = "menu";
             }
             break;
-        case "menu":
-            if(MENU_BUTTONS[0].isIntersected(x, y)) {
-                gameStart = true;
-                setupGame();
-                gameState = "game";
-            }
-            break;
-        case "tutorial":
-            break;
     }
     
     
@@ -565,9 +577,9 @@ $("body").keydown(function(event){
 
 gameStart = true;
 
-function playGame() {
-    if (gameStart){
-        setupGame();
+function playGame(tutorial=false) {
+    if(gameStart){
+        setupGame(tutorial);
         gameStart = false;
     } else if (gameOverTrue){
         stopGame("Game Over");
@@ -785,6 +797,9 @@ var game = setInterval(function(){
             break;
         case "menu":
             drawMenu();
+            break;
+        case "tutorial":
+            playGame(tutorial=true);
             break;
         default:
             break;
