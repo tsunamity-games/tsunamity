@@ -481,6 +481,7 @@ $("#field").click(function(event){
             
             if(MENU_BUTTONS[1].isIntersected(x, y)) {
                 gameStart = true;
+                tutorialState = 0;
                 setupGame(tutorial=true);
                 gameState = "tutorial";
             }
