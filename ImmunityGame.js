@@ -373,7 +373,6 @@ var antibodies;
 var shops;
 var buttons;
 var spleen;
-var tissuecells;
 var inplayBacteriaColorsIndices;
 var colorProbs;
 var bacteria;
@@ -538,6 +537,8 @@ $("#field").click(function(event){
 
             if(gameState == "tutorial" && waitingForClick) {
                 tutorialState += 1;
+
+                presetTutorialState(tutorialState);
             }
             break;
     }
@@ -586,6 +587,16 @@ $("body").keydown(function(event){
 
 gameStart = true;
 
+presetTutorialState = function(tutorialState) {
+    switch(tutorialState) {
+        case 2:
+            drawBlackScreen(BLACK_SCREEN_ALPHA, tissueCells[50].x, tissueCells[50].y,
+                 tissueCells[50].size, tissueCells[50].size);
+        default:
+            break;
+    }
+};
+
 handleTutorialState = function(tutorialState) {
     console.log("Handling state " + tutorialState);
     switch(tutorialState) {
@@ -604,7 +615,8 @@ handleTutorialState = function(tutorialState) {
 
         case 2:
             waitingForClick = false;
-            text = ["Ничоси, работает"];
+            text = ["Это клетка ткани.", "Они производят", "аминокислоты, которые", "нужны для производства", "иммунных клеток",
+                    "", "", "Кликни в любое место", "чтобы продолжить"]
             stopGame(text);
             break;
         

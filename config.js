@@ -83,6 +83,8 @@ const AUTHORS_INFO = ["Dmitry Biba & Vladimir Shitov",
                       "Design by Anastasia Troshina",
                       "BioMolText 2022"];
 
+// Tutorial
+BLACK_SCREEN_ALPHA = 0.5;
 
 // fieldwidth = 1440 
 // fieldheight = 1068
