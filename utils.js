@@ -78,9 +78,12 @@ function star(cx, cy, nSpikes, outerRadius, innerRadius, color){
       ctx.fillStyle=color;
       ctx.fill();
     }
-function roundRect(ctx, x, y, width, height, leftRadius, rightRadius, fill = false, stroke = true) {
+function roundRect(ctx, x, y, width, height, leftRadius, rightRadius, fill = false, stroke = true, bottomLeftRadius=null) {
+    if (bottomLeftRadius == null){
+          bottomLeftRadius = leftRadius;
+      }
       if (typeof leftRadius === 'number') {
-        radius = {tl: leftRadius, tr: rightRadius, br: rightRadius, bl: leftRadius};
+        radius = {tl: leftRadius, tr: rightRadius, br: rightRadius, bl: bottomLeftRadius};
       } else {
         radius = {...{tl: 0, tr: 0, br: 0, bl: 0}, ...radius};
       }
@@ -158,3 +161,5 @@ function doCirclesIntersect(x1, y1, r1, x2, y2, r2) {
 function tissueCellsDistance(c1, c2){
     return (Math.abs(c1.x - c2.x) + Math.abs(c1.y-c2.y))/(tissueCellSize + spaceBetweenTissueCellsHorizontal);
 }
+
+

@@ -4,6 +4,7 @@ function drawField(){
     
     
     // Blood
+    
     ctx.drawImage(
         BLOOD_IMAGE_7, 
         (1211/1440)*fieldWidth, 
@@ -45,17 +46,6 @@ function drawField(){
     // Top menu
     ctx.fillStyle = topMenuColor;
     ctx.fillRect(0, 0, fieldWidth, topMenuHeight);
-    
-    // Lifes
-    ctx.drawImage(
-            LIFES_IMAGE, fieldWidth*0.02, (topMenuHeight-lifesSize)/2, lifesSize*1.1, lifesSize);
-    ctx.fillStyle = "Black";
-    ctx.textBaseline = "middle";
-    ctx.textAlign = "center";
-    ctx.font = "bold " + lifesSize*1.1*0.5 + "px Courier";
-    ctx.fillText(livesLeft, 
-                 fieldWidth*0.02+lifesSize*1.1/2, 
-                 topMenuHeight/2);
         
     
     // Waves
@@ -79,8 +69,16 @@ function drawField(){
     }
     ctx.globalAlpha = 1;
     ctx.fillStyle = "Black";
+    ctx.textBaseline = "middle";
     ctx.textAlign = "right";
+    ctx.font = "bold " + wavesRectangleHeight*0.6 + "px Courier";
     ctx.fillText(wave, wavesRectangleX+wavesRectangleWidth*0.9, wavesRectangleY+wavesRectangleHeight/2);
+    ctx.drawImage(
+        WAVE_IMAGE, 
+        wavesRectangleX + wavesRectangleWidth*0.1, 
+        wavesRectangleY + wavesRectangleHeight*0.2, 
+        wavesRectangleHeight*0.6*1.3819,
+        wavesRectangleHeight*0.6);
     
     // Money
     ctx.fillStyle = moneyRectangleColor;
@@ -91,15 +89,36 @@ function drawField(){
               moneyRectangleHeight, 
               leftRadius = 8, rightRadius = 8, fill = true, stroke = true);
     ctx.fillStyle = "Black";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "right";
     ctx.fillText(Math.round(money), 
                  moneyRectangleX+moneyRectangleWidth*0.9, moneyRectangleY+moneyRectangleHeight/2);
+
+
     ctx.drawImage(
             MONEY_IMAGE, 
         moneyRectangleX + moneyRectangleWidth*0.1, 
-        moneyRectangleY+moneyRectangleHeight*0.1, 
-        moneyRectangleHeight*1.5, 
-        moneyRectangleHeight-moneyRectangleHeight*0.2);
+        moneyRectangleY + moneyRectangleHeight*0.1, 
+        moneyRectangleHeight*0.8*1.23, 
+        moneyRectangleHeight*0.8);
 
+    
+    // Lifes
+    ctx.drawImage(
+        LIFES_IMAGE,
+        rightMenuX + rightMenuWidth*0.5 - lifesSize*1.1/2, 
+        (topMenuHeight-lifesSize)/2, 
+        lifesSize*1.1, 
+        lifesSize);
+    
+    ctx.fillStyle = "Black";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+    ctx.font = "bold " + lifesSize*1.1*0.5 + "px Courier";
+    ctx.fillText(livesLeft, 
+                 rightMenuX + rightMenuWidth*0.5, 
+                 topMenuHeight/2);
+    
     // Playable Field
     ctx.strokeStyle = playableFieldBorderColor;
     ctx.strokeRect(playableFieldX, playableFieldY, playableFieldWidth, playableFieldHeight);
@@ -107,24 +126,6 @@ function drawField(){
     ctx.fillRect(playableFieldX, playableFieldY, playableFieldWidth, playableFieldHeight);
     
     // Blood over
-    ctx.drawImage(
-        BLOOD_IMAGE_2, 
-        (9/1440)*fieldWidth, 
-        (420/1080)*fieldHeight, 
-        (88/1440)*fieldWidth, 
-        (70/1080)*fieldHeight);
-    ctx.drawImage(
-        BLOOD_IMAGE_3, 
-        (481/1440)*fieldWidth, 
-        (362/1080)*fieldHeight, 
-        (561/1440)*fieldWidth, 
-        (102/1080)*fieldHeight);
-    ctx.drawImage(
-        BLOOD_IMAGE_5, 
-        (830/1440)*fieldWidth, 
-        (930/1080)*fieldHeight, 
-        (296/1440)*fieldWidth, 
-        (147/1080)*fieldHeight);
     ctx.drawImage(
         BLOOD_IMAGE_6, 
         (1243/1440)*fieldWidth, 
@@ -167,6 +168,7 @@ function drawField(){
     
     reset.draw();
     toMainMenu.draw();  
+    pause.draw();
 }
 
 //-----GAME SETUP FUNCTIONS------
@@ -404,14 +406,15 @@ const T_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + shopWidth + spaceBetweenShops, 
 const B_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + 3 * shopWidth + 3 * spaceBetweenShops, shopY, BLymphocyte, B_LYMPHOCYTE_PRICE, LYMPHOCYTES_IMAGES.get("green"), true, true, "green");
 
 shops = [
-    new Shop(xLeftOffset, shopY, NaturalKiller, 150, T_LYMPHOCYTES_IMAGE, true, true, "yellow"),
+    new Shop(xLeftOffset, shopY, NaturalKiller, NK_PRICE, T_LYMPHOCYTES_IMAGE, true, true, "yellow"),
     T_LYMPHOCYTE_SHOP,
-    new Shop(xLeftOffset + 2 * shopWidth + 2 * spaceBetweenShops, shopY, Neutrophil, 100, NEUTROPHILS_IMAGE, true, true, "green"),
+    new Shop(xLeftOffset + 2 * shopWidth + 2 * spaceBetweenShops, shopY, Neutrophil, NEUTROPHIL_PRICE, NEUTROPHILS_IMAGE, true, true, "green"),
     B_LYMPHOCYTE_SHOP,
     new Shop(xLeftOffset + 4 * shopWidth + 4 * spaceBetweenShops, 
              shopY, THelper, T_HELPER_PRICE, T_LYMPHOCYTES_IMAGE, true, true, "blue"),
-    new Shop(xLeftOffset + 6 * shopWidth + 6 * spaceBetweenShops, shopY, Macrophage, 300, MACROPHAGES_IMAGE, true, true, "blue"),
-    new Shop(xLeftOffset + 5 * shopWidth + 5 * spaceBetweenShops, shopY, Eosinophile, 50, EOSINOPHILES_IMAGE, true, true, "blue")
+    new Shop(xLeftOffset + 5 * shopWidth + 5 * spaceBetweenShops, shopY, Eosinophile, EOSINOPHILE_PRICE, EOSINOPHILES_IMAGE, true, true, "blue"),
+    new Shop(xLeftOffset + 6 * shopWidth + 6 * spaceBetweenShops, shopY, Macrophage, MACROPHAGE_PRICE, MACROPHAGES_IMAGE, true, true, "blue")
+
     
 ];
       
@@ -426,7 +429,7 @@ function setupGame(tutorial=false){
                 antibioticsX,
                 topAntibioticY + (buttonHeight+spaceBetweenAntibioticButtons)*i,
                 buttonWidth, 
-                buttonHeight, 100));
+                buttonHeight, ANTIBIOTIC_PRICE));
         buttons.push(
             new Vaccine(
                 BACTERIA_COLORS[i], 
@@ -434,7 +437,7 @@ function setupGame(tutorial=false){
                 topVaccineY + (buttonHeight+spaceBetweenAntibioticButtons)*i, 
                 buttonWidth, 
                 buttonHeight,
-                100));
+                VACCINE_PRICE));
     }
 
     spleen = new Spleen(spleenX, spleenY, spleenSize, spleenSize, 12);
@@ -458,7 +461,19 @@ function setupGame(tutorial=false){
     pauseTrue = false;
     historyObject = new GameHistory();
     reset = new ResetButton("red", rightMenuX+rightMenuWidth/2 - 120, 10, 60, 60, "R");
-    toMainMenu = new Button("white", rightMenuX+rightMenuWidth/2 - 30, 10, 60, 60, "Q");
+    toMainMenu = new Button("white", 
+                            fieldWidth*0.02, 
+                            (topMenuHeight-homeHeight)/2,
+                            homeHeight*0.85,
+                            homeHeight, 
+                            "Q", false, HOME_IMAGE);
+    pause = new Button("white",
+                       fieldWidth*0.7,
+                       (topMenuHeight-topMenuHeight*0.5)/2,
+                       topMenuHeight*0.5,
+                       topMenuHeight*0.5,
+                       "Q", false, 
+                       PAUSE_IMAGE);
     livesLeft = 10;
     money = STARTING_MONEY;
 }
@@ -534,7 +549,17 @@ $("#field").click(function(event){
             if(toMainMenu.isIntersected(x, y)) {
                 gameState = "menu";
             }
-
+            
+            if(pause.isIntersected(x, y)) {
+                if (pauseTrue){
+                    pause.texture = PAUSE_IMAGE;
+                } else {pause.texture = RESUME_IMAGE;}
+                pause.draw();
+                pauseTrue = !pauseTrue;
+                 
+            }
+            
+            
             if(gameState == "tutorial" && waitingForClick) {
                 tutorialState += 1;
             }
@@ -551,6 +576,7 @@ var keyActions = {
     52: "4",
     53: "5",
     54: "6",
+    55: "7",
     81: "a1",
     87: "a2",
     69: "a3",
@@ -567,13 +593,16 @@ var keyActions = {
 $("body").keydown(function(event){
     var action = keyActions[event.keyCode];
     if (action != undefined){
-        if (["1", "2", "3", "4", "5", "6"].includes(action)){
+        if (["1", "2", "3", "4", "5", "6", "7"].includes(action)){
             shops[parseInt(action)-1].buy();
         } else if (action.startsWith("a")){
             buttons.filter((button) => button instanceof Antibiotic)[parseInt(action[1])-1].activate()
         } else if (action.startsWith("v")){
             buttons.filter((button) => button instanceof Vaccine)[parseInt(action[1])-1].activate()
         } else if (action == "pause"){
+            if (pauseTrue){pause.texture = PAUSE_IMAGE;} 
+            else {pause.texture = RESUME_IMAGE;}
+            pause.draw();
             pauseTrue = !pauseTrue;
         } else if (action == "upgrade"){
             immunityCells.filter((cell) => cell.label != undefined && cell.label.active).forEach((cell) => {
@@ -754,6 +783,7 @@ function playGame(tutorial=false) {
         // Set price with discount
         shop.price = Math.round(shop.base_price * Math.pow(HELPER_DISCOUNT_RATE, shop.discount));
         shop.draw();
+
     });
 
     spleen.sections.forEach((section) => {
@@ -776,6 +806,7 @@ function playGame(tutorial=false) {
     
     if(bacteria.length === 0) {
         wave += 1;
+        livesLeft += 1;
         var nmut = [];
         tissueCells.forEach(cell => {
             nmut.push(cell.nMutations);
@@ -787,8 +818,29 @@ function playGame(tutorial=false) {
         fullWaveSize = bacteria.length;
         checkAntibiotics();
     }
+    // Draw blood vessels that should be over everything else
+    ctx.drawImage(
+        BLOOD_IMAGE_2, 
+        (9/1440)*fieldWidth, 
+        (420/1080)*fieldHeight, 
+        (88/1440)*fieldWidth, 
+        (70/1080)*fieldHeight);
+    ctx.drawImage(
+        BLOOD_IMAGE_3, 
+        (481/1440)*fieldWidth, 
+        (362/1080)*fieldHeight, 
+        (561/1440)*fieldWidth, 
+        (102/1080)*fieldHeight);
+    ctx.drawImage(
+        BLOOD_IMAGE_5, 
+        (830/1440)*fieldWidth, 
+        (930/1080)*fieldHeight, 
+        (296/1440)*fieldWidth, 
+        (147/1080)*fieldHeight);
     immunityCells.filter(cell => cell instanceof BLymphocyte || cell instanceof TLymphocyte).forEach(cell => cell.label.draw());
     money += baseIncome * tissueCells.filter((cell) => cell.infection.length === 0).length/tissueCells.length;
+        
+    
     ctx.lineWidth = 1;
     ctx.strokeStyle = "black";
     ctx.strokeRect(0, 0, fieldWidth, fieldHeight);

@@ -1,46 +1,53 @@
 class Button extends BodyPart {
-    constructor(color, x, y, width, height, text, isCircle=true) {
-        super("", x, y, width, height);
+    constructor(color, x, y, width, height, text, isCircle=true, texture="") {
+        super(texture, x, y, width, height);
         this.color = color;
         this.text = text;
         this.isCircle = isCircle;
     }
     
     draw(){
-        ctx.fillStyle = this.color;
-        ctx.globalAlpha = 0.5;
-
-        if(this.isCircle) {
-            circle(this.x+this.width/2, this.y+this.height/2, this.width/2, true);
+        if (this.texture != ""){
+            super.draw();
         }
         else {
-            ctx.fillRect(this.x, this.y, this.width, this.height);   
-            ctx.strokeStyle = "white";
+            
+            ctx.fillStyle = this.color;
+            ctx.globalAlpha = 0.5;
+
+            if(this.isCircle) {
+                circle(this.x+this.width/2, this.y+this.height/2, this.width/2, true);
+            }
+            else {
+                ctx.fillRect(this.x, this.y, this.width, this.height);   
+                ctx.strokeStyle = "white";
+                ctx.lineWidth = 1;
+                ctx.globalAlpha = 1;
+                ctx.strokeRect(this.x, this.y, this.width, this.height)
+            }
+
             ctx.globalAlpha = 1;
-            ctx.strokeRect(this.x, this.y, this.width, this.height)
-        }
-        
-        ctx.globalAlpha = 1;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
 
-        if(this.isCircle) {
-            circle(this.x+this.width/2, this.y+this.height/2, this.width/2, false);
-            ctx.fillStyle = "black";
-            ctx.font = this.height * 0.7 + "px Courier"
+            if(this.isCircle) {
+                circle(this.x+this.width/2, this.y+this.height/2, this.width/2, false);
+                ctx.fillStyle = "black";
+                ctx.font = this.height * 0.7 + "px Courier"
+            }
+            else {
+                ctx.fillStyle = "white";
+                ctx.font = this.height * 0.4 + "px Courier"
+            }
+
+            ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
         }
-        else {
-            ctx.fillStyle = "white";
-            ctx.font = this.height * 0.4 + "px Courier"
-        }
-        
-        ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
     }
     
 }
 class Antibiotic extends Button {
     constructor(color, x, y, width, height, price){
-        super(color, x, y, width, height, "A");
+        super(color, x, y, width, height, "A", false, ShopColors[color]["antibioticButtonImage"]["inactive"]);
         this.price = price;
         this.course = 0;
         this.lastWave = null;
@@ -57,8 +64,10 @@ class Antibiotic extends Button {
             this.course = this.course % ANTIBIOTIC_COURSE_LENGTH;
             if (this.course === 0){
                 this.lastWave = null;
+                this.texture = ShopColors[this.color]["antibioticButtonImage"]["inactive"]
             } else {
                 this.lastWave = wave;
+                this.texture = ShopColors[this.color]["antibioticButtonImage"]["active"]
             }
             historyObject.antibioticsBought += 1;
             
@@ -66,23 +75,26 @@ class Antibiotic extends Button {
     }
     
     draw(){
+        // Draw button
+        super.draw();
+        
+        // Draw bar nearby
+        ctx.fillStyle = "#D9D9D9";
+        ctx.fillRect(
+            this.x+this.width + distanceBetweenAntibioticButtonAndBar, 
+            this.y,
+            antibioticBarWidth,
+            this.height);
         ctx.fillStyle = this.color;
-        ctx.globalAlpha = 0.1;
-        circle(this.x+this.width/2, this.y+this.height/2, this.width/2, true);
-        ctx.globalAlpha = 1;
-        if (this.course > 0){
-            ctx.beginPath();
-            ctx.moveTo(this.x+this.width/2, this.y+this.height/2);
-            ctx.arc(this.x+this.width/2, this.y+this.height/2, this.width/2, -Math.PI/2, -Math.PI/2+2*Math.PI*this.course/ANTIBIOTIC_COURSE_LENGTH, false);
-            ctx.fill();
-            
-        }
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = "black";
-        circle(this.x+this.width/2, this.y+this.height/2, this.width/2, false);
-        ctx.font = this.width*0.7 + "px Courier"
-        ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
+        var filledHeight = (this.course/ANTIBIOTIC_COURSE_LENGTH)*this.height;
+        ctx.fillRect(
+            this.x + this.width + distanceBetweenAntibioticButtonAndBar, 
+            this.y + this.height - filledHeight,
+            antibioticBarWidth,
+            filledHeight,
+        );
+        
+
         if (!this.available){
             ctx.strokeStyle = "red";
             ctx.lineWidth = 4;
@@ -98,7 +110,7 @@ class Antibiotic extends Button {
 }
 class Vaccine extends Button{
     constructor(color, x, y, width, height, price){
-        super(color, x, y, width, height, "V");
+        super(color, x, y, width, height, "V", isCircle=false);
         this.price = price;
     }  
     activate(){
@@ -112,6 +124,21 @@ class Vaccine extends Button{
             historyObject.vaccinesBought += 1;       
         }
     }
+    
+    draw(){
+        ctx.fillStyle = this.color;
+        roundRect(ctx,
+                  this.x, this.y, this.width, this.height,
+                  leftRadius = 3, rightRadius = 3, fill = true, stroke = false);
+        ctx.font = "bold " + this.height * 0.8 + "px Courier";
+        ctx.fillStyle = "black";
+        ctx.globalAlpha = 0.2;
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "center";
+        ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
+        ctx.globalAlpha = 1;
+    }
+
 }
 class Label extends BodyPart{
     constructor(labelledObject){
@@ -155,16 +182,17 @@ class Label extends BodyPart{
     }
 }
 class Pocket extends Shop{
-    constructor(shopObj, x, y, width, height, color){
+    constructor(shopObj, x, y, color){
         super(x, y, shopObj.cellType, shopObj.price, shopObj.cellTexture, true, true, color)
         this.color = color;
         this.shopObj = shopObj;
-        this.width = width;
-        this.height = height;
+        this.width = (shopObj.width*0.9028)/BACTERIA_COLORS.length;
+        this.height = this.width*1.59;
     }
     draw(){
         ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.drawImage(ShopColors[this.color]["pocketImage"], this.x, this.y, this.width, this.height);
+//        ctx.fillRect(this.x, this.y, this.width, this.height);
     }
     buy(){
         if(money - this.price >= 0) {

@@ -55,6 +55,7 @@ class Bacterium extends MovingObject {
         this.mode = "enemy";
         this.spleenSection;
         this.baseSpeed = BACTERIUM_BASE_SPEED;
+        this.angle = randomUniform(0, 2*Math.PI);
     }
 
 
@@ -69,6 +70,7 @@ class Bacterium extends MovingObject {
         if (this.mode === "enemy"){
             this.y = clip(this.y, playableFieldY + this.radius, playableFieldY+playableFieldHeight - this.radius);            
         }
+        this.angle += randomUniform(-0.01, 0.01);
     }
 
     changeDirection() {
@@ -83,10 +85,24 @@ class Bacterium extends MovingObject {
     draw() {
         if (this.mode === "enemy"){
             ctx.globalAlpha = clip(this.health / this.maxHealth, 0.5, 1);
-            super.draw();
+            ctx.save();
+            ctx.translate(this.x+this.radius/2, this.y+this.radius/2);
+            ctx.rotate(this.angle);
+            ctx.drawImage(
+                this.texture,
+                -this.radius,
+                -this.radius,
+                2 * this.radius,
+                2 * this.radius)
+            ctx.restore();
             ctx.globalAlpha = 1;            
         } else if (this.mode === "antigen"){
-            super.draw();
+            ctx.drawImage(
+                this.texture,
+                this.x-this.radius,
+                this.y-this.radius,
+                2 * this.radius,
+                2 * this.radius)
         }
 
     }
@@ -95,6 +111,23 @@ class HelmintPart extends MovingObject{
     constructor(texture, x, y, radius, helmint){
         super(texture, x, y, radius);
         this.helmint = helmint;
+        this.angle = 0;
+    }
+    draw(){
+        if (this.x > 0 && this.y > 0 && this.x < fieldWidth && this.y < fieldHeight) {
+            ctx.save();
+            ctx.translate(this.x+this.radius/2, this.y+this.radius/2);
+            ctx.rotate(this.angle);
+            ctx.drawImage(
+                this.texture,
+                -this.radius,
+                -this.radius,
+                2 * this.radius,
+                2 * this.radius)
+            ctx.restore();
+        }
+            
+
     }
 }
 class Helmint {
@@ -111,12 +144,18 @@ class Helmint {
         this.movingtime = 0;
         this.overlay = this.width*0.6; // stupid, but this is actually something inversely proportional to the overlay of the segments
         for (var i=0; i < length; i++){
-            this.parts.push(new HelmintPart(this.texture, this.x-i*this.overlay, this.y, this.width/2, this));
+            this.parts.push(new HelmintPart(this.texture, 
+                                            this.x-i*this.overlay, 
+                                            this.y, 
+                                            this.width/2, 
+                                            this));
         }
     }
     
     draw(){
-        this.parts.forEach((part) => {part.draw(false)});
+        this.parts.forEach((part) => {
+            part.draw(false)
+        });
         // Draw a healthbar
 
         if (this.health > 0 && this.parts.length > 0){
@@ -148,11 +187,15 @@ class Helmint {
                 var newY = this.parts[0].y + randomUniform(-this.overlay, this.overlay);
                 newY = clip(newY, playableFieldY + this.width/2, playableFieldY + playableFieldHeight-this.width/2);
                 var newX = this.parts[0].x + Math.sqrt(Math.pow(this.overlay, 2) -  Math.pow(this.parts[0].y-newY, 2));
+                
+                var angle = Math.asin((newY - this.parts[0].y)/Math.pow(Math.pow(newX - this.parts[0].x, 2) + Math.pow(newY - this.parts[0].y, 2), 0.5));
+                
                 if (newX > playableFieldX+playableFieldWidth){
                     livesLeft--;
                 } else {
                     segment.x = newX;
                     segment.y = newY;
+                    segment.angle = angle;
                     this.parts.unshift(segment);
                 } 
                 this.x = segment.x;

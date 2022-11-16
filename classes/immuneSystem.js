@@ -263,7 +263,7 @@ class BLymphocyte extends ImmuneCell {
         this.color = color;
         this.label = new Label(this);
         this.killed = false;
-        this.upgradePrice = 200;
+        this.upgradePrice = PLASMATIC_CELL_UPGRADE_PRICE;
         this.counter = 0;
     }
 
@@ -272,16 +272,19 @@ class BLymphocyte extends ImmuneCell {
         if (this.mode === "mature"){
             this.mode = "plasmatic";
             this.damage = 0;
-            this.upgradePrice = 300;
+            this.upgradePrice = MEMORY_CELL_UPGRADE_PRICE;
             this.target = null;
         } else if (this.mode === "plasmatic"){
             this.mode = "memory";
             this.longevity = BASE_IMMUNITY_CELL_LONGEVITY*4;
             this.baseSpeed = 0;
             this.upgradePrice = 0;
-            B_LYMPHOCYTE_SHOP.pockets.push(new Pocket(B_LYMPHOCYTE_SHOP, 
-                                             B_LYMPHOCYTE_SHOP.x + BACTERIA_COLORS.indexOf(this.color)*B_LYMPHOCYTE_SHOP.width/BACTERIA_COLORS.length, shopY + B_LYMPHOCYTE_SHOP.height+10, B_LYMPHOCYTE_SHOP.width/BACTERIA_COLORS.length, 2*10*0.9, 
-                                             this.color)) 
+            B_LYMPHOCYTE_SHOP.pockets.push(
+                new Pocket(
+                    B_LYMPHOCYTE_SHOP,
+                    B_LYMPHOCYTE_SHOP.x + B_LYMPHOCYTE_SHOP.width*0.0486 + BACTERIA_COLORS.indexOf(this.color)*B_LYMPHOCYTE_SHOP.width*0.9028/BACTERIA_COLORS.length,
+                    shopY + B_LYMPHOCYTE_SHOP.height - B_LYMPHOCYTE_SHOP.height*0.02,
+                    this.color)) 
         }
     }
     
@@ -382,7 +385,7 @@ class TLymphocyte extends ImmuneCell {
         this.active = active;
         this.label = new Label(this);
         this.mode = mode;
-        this.upgradePrice = 300;
+        this.upgradePrice = MEMORY_CELL_UPGRADE_PRICE;
     }
     
     upgrade(){
@@ -397,9 +400,8 @@ class TLymphocyte extends ImmuneCell {
             T_LYMPHOCYTE_SHOP.pockets.push(
                 new Pocket(T_LYMPHOCYTE_SHOP, 
                            pocketX, 
-                           shopY + T_LYMPHOCYTE_SHOP.height + 10, 
-                           T_LYMPHOCYTE_SHOP.width / BACTERIA_COLORS.length, 
-                           2*10*0.9, this.color));
+                           shopY + T_LYMPHOCYTE_SHOP.height,
+                           this.color));
             
         }
 

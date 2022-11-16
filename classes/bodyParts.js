@@ -64,40 +64,57 @@ class Shop extends BodyPart {
         ctx.textBaseline = "top";
         
         // Name of the cell type sold
-        ctx.font = "bold " + this.width/9 + "px Courier";
+        ctx.font = "bold " + this.width/8 + "px Courier";
         ctx.textAlign = "center";
-        ctx.fillText(this.cellType.name, this.x + this.width / 2, this.y + this.height/8);
- 
+        var name = cell_names[this.cellType.name];
+        for (let i = 0; i < name.length; i++) {
+            ctx.fillText(
+                name[i], 
+                this.x + this.width / 5, 
+                this.y + this.height/9 + this.height/12*i);
+        
+        }
         ctx.drawImage(
             this.cellTexture, 0, 0,
             this.isCellAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
             this.isCellAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
-            this.x + this.width/2 - 6*this.width/10/2,
-            this.y + this.height/2 - 4.5/2*this.height/10,
+            this.x + this.width/2 - 6*this.width/10/2 + this.width/12,
+            this.y + this.height/2 - 4.5/2*this.height/10 - this.height/12,
             6*this.width/10,
             9/2*this.height/10)
 
+        // Draw coloured rectangle for price
+        ctx.fillStyle = ShopColors[this.color]["colorCode"];
+        var priceX = this.x + this.width*(53/123), priceY = this.y + this.height*(1-0.125), priceWidth = this.width*(1-53/123), priceHeight = this.height*0.125;
+        roundRect(ctx, 
+              priceX, priceY, priceWidth, priceHeight, 
+              8, 0, true, false, 0);
         
-        ctx.drawImage(ShopColors[this.color]["minimoneyImage"],
-                      this.x + 2 * this.width / 10,
-                      this.y + 8*this.height/10,
-                      this.width*(23/111),
-                      this.height*(22/158)
-                     )
-        ctx.font = "bold " + (22/158)*this.height + "px Courier";
+        // Write price
+        ctx.fillStyle = "#F9EAC4";
+        ctx.font = "bold " + priceHeight*0.9 + "px Courier";
         ctx.textAlign = "left";
-        ctx.textBaseline = "top";
+        ctx.textBaseline = "middle";
         
         ctx.fillText(this.price, 
-                     this.x + 2 * this.width / 10 + this.width*(23/111), 
-                     this.y + 8*this.height/10);
+                     priceX + priceWidth/2, 
+                     priceY + priceHeight/2);
+        
+    
+        // Render price image
+        ctx.drawImage(MINIMONEY, 
+                      priceX + priceWidth*0.1,
+                      priceY + priceHeight*0.05,
+                      priceHeight*0.9*1.282,
+                      priceHeight*0.9
+                     );
         }
 }
 class SpleenSection{
     constructor(x, y, size){
         this.x = x + size/2;
         this.y = y + size/2;
-        this.size = size*0.5; // width = height = size
+        this.size = size*0.7; // width = height = size
         this.antigen = null;
         this.texture = BONE_MARROW_IMAGE;
     }
@@ -117,7 +134,7 @@ class Spleen extends BodyPart{
                 if (i === 0 || j === 0 || i === this.width/sectionSize-1 || j === this.width/sectionSize-1){
                     this.sections.push(new SpleenSection(
                         this.x + i*sectionSize, 
-                        this.y+j*sectionSize, 
+                        this.y + j*sectionSize, 
                         this.width/((nSections - 4)/4 + 2)));
                 }
             }    

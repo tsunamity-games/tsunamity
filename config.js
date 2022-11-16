@@ -23,6 +23,8 @@ const tissueCellsUpOffset = 0.017452*playableFieldHeight;
 const rightMenuColor = "#2C363E";
 const rightMenuX = 0.9*fieldWidth;
 const rightMenuWidth = 0.076388*fieldWidth;
+const distanceBetweenAntibioticButtonAndBar = 0.03636*rightMenuWidth;
+const antibioticBarWidth = 0.0727*rightMenuWidth;
 
 // Antibiotics & vaccines
 const buttonWidth = 0.02777*fieldHeight;
@@ -55,6 +57,7 @@ const xLeftOffset = playableFieldX;
 const topMenuColor = "#142029";
 const topMenuHeight = fieldHeight*0.075;
 const lifesSize = topMenuHeight*0.6;
+const homeHeight = topMenuHeight*0.5;
 
 const wavesBackColor = "#009EEB";
 const wavesFillingColor = "#01567F";
@@ -94,7 +97,6 @@ const ANIMATED_IMAGE_WIDTH = 100;
 const ANIMATED_IMAGE_HEIGHT = 80;
 const STATIC_IMAGE_WIDTH = 200;
 const STATIC_IMAGE_HEIGHT = 200;
-
 const SCROLL_IMAGE = new Image();
 SCROLL_IMAGE.src = "./images/scroll.png";
 
@@ -130,12 +132,11 @@ NEUTROPHILS_IMAGE.src = "./images/neutrophils.png";
 
 const EOSINOPHILES_IMAGE = new Image();
 EOSINOPHILES_IMAGE.src = "./images/eosinophiles.png";
-
 const BACTERIA_IMAGE = new Image();
 BACTERIA_IMAGE.src = "./images/bacteria.png";
 
 const HELMINTH_IMAGE = new Image();
-HELMINTH_IMAGE.src = "./images/helminth.png";
+HELMINTH_IMAGE.src = "./images/helmint_trial.png"; //"./images/helminth.png";
 
 const BONE_MARROW_IMAGE = new Image();
 BONE_MARROW_IMAGE.src = "./images/bone_marrow.png";
@@ -156,7 +157,21 @@ const LIFES_IMAGE = new Image();
 LIFES_IMAGE.src = "./images/lifes.png";
 
 const MONEY_IMAGE = new Image();
-MONEY_IMAGE.src = "./images/sugar.svg";
+MONEY_IMAGE.src = "./images/sugar.png";
+
+const WAVE_IMAGE = new Image();
+WAVE_IMAGE.src = "./images/wave.png";
+
+const HOME_IMAGE = new Image();
+HOME_IMAGE.src = "./images/home.png";
+
+const PAUSE_IMAGE = new Image();
+PAUSE_IMAGE.src = "./images/pause.png";
+
+const RESUME_IMAGE = new Image();
+RESUME_IMAGE.src = "./images/resume.png";
+
+
 
 
 const BONE_MARROW_BACKGROUND_IMAGE = new Image();
@@ -169,37 +184,82 @@ YELLOW_SCROLL.src = "./images/yellowScroll.png";
 const BLUE_SCROLL = new Image();
 BLUE_SCROLL.src = "./images/blueScroll.png";
 
-const GREEN_MINIMONEY = new Image();
-GREEN_MINIMONEY.src = "./images/greenMiniMoney.png";
-const YELLOW_MINIMONEY = new Image();
-YELLOW_MINIMONEY.src = "./images/yellowMiniMoney.png";
-const BLUE_MINIMONEY = new Image();
-BLUE_MINIMONEY.src = "./images/blueMiniMoney.png";
+const MINIMONEY = new Image();
+MINIMONEY.src = "./images/minimoney.svg";
 
+
+const BLUE_POCKET = new Image();
+BLUE_POCKET.src = "./images/pocket_blue.png";
+
+
+const BLUE_ANTIBIOTIC_ACTIVE = new Image();
+BLUE_ANTIBIOTIC_ACTIVE.src = "./images/antibiotic_button_blue_active.png";
+const GREEN_ANTIBIOTIC_ACTIVE = new Image();
+GREEN_ANTIBIOTIC_ACTIVE.src = "./images/antibiotic_button_green_active.png";
+const YELLOW_ANTIBIOTIC_ACTIVE = new Image();
+YELLOW_ANTIBIOTIC_ACTIVE.src = "./images/antibiotic_button_yellow_active.png";
+const ORANGE_ANTIBIOTIC_ACTIVE = new Image();
+ORANGE_ANTIBIOTIC_ACTIVE.src = "./images/antibiotic_button_orange_active.png";
+
+
+const BLUE_ANTIBIOTIC_INACTIVE = new Image();
+BLUE_ANTIBIOTIC_INACTIVE.src = "./images/antibiotic_button_blue_inactive.png";
+const GREEN_ANTIBIOTIC_INACTIVE = new Image();
+GREEN_ANTIBIOTIC_INACTIVE.src = "./images/antibiotic_button_green_inactive.png";
+const YELLOW_ANTIBIOTIC_INACTIVE = new Image();
+YELLOW_ANTIBIOTIC_INACTIVE.src = "./images/antibiotic_button_yellow_inactive.png";
+const ORANGE_ANTIBIOTIC_INACTIVE = new Image();
+ORANGE_ANTIBIOTIC_INACTIVE.src = "./images/antibiotic_button_orange_inactive.png";
 
 
 var ShopColors = {
     blue:{
         scrollImage: BLUE_SCROLL,
+        pocketImage: BLUE_POCKET,
+        antibioticButtonImage: {
+            active: BLUE_ANTIBIOTIC_ACTIVE,
+            inactive: BLUE_ANTIBIOTIC_INACTIVE
+        },
         colorCode: "#005FA4",
-        minimoneyImage: BLUE_MINIMONEY
     },
     green:{
         scrollImage: GREEN_SCROLL,
+        pocketImage: BLUE_POCKET,
+        antibioticButtonImage: {
+            active: GREEN_ANTIBIOTIC_ACTIVE,
+            inactive: GREEN_ANTIBIOTIC_INACTIVE
+        },
         colorCode: "#006956",
-        minimoneyImage: GREEN_MINIMONEY
     },
     yellow:{
         scrollImage: YELLOW_SCROLL,
+        pocketImage: BLUE_POCKET,
+        antibioticButtonImage: {
+            active: YELLOW_ANTIBIOTIC_ACTIVE,
+            inactive: YELLOW_ANTIBIOTIC_INACTIVE
+        },
         colorCode: "#DC9E00",
-        minimoneyImage: YELLOW_MINIMONEY
     },
     // This one is not displayed, but prevents error when creating orange pocket
     orange:{
         scrollImage: YELLOW_SCROLL,
+        antibioticButtonImage: {
+            active: ORANGE_ANTIBIOTIC_ACTIVE,
+            inactive: ORANGE_ANTIBIOTIC_INACTIVE
+        },
+        pocketImage: BLUE_POCKET,
         colorCode: "#DC9E00",
-        minimoneyImage: YELLOW_MINIMONEY
     },
+}
+
+cell_names = {
+    Neutrophil: "Neutrophil",
+    Macrophage: "Margophage",
+    Eosinophile: "Eosinophil",
+    NaturalKiller: "NK cell",
+    BLymphocyte: "B cell",
+    TLymphocyte: "T Killer",
+    THelper:"T Helper"
 }
 
 
@@ -236,13 +296,18 @@ const tissueCellDeathRate = 0.000001;
 
 // Immune cells
 
-const NK_PRICE = 150;
-const T_LYMPHOCYTE_PRICE = 300;
-const B_LYMPHOCYTE_PRICE = 200;
-const T_HELPER_PRICE = 500;
-const NEUTROPHIL_PRICE = 100;
-const MACROPHAGE_PRICE = 100;
-const EOSINOPHILE_PRICE = 50;
+const NK_PRICE = 15;
+const T_LYMPHOCYTE_PRICE = 30;
+const B_LYMPHOCYTE_PRICE = 20;
+const T_HELPER_PRICE = 50;
+const NEUTROPHIL_PRICE = 10;
+const MACROPHAGE_PRICE = 30;
+const EOSINOPHILE_PRICE = 5;
+const ANTIBIOTIC_PRICE = 10;
+const VACCINE_PRICE = 10;
+const PLASMATIC_CELL_UPGRADE_PRICE = 10;
+const MEMORY_CELL_UPGRADE_PRICE = 20;
+
 
 const EOSINOPHILES_DAMAGE = 0.01;
 
@@ -273,7 +338,7 @@ const HIV_DAMAGE = 0.05;
 
 
 //      Bacteria
-const bacteriaRadius = 8;
+const bacteriaRadius = 6;
 var starting_nBacteria = 30;
 const BACTERIUM_BASE_SPEED = 0.2*0.86;
 
@@ -289,7 +354,7 @@ ANTIBODY_SLOWING_COEFFICIENT = 0.5;
 // Game parameters
 var livesLeft = 10;
 var STARTING_MONEY = 0;
-var baseIncome = 0.1;
+var baseIncome = 0.01;
 var chanceToGetAntigen = 0.01;
 var garbagePileSlowingCoefficient = 0.4;
 var nVaccinate = 30;
@@ -301,7 +366,7 @@ var VIRUS_PRICE = 50;
 var HELMINT_PRICE = 100;
 var HIV_PRICE = 10;
 var ENEMY_PROB_DIST = [1/BACTERIUM_PRICE, 1/VIRUS_PRICE, 1/HELMINT_PRICE, 0/HIV_PRICE];
-var MIN_HELMINT_LENGTH = 3;
+var MIN_HELMINT_LENGTH = 4;
 var MAX_HELMINT_LENGTH = 20;
 var HELMINT_WIDTH_MIN_LENGTH_MULTIPLIER = 3;
 var HELMINT_WIDTH_LENGTH_MULTIPLIER = 6;
@@ -311,8 +376,8 @@ var HELMINT_DELAY_NOISE = 10;
 
 
 
-var PROB_TO_ADD_NEW_COLOR = 0.2;
-var PROB_TO_REMOVE_COLOR = 0.1;
+var PROB_TO_ADD_NEW_COLOR = 0.07;
+var PROB_TO_REMOVE_COLOR = 0;
 var VIRUSES_CLASSIFICATION = {
     blue:{
         doublingTime: 200,
