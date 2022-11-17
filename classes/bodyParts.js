@@ -44,7 +44,11 @@ class Shop extends BodyPart {
                 randomUniform(this.x, this.x + this.width),
                 randomUniform(this.y, this.y + this.height));
 
-            cell.damage = cell.damage * Math.pow(HELPER_DAMAGE_INCREASE, this.discount);
+            if (cell instanceof TLymphocyte){
+                cell.baseSpeed = Math.min(tissueCellSize*0.5, cell.baseSpeed * Math.pow(HELPER_DAMAGE_INCREASE, this.discount)); 
+            } else if (cell instanceof BLymphocyte){
+                cell.damage = cell.damage * Math.pow(HELPER_DAMAGE_INCREASE, this.discount);
+            }
             immunityCells.push(cell);
             money -= this.price;
             historyObject.cellsBought[cell.constructor.name] += 1;

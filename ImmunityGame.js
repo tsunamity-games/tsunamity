@@ -610,7 +610,8 @@ $("body").keydown(function(event){
             pause.draw();
             pauseTrue = !pauseTrue;
         } else if (action == "upgrade"){
-            immunityCells.filter((cell) => cell.label != undefined && cell.label.active).forEach((cell) => {
+            immunityCells.filter((cell) => cell.label != undefined && cell.label.active && cell.label.upgradeAvailable).forEach((cell) => {
+                money -= cell.upgradePrice;
                 cell.upgrade();
             })
     }       

@@ -206,7 +206,7 @@ class Eosinophile extends ImmuneCell {
                 // Move to the random target
                 if (this.target == null || this.target.helmint.health <= 0 || this.target.x > playableFieldX+playableFieldWidth || !this.target.helmint.parts.includes(this.target))  
                 {
-                    if (helmintes.includes(this.target.helmint)){
+                    if (this.target != null && this.target.helmint.health > 0 && this.target.x < playableFieldX+playableFieldWidth && helmintes.includes(this.target.helmint)){
                             targetsList = this.target.helmint.parts;
                         } else {
                             targetsList = randomChoice(targetsList).parts;
