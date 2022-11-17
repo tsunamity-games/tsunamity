@@ -1,6 +1,7 @@
 class Virus{
     constructor(color, doublingTime, host){
         this.color = color;
+        this.number = 1
         this.doublingTime = doublingTime;
         this.timeToDouble = 0;
         if (host === null){
@@ -8,35 +9,43 @@ class Virus{
         else {
             this.host = host;
         }
-        if (this.host.infection.length === 0 && this.host.x === EdgeCellX){
+        if (this.host.x === EdgeCellX){
             livesLeft--;
         }
-        this.host.infection.push(this);
+        this.host.virus = this;
     }
     
     grow(){
 
-        this.host.health -= 0.001;
+        this.host.health -= 0.001*this.number;
         
         if (++this.timeToDouble === this.doublingTime){
             this.timeToDouble = 0;
-            
-            var virusLoad = this.host.infection.length;
-            var spreadDisease = Math.random() > viralSpreadThreshold/virusLoad;
-            var cellToInfect;
+            var spreadDisease
+            if (this.number < viralSpreadThreshold){
+                spreadDisease = false;
+            } else {
+                spreadDisease = Math.random() < 0.62;
+            }
+             
+            var cellToInfect = null;
             if (spreadDisease){
                 var thisHost = this.host;
                 var thisColor = this.color;
                 cellToInfect = randomChoice(tissueCells.filter(
                     function isUninfectedNeighbour(cell){
-                    return tissueCellsDistance(thisHost, cell) < 1.5 && cell.size === tissueCellSize && (cell.infection.length === 0 || cell.infection[0].color === thisColor) && (cell.vaccine != thisColor);
+                    return (tissueCellsDistance(thisHost, cell) < 1.5) && (cell.size === tissueCellSize) && (cell.virus == null || cell.virus.color === thisColor) && (cell.vaccine != thisColor);
                     }));
-            } else {
-                cellToInfect = this.host
-            }
-            if (cellToInfect != null && cellToInfect.infection.length < maxVirusesInTissueCell){
-                var newVirus = new Virus(this.color, this.doublingTime, cellToInfect);
+                if (cellToInfect != null){
+                    if (cellToInfect.virus != null){
+                        cellToInfect.virus.number++;
+                    } else {
+                        var newVirus = new Virus(this.color, this.doublingTime, cellToInfect);
                 viruses.push(newVirus);
+                    }
+                }
+            } else {
+                this.number = Math.min(this.number*2, maxVirusesInTissueCell);
             }
         }
     }
@@ -114,7 +123,7 @@ class HelmintPart extends MovingObject{
         this.angle = 0;
     }
     draw(){
-        if (this.x > 0 && this.y > 0 && this.x < fieldWidth && this.y < fieldHeight) {
+        if (this.x > 0 && this.y > 0 && this.x < playableFieldX+playableFieldWidth && this.y < playableFieldY+playableFieldHeight) {
             ctx.save();
             ctx.translate(this.x+this.radius/2, this.y+this.radius/2);
             ctx.rotate(this.angle);

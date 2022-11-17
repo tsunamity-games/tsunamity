@@ -279,7 +279,12 @@ function formNewWave(waveNumber, oldBac, oldVir, oldHel, oldHIV){
     var newVir = oldVir;
     var newHel = oldHel;
     var newHIV = oldHIV;
-    var coins = Math.round(50*waveNumber + 0.05*waveNumber**2);
+    var coins;
+    if (waveNumber === 1){
+        coins = 15;
+    } else {
+        coins = Math.round(25*waveNumber + 0.025*waveNumber**2);
+    }
     if (waveNumber > 3 && randomUniform(0, 1) < PROB_TO_ADD_NEW_COLOR){
         var newIndex = (inplayBacteriaColorsIndices[inplayBacteriaColorsIndices.length-1] + 1) % BACTERIA_COLORS.length;
         if (!inplayBacteriaColorsIndices.includes(newIndex)){
@@ -351,7 +356,7 @@ function chooseEnemy(bacList, virList, helList, hivList, coins, waveNumber){
         var delay = Math.round(health*HELMINT_DELAY_HEALTH_MULTIPLIER + randomUniform(-HELMINT_DELAY_NOISE, HELMINT_DELAY_NOISE));
         enemyPrice = health;
         if (enemyPrice <= coins){
-            helList.push(new Helmint(-100, randomUniform(playableFieldY + 15, playableFieldHeight-15), health, price, delay, width, length));
+            helList.push(new Helmint(-100, randomUniform(playableFieldY, playableFieldY+playableFieldHeight), health, price, delay, width, length));
             coins -= enemyPrice;
         } 
     } else if (enemy == HIV){
@@ -763,8 +768,7 @@ function playGame(tutorial=false) {
                 targetList = bacteria;
             }
 
-            cell.changeDirection(targetList);            
-            
+            cell.changeDirection(targetList);
             // Old cells die
             var oldCells = immunityCells.filter((cell)=>cell.age >= cell.longevity);
             oldCells.forEach((cell) => {
@@ -838,7 +842,7 @@ function playGame(tutorial=false) {
         (296/1440)*fieldWidth, 
         (147/1080)*fieldHeight);
     immunityCells.filter(cell => cell instanceof BLymphocyte || cell instanceof TLymphocyte).forEach(cell => cell.label.draw());
-    money += baseIncome * tissueCells.filter((cell) => cell.infection.length === 0).length/tissueCells.length;
+    money += baseIncome * tissueCells.filter((cell) => cell.virus == null).length/tissueCells.length;
         
     
     ctx.lineWidth = 1;

@@ -291,20 +291,20 @@ var EdgeCellX;
 
 const TISSUE_CELL_COLOR = "#facdf3";
 const cancerMutationsThreshold = 50;
-const mutationProbability = 0.05;
+const mutationProbability = 0.1;
 const tissueCellDeathRate = 0.000001;
 
 // Immune cells
 
 const NK_PRICE = 15;
-const T_LYMPHOCYTE_PRICE = 30;
+const T_LYMPHOCYTE_PRICE = 25;
 const B_LYMPHOCYTE_PRICE = 20;
 const T_HELPER_PRICE = 50;
 const NEUTROPHIL_PRICE = 10;
 const MACROPHAGE_PRICE = 30;
 const EOSINOPHILE_PRICE = 5;
 const ANTIBIOTIC_PRICE = 10;
-const VACCINE_PRICE = 10;
+const VACCINE_PRICE = 5;
 const PLASMATIC_CELL_UPGRADE_PRICE = 10;
 const MEMORY_CELL_UPGRADE_PRICE = 20;
 
@@ -342,8 +342,7 @@ const bacteriaRadius = 6;
 var starting_nBacteria = 30;
 const BACTERIUM_BASE_SPEED = 0.2*0.86;
 
-const BACTERIA_BASE_HEALTH = 100;
-var BASE_BACTERIAL_HEALTH = 100;
+var BASE_BACTERIAL_HEALTH = 200;
 
 // Antibodies
 ANTIBODY_LONGEVITY = 10000;
@@ -355,16 +354,16 @@ ANTIBODY_SLOWING_COEFFICIENT = 0.5;
 var livesLeft = 10;
 var STARTING_MONEY = 0;
 var baseIncome = 0.01;
-var chanceToGetAntigen = 0.01;
+var chanceToGetAntigen = 0.02;
 var garbagePileSlowingCoefficient = 0.4;
 var nVaccinate = 30;
 var ANTIBIOTIC_COURSE_LENGTH = 4;
 
 // Wave forming algorithm parameters
 var BACTERIUM_PRICE = 1; 
-var VIRUS_PRICE = 50;
-var HELMINT_PRICE = 100;
-var HIV_PRICE = 10;
+var VIRUS_PRICE = 25;
+var HELMINT_PRICE = 50;
+var HIV_PRICE = 5;
 var ENEMY_PROB_DIST = [1/BACTERIUM_PRICE, 1/VIRUS_PRICE, 1/HELMINT_PRICE, 0/HIV_PRICE];
 var MIN_HELMINT_LENGTH = 4;
 var MAX_HELMINT_LENGTH = 20;
@@ -376,7 +375,7 @@ var HELMINT_DELAY_NOISE = 10;
 
 
 
-var PROB_TO_ADD_NEW_COLOR = 0.07;
+var PROB_TO_ADD_NEW_COLOR = 0.08;
 var PROB_TO_REMOVE_COLOR = 0;
 var VIRUSES_CLASSIFICATION = {
     blue:{

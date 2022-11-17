@@ -118,7 +118,7 @@ class Vaccine extends Button{
             money -= this.price;
             var targetTissueCells = [];
             for (var i = 0; i < nVaccinate; i++){
-                targetTissueCells.push(randomChoice(tissueCells.filter((cell) => !(cell in targetTissueCells) && cell.infection.length === 0)));
+                targetTissueCells.push(randomChoice(tissueCells.filter((cell) => !(cell in targetTissueCells) && cell.virus == null)));
             }
             targetTissueCells.forEach((cell) => cell.vaccine = this.color);
             historyObject.vaccinesBought += 1;       
@@ -219,6 +219,7 @@ class GameHistory {
             NaturalKiller: 0,
             TLymphocyte: 0,
             BLymphocyte: 0,
+            THelper: 0,
             Neutrophil: 0,
             Eosinophile: 0,
             Macrophage: 0
@@ -232,8 +233,8 @@ class GameHistory {
     }
     
     makeReport(){
-        this.moneyEarned = Math.round(this.cellsBought["NaturalKiller"]*150 + this.cellsBought["TLymphocyte"]*300 + this.cellsBought["BLymphocyte"]*200 + this.cellsBought["Neutrophil"]*100 + this.cellsBought["Eosinophile"]*50 + this.cellsBought["Macrophage"]*300 + this.antibioticsBought*100 + this.vaccinesBought*100 + money);
-        var text = "Immune cells bought:\nNatural Killers: " + this.cellsBought["NaturalKiller"] + "\nT-lymphocytes: " + this.cellsBought["TLymphocyte"] + "\nB-lymphocytes: " + this.cellsBought["BLymphocyte"] + "\nNeutrophils: " + this.cellsBought["Neutrophil"] + "\nEosinophiles: " + this.cellsBought["Eosinophile"] + "\nMacrophages: " + this.cellsBought["Macrophage"] + "\n\nEnemies killed:\nBacteria: " + this.bacteriaKilled + "\nInfected Tissue Cells: " + this.tissueCellsKilled + "\nHelmintes: " + this.helmintesKilled + "\n\nBoosters bought:\nAntibiotics: " + this.antibioticsBought + "\nVaccines: " + this.vaccinesBought + "\n\n Money earned: " + this.moneyEarned + "\nCurrent wave: " + wave;
+        this.moneyEarned = Math.round(this.cellsBought["NaturalKiller"]*NK_PRICE + this.cellsBought["TLymphocyte"]*T_LYMPHOCYTE_PRICE + this.cellsBought["BLymphocyte"]*B_LYMPHOCYTE_PRICE + this.cellsBought["Neutrophil"]*NEUTROPHIL_PRICE + this.cellsBought["Eosinophile"]*EOSINOPHILE_PRICE + this.cellsBought["Macrophage"]*MACROPHAGE_PRICE + this.antibioticsBought*ANTIBIOTIC_PRICE + this.vaccinesBought*VACCINE_PRICE + money);
+        var text = "Immune cells bought:\nNK cells: " + this.cellsBought["NaturalKiller"] + "\nT killers: " + this.cellsBought["TLymphocyte"] + "\nNeutrophils: " + this.cellsBought["Neutrophil"] + "\nB cells: " + this.cellsBought["BLymphocyte"] + "\nT helpers: " + this.cellsBought["THelper"] +  "\nEosinophils: " + this.cellsBought["Eosinophile"] + "\nMacrophages: " + this.cellsBought["Macrophage"] + "\n\nEnemies killed:\nBacteria: " + this.bacteriaKilled + "\nInfected Tissue Cells: " + this.tissueCellsKilled + "\nHelminthes: " + this.helmintesKilled + "\n\nBoosters bought:\nAntibiotics: " + this.antibioticsBought + "\nVaccines: " + this.vaccinesBought + "\n\n Money earned: " + this.moneyEarned + "\nCurrent wave: " + wave;
         return text;
     }
 }

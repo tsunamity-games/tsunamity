@@ -151,7 +151,7 @@ class TissueCell{
         this.x = x;
         this.y = y;
         this.size = size;
-        this.infection = [];
+        this.virus = null;
         this.health = 100;
         this.texture = randomChoice(CELL_IMAGES);
         this.vaccine = null;
@@ -176,9 +176,9 @@ class TissueCell{
             this.size,
             this.size)
         
-        if (this.infection.length !== 0){
-            ctx.fillStyle = this.infection[0].color;
-            ctx.globalAlpha = (this.infection.length+this.infection.length*0.2)/(maxVirusesInTissueCell+this.infection.length*0.2);
+        if (this.virus != null){
+            ctx.fillStyle = this.virus.color;
+            ctx.globalAlpha = (this.virus.number+this.virus.number*0.2)/(maxVirusesInTissueCell+this.virus.number*0.2);
             circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 2, true);
         } else if (this.vaccine != null){
             ctx.fillStyle = this.vaccine;
