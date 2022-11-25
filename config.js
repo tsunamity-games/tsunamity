@@ -435,7 +435,7 @@ var HELMINT_DELAY_NOISE = 10;
 
 
 
-var PROB_TO_ADD_NEW_COLOR = 0.09;
+var PROB_TO_ADD_NEW_COLOR = 0.12;
 var VIRUSES_CLASSIFICATION = {
     first:{
         doublingTime: 200,
