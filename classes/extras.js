@@ -47,7 +47,7 @@ class Button extends BodyPart {
 }
 class Antibiotic extends Button {
     constructor(color, x, y, width, height, price){
-        super(color, x, y, width, height, "A", false, ShopColors[color]["antibioticButtonImage"]["inactive"]);
+        super(color, x, y, width, height, "A", false, bacteriaColors[color]["antibioticButtonImage"]["inactive"]);
         this.price = price;
         this.course = 0;
         this.lastWave = null;
@@ -64,10 +64,10 @@ class Antibiotic extends Button {
             this.course = this.course % ANTIBIOTIC_COURSE_LENGTH;
             if (this.course === 0){
                 this.lastWave = null;
-                this.texture = ShopColors[this.color]["antibioticButtonImage"]["inactive"]
+                this.texture = bacteriaColors[this.color]["antibioticButtonImage"]["inactive"]
             } else {
                 this.lastWave = wave;
-                this.texture = ShopColors[this.color]["antibioticButtonImage"]["active"]
+                this.texture = bacteriaColors[this.color]["antibioticButtonImage"]["active"]
             }
             historyObject.antibioticsBought += 1;
             
@@ -85,7 +85,7 @@ class Antibiotic extends Button {
             this.y,
             antibioticBarWidth,
             this.height);
-        ctx.fillStyle = this.color;
+        ctx.fillStyle = bacteriaColors[this.color]["colorCode"];
         var filledHeight = (this.course/ANTIBIOTIC_COURSE_LENGTH)*this.height;
         ctx.fillRect(
             this.x + this.width + distanceBetweenAntibioticButtonAndBar, 
@@ -126,7 +126,7 @@ class Vaccine extends Button{
     }
     
     draw(){
-        ctx.fillStyle = this.color;
+        ctx.fillStyle = VIRUSES_CLASSIFICATION[this.color]["colorCode"];
         roundRect(ctx,
                   this.x, this.y, this.width, this.height,
                   leftRadius = 3, rightRadius = 3, fill = true, stroke = false);
@@ -187,11 +187,17 @@ class Pocket extends Shop{
         this.color = color;
         this.shopObj = shopObj;
         this.width = (shopObj.width*0.9028)/BACTERIA_COLORS.length;
-        this.height = this.width*1.59;
+        this.height = this.width*2.65;
+        this.texture = null;
+        if (this.shopObj == T_LYMPHOCYTE_SHOP){
+            this.texture = VIRUSES_CLASSIFICATION[this.color]['pocketImage'];
+        } else if (this.shopObj == B_LYMPHOCYTE_SHOP){
+            this.texture = bacteriaColors[this.color]['pocketImage'];
+        }
     }
     draw(){
         ctx.fillStyle = this.color;
-        ctx.drawImage(ShopColors[this.color]["pocketImage"], this.x, this.y, this.width, this.height);
+        ctx.drawImage(this.texture, this.x, this.y, this.width, this.height);
 //        ctx.fillRect(this.x, this.y, this.width, this.height);
     }
     buy(){

@@ -53,8 +53,7 @@ class Virus{
 }
 class Bacterium extends MovingObject {
     constructor(color, x, y, radius, maxHealth) {
-        var texture = BACTERIA_IMAGES.get(color);
-
+        var texture = bacteriaColors[color]["bacteriumImage"];
         super(texture, x, y, radius)
         this.color = color;
         this.xSpeed = randomUniform(-5, 5); 

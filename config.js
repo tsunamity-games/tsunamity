@@ -50,7 +50,7 @@ const shopY =  0.172*fieldHeight;
 const shopWidth =  0.085417*fieldWidth;
 const shopHeight = 0.16*fieldHeight;
 const spaceBetweenShops = 0.0125*fieldWidth;
-const BACTERIA_COLORS = ["blue", "green", "yellow", "orange"];
+const BACTERIA_COLORS = ["first", "second", "third", "fourth"];
 const xLeftOffset = playableFieldX;
 
 // Top menu
@@ -103,15 +103,15 @@ SCROLL_IMAGE.src = "./images/scroll.png";
 const LYMPHOCYTES_IMAGES = new Map();  // Map from color to image of lymphocytes
 const BACTERIA_IMAGES = new Map();  // Map from color to image of bacteria
 
-BACTERIA_COLORS.forEach((color) => {
-    const lymphocyte_image = new Image();
-    lymphocyte_image.src = "./images/lymphocytes_" + color + ".png";
-    LYMPHOCYTES_IMAGES.set(color, lymphocyte_image);
-    
-    const bacterium_image = new Image();
-    bacterium_image.src = "./images/bacteria_" + color + ".png";
-    BACTERIA_IMAGES.set(color, bacterium_image);
-});
+//BACTERIA_COLORS.forEach((color) => {
+//    const lymphocyte_image = new Image();
+//    lymphocyte_image.src = "./images/lymphocytes_" + color + ".png";
+//    LYMPHOCYTES_IMAGES.set(color, lymphocyte_image);
+//    
+//    const bacterium_image = new Image();
+//    bacterium_image.src = "./images/bacteria_" + color + ".png";
+//    BACTERIA_IMAGES.set(color, bacterium_image);
+//});
 
 const LYMPHOCYTES_DEFAULT_IMAGE = new Image();
 LYMPHOCYTES_DEFAULT_IMAGE.src = "./images/lymphocytes_dark.png";
@@ -171,9 +171,6 @@ PAUSE_IMAGE.src = "./images/pause.png";
 const RESUME_IMAGE = new Image();
 RESUME_IMAGE.src = "./images/resume.png";
 
-
-
-
 const BONE_MARROW_BACKGROUND_IMAGE = new Image();
 BONE_MARROW_BACKGROUND_IMAGE.src = "./images/boneMarrow.png";
 
@@ -188,66 +185,129 @@ const MINIMONEY = new Image();
 MINIMONEY.src = "./images/minimoney.svg";
 
 
-const BLUE_POCKET = new Image();
-BLUE_POCKET.src = "./images/pocket_blue.png";
+const FIRST_POCKET_V = new Image();
+FIRST_POCKET_V.src = "./images/pocket_one_v.png";
+const SECOND_POCKET_V = new Image();
+SECOND_POCKET_V.src = "./images/pocket_two_v.png";
+const THIRD_POCKET_V = new Image();
+THIRD_POCKET_V.src = "./images/pocket_three_v.png";
+const FOURTH_POCKET_V = new Image();
+FOURTH_POCKET_V.src = "./images/pocket_four_v.png";
+
+const FIRST_POCKET_B = new Image();
+FIRST_POCKET_B.src = "./images/pocket_one_b.png";
+const SECOND_POCKET_B = new Image();
+SECOND_POCKET_B.src = "./images/pocket_two_b.png";
+const THIRD_POCKET_B = new Image();
+THIRD_POCKET_B.src = "./images/pocket_three_b.png";
+const FOURTH_POCKET_B = new Image();
+FOURTH_POCKET_B.src = "./images/pocket_four_b.png";
 
 
-const BLUE_ANTIBIOTIC_ACTIVE = new Image();
-BLUE_ANTIBIOTIC_ACTIVE.src = "./images/antibiotic_button_blue_active.png";
-const GREEN_ANTIBIOTIC_ACTIVE = new Image();
-GREEN_ANTIBIOTIC_ACTIVE.src = "./images/antibiotic_button_green_active.png";
-const YELLOW_ANTIBIOTIC_ACTIVE = new Image();
-YELLOW_ANTIBIOTIC_ACTIVE.src = "./images/antibiotic_button_yellow_active.png";
-const ORANGE_ANTIBIOTIC_ACTIVE = new Image();
-ORANGE_ANTIBIOTIC_ACTIVE.src = "./images/antibiotic_button_orange_active.png";
+const FIRST_ANTIBIOTIC_ACTIVE = new Image();
+FIRST_ANTIBIOTIC_ACTIVE.src = "./images/antibiotic_button_first_active.png";
+const SECOND_ANTIBIOTIC_ACTIVE = new Image();
+SECOND_ANTIBIOTIC_ACTIVE.src = "./images/antibiotic_button_second_active.png";
+const THIRD_ANTIBIOTIC_ACTIVE = new Image();
+THIRD_ANTIBIOTIC_ACTIVE.src = "./images/antibiotic_button_third_active.png";
+const FOURTH_ANTIBIOTIC_ACTIVE = new Image();
+FOURTH_ANTIBIOTIC_ACTIVE.src = "./images/antibiotic_button_fourth_active.png";
 
 
-const BLUE_ANTIBIOTIC_INACTIVE = new Image();
-BLUE_ANTIBIOTIC_INACTIVE.src = "./images/antibiotic_button_blue_inactive.png";
-const GREEN_ANTIBIOTIC_INACTIVE = new Image();
-GREEN_ANTIBIOTIC_INACTIVE.src = "./images/antibiotic_button_green_inactive.png";
-const YELLOW_ANTIBIOTIC_INACTIVE = new Image();
-YELLOW_ANTIBIOTIC_INACTIVE.src = "./images/antibiotic_button_yellow_inactive.png";
-const ORANGE_ANTIBIOTIC_INACTIVE = new Image();
-ORANGE_ANTIBIOTIC_INACTIVE.src = "./images/antibiotic_button_orange_inactive.png";
+const FIRST_ANTIBIOTIC_INACTIVE = new Image();
+FIRST_ANTIBIOTIC_INACTIVE.src = "./images/antibiotic_button_first_inactive.png";
+const SECOND_ANTIBIOTIC_INACTIVE = new Image();
+SECOND_ANTIBIOTIC_INACTIVE.src = "./images/antibiotic_button_second_inactive.png";
+const THIRD_ANTIBIOTIC_INACTIVE = new Image();
+THIRD_ANTIBIOTIC_INACTIVE.src = "./images/antibiotic_button_third_inactive.png";
+const FOURTH_ANTIBIOTIC_INACTIVE = new Image();
+FOURTH_ANTIBIOTIC_INACTIVE.src = "./images/antibiotic_button_fourth_inactive.png";
+
+const FIRST_BACTERIUM = new Image();
+FIRST_BACTERIUM.src = "./images/bacteria_first.png";
+const SECOND_BACTERIUM = new Image();
+SECOND_BACTERIUM.src = "./images/bacteria_second.png";
+const THIRD_BACTERIUM = new Image();
+THIRD_BACTERIUM.src = "./images/bacteria_third.png";
+const FOURTH_BACTERIUM = new Image();
+FOURTH_BACTERIUM.src = "./images/bacteria_fourth.png";
+
+const FIRST_LYMPHOCYTE = new Image();
+FIRST_LYMPHOCYTE.src = "./images/lymphocytes_dark.png";
+const SECOND_LYMPHOCYTE = new Image();
+SECOND_LYMPHOCYTE.src = "./images/lymphocytes_dark.png";
+const THIRD_LYMPHOCYTE = new Image();
+THIRD_LYMPHOCYTE.src = "./images/lymphocytes_dark.png";
+const FOURTH_LYMPHOCYTE = new Image();
+FOURTH_LYMPHOCYTE.src = "./images/lymphocytes_dark.png";
+
+
+
+
+var bacteriaColors = {
+    first:{
+        colorCode: "#FD2595",
+        pocketImage: FIRST_POCKET_B,
+        bacteriumImage: FIRST_BACTERIUM,
+        antibioticButtonImage: {
+            active: FIRST_ANTIBIOTIC_ACTIVE,
+            inactive: FIRST_ANTIBIOTIC_INACTIVE
+        },
+        lymphocyteImage: FIRST_LYMPHOCYTE
+    },
+    second:{
+        colorCode: "#DF1B1B",
+        pocketImage: SECOND_POCKET_B,
+        bacteriumImage: SECOND_BACTERIUM,
+        antibioticButtonImage: {
+            active: SECOND_ANTIBIOTIC_ACTIVE,
+            inactive: SECOND_ANTIBIOTIC_INACTIVE
+        },
+        lymphocyteImage: SECOND_LYMPHOCYTE
+    },
+    third:{
+        colorCode: "#FF5900",
+        pocketImage: THIRD_POCKET_B,
+        bacteriumImage: THIRD_BACTERIUM,
+        antibioticButtonImage: {
+            active: THIRD_ANTIBIOTIC_ACTIVE,
+            inactive: THIRD_ANTIBIOTIC_INACTIVE
+        },
+        lymphocyteImage: THIRD_LYMPHOCYTE
+},
+    fourth:{
+        colorCode: "#FFA800",
+        pocketImage: FOURTH_POCKET_B,
+        bacteriumImage: FOURTH_BACTERIUM,
+        antibioticButtonImage: {
+            active: FOURTH_ANTIBIOTIC_ACTIVE,
+            inactive: FOURTH_ANTIBIOTIC_INACTIVE
+        },
+        lymphocyteImage: FOURTH_LYMPHOCYTE
+    }
+}
 
 
 var ShopColors = {
     blue:{
         scrollImage: BLUE_SCROLL,
-        pocketImage: BLUE_POCKET,
-        antibioticButtonImage: {
-            active: BLUE_ANTIBIOTIC_ACTIVE,
-            inactive: BLUE_ANTIBIOTIC_INACTIVE
-        },
+        pocketImageV: FIRST_POCKET_V,        
         colorCode: "#005FA4",
     },
     green:{
         scrollImage: GREEN_SCROLL,
-        pocketImage: BLUE_POCKET,
-        antibioticButtonImage: {
-            active: GREEN_ANTIBIOTIC_ACTIVE,
-            inactive: GREEN_ANTIBIOTIC_INACTIVE
-        },
+        pocketImageV: SECOND_POCKET_V,        
         colorCode: "#006956",
     },
     yellow:{
         scrollImage: YELLOW_SCROLL,
-        pocketImage: BLUE_POCKET,
-        antibioticButtonImage: {
-            active: YELLOW_ANTIBIOTIC_ACTIVE,
-            inactive: YELLOW_ANTIBIOTIC_INACTIVE
-        },
+        pocketImageV: THIRD_POCKET_V,        
         colorCode: "#DC9E00",
     },
     // This one is not displayed, but prevents error when creating orange pocket
     orange:{
         scrollImage: YELLOW_SCROLL,
-        antibioticButtonImage: {
-            active: ORANGE_ANTIBIOTIC_ACTIVE,
-            inactive: ORANGE_ANTIBIOTIC_INACTIVE
-        },
-        pocketImage: BLUE_POCKET,
+        pocketImageV: FOURTH_POCKET_V,                
         colorCode: "#DC9E00",
     },
 }
@@ -352,7 +412,7 @@ ANTIBODY_SLOWING_COEFFICIENT = 0.5;
 
 // Game parameters
 var livesLeft = 10;
-var STARTING_MONEY = 0;
+var STARTING_MONEY = 100;
 var baseIncome = 0.01;
 var chanceToGetAntigen = 0.02;
 var garbagePileSlowingCoefficient = 0.4;
@@ -375,21 +435,31 @@ var HELMINT_DELAY_NOISE = 10;
 
 
 
-var PROB_TO_ADD_NEW_COLOR = 0.08;
-var PROB_TO_REMOVE_COLOR = 0;
+var PROB_TO_ADD_NEW_COLOR = 0.09;
 var VIRUSES_CLASSIFICATION = {
-    blue:{
+    first:{
         doublingTime: 200,
-        price: 50},
-    green:{
+        price: 50,
+        pocketImage: FIRST_POCKET_V,
+        colorCode: "#52BBEE"
+    },
+    second:{
         doublingTime: 180,
-        price: 55},
-    yellow:{
+        price: 55,
+        pocketImage: SECOND_POCKET_V,
+        colorCode: "#718BCF"
+    },
+    third:{
         doublingTime: 150, 
-        price: 66},
-    orange:{
+        price: 66,
+        pocketImage: THIRD_POCKET_V,
+        colorCode: "#8A71CF"
+    },
+    fourth:{
         doublingTime: 100,
-        price: 100}
+        price: 100,
+        pocketImage: FOURTH_POCKET_V,
+        colorCode: "#B159DB"
+    }
 }
-var NEW_COLOR_MULTIPLIER = 10;
 var MAX_COLOR_PROB_VAL = 10;

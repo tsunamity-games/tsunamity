@@ -184,41 +184,6 @@ function addTissueCells(tissueCellsList){
     return tissueCellsList;
 }
 
-function addBacteria(bacteriaList, n, maxHealth, price){
-    for (var i=0; i<n; i++){
-        var y = randomUniform(playableFieldY, playableFieldHeight); 
-        var x = -100;
-        var color = BACTERIA_COLORS[randomChoice(inplayBacteriaColorsIndices)];
-        bacteriaList.push(new Bacterium(color, x, y, bacteriaRadius, maxHealth));
-    };
-    return bacteriaList;
-}
-function addViruses(virusesList, n, color, doublingTime){
-    for (var i=0; i < n; i++){
-        virusesList.push(new Virus(randomChoice(BACTERIA_COLORS), doublingTime, null))
-    }
-    return virusesList;
-}
-
-function drawBlood(){
-    var pointsBranch1 = 
-        [[369, 378], [418, 346], [491, 333], [567, 313], [638, 260], [702, 193], 
-            [759, 139], [837, 128], [915, 126], [942, 102], [957, 87], [980, 0]]
-    ctx.lineWidth = 30;
-    ctx.strokeStyle = "red";
-    ctx.beginPath();
-    ctx.moveTo(pointsBranch1[0][0], pointsBranch1[0][1]);
-    for (var i=1; i < pointsBranch1.length; i++){
-        ctx.lineTo(pointsBranch1[i][0], pointsBranch1[i][1]);
-    }
-    ctx.moveTo(942, 102)
-    var pointsBranch2 = [[943, 227], [958, 266], [950, 292], [944, 351], [965, 365], [989, 377], [1021, 448], [1006, 481], [970, 550], [929, 584], [848, 644], [849, 668], [870, 706], [898, 722], [919, 744], [929, 754]];
-    for (var i=1; i < pointsBranch2.length; i++){
-        ctx.lineTo(pointsBranch2[i][0], pointsBranch2[i][1]);
-    }
-    
-    ctx.stroke();
-}
 
 function printGameInfo(){
     ctx.fillStyle = "Black";
@@ -289,21 +254,38 @@ function formNewWave(waveNumber, oldBac, oldVir, oldHel, oldHIV){
         var newIndex = (inplayBacteriaColorsIndices[inplayBacteriaColorsIndices.length-1] + 1) % BACTERIA_COLORS.length;
         if (!inplayBacteriaColorsIndices.includes(newIndex)){
             inplayBacteriaColorsIndices.push(newIndex);   
-            colorProbs.push(1);        }
-    } 
-    if (inplayBacteriaColorsIndices.length > 1 && randomUniform(0, 1) < PROB_TO_REMOVE_COLOR){
-        inplayBacteriaColorsIndices.shift();
-        colorProbs.shift();
-    } 
+            bacterialColorProbs.push(1);}
+    }
+    if (waveNumber > 3 && randomUniform(0, 1) < PROB_TO_ADD_NEW_COLOR){
+        var newIndex = (inplayVirusesColorsIndices[inplayVirusesColorsIndices.length-1] + 1) % BACTERIA_COLORS.length;
     
-    colorProbs[0] -= 1;
-    colorProbs[0] = Math.max(0, colorProbs[0]);
-    colorProbs[colorProbs.length-1] += 1;
-    if (colorProbs[0] === 0){
-        colorProbs.shift();
+        if (!inplayVirusesColorsIndices.includes(newIndex)){
+            inplayVirusesColorsIndices.push(newIndex);   
+            viralColorProbs.push(1);        }
+    } 
+    bacterialColorProbs[0] -= 1;
+    bacterialColorProbs[0] = Math.max(0, bacterialColorProbs[0]);
+    bacterialColorProbs[bacterialColorProbs.length-1] += 1;
+    
+    viralColorProbs[0] -= 1;
+    viralColorProbs[0] = Math.max(0, viralColorProbs[0]);
+    viralColorProbs[viralColorProbs.length-1] += 1;
+    
+    
+    
+    if (bacterialColorProbs[0] === 0){
+        bacterialColorProbs.shift();
         inplayBacteriaColorsIndices.shift();
     }
-    colorProbs[colorProbs.length-1] = Math.min(colorProbs[colorProbs.length-1], MAX_COLOR_PROB_VAL);
+    
+    if (viralColorProbs[0] === 0){
+        viralColorProbs.shift();
+        inplayVirusesColorsIndices.shift();
+    }
+    
+    bacterialColorProbs[bacterialColorProbs.length-1] = Math.min(bacterialColorProbs[bacterialColorProbs.length-1], MAX_COLOR_PROB_VAL);
+    viralColorProbs[viralColorProbs.length-1] = Math.min(viralColorProbs[viralColorProbs.length-1], MAX_COLOR_PROB_VAL);
+    
     while (coins > 0){
         [newBac, newVir, newHel, newHIV, coins] = chooseEnemy(newBac, newVir, newHel, newHIV, coins, waveNumber);
     }
@@ -326,22 +308,22 @@ function chooseEnemy(bacList, virList, helList, hivList, coins, waveNumber){
     var enemyPrice;
     var enemy = randomChoice(candidates, ENEMY_PROB_DIST.slice(0, candidates.length));
     if (enemy != Helmint && enemy != HIV){
-        var colorIndex = randomChoice(inplayBacteriaColorsIndices, colorProbs);
-        var color = BACTERIA_COLORS[colorIndex];
         if (enemy == Bacterium){
+            var colorIndex = randomChoice(inplayBacteriaColorsIndices, bacterialColorProbs);
+            var color = BACTERIA_COLORS[colorIndex];
+
             var y = randomUniform(playableFieldY, 
                                   playableFieldY + playableFieldHeight);
             var x = -100;
             enemyPrice = BACTERIUM_PRICE;
-            if(colorIndex === inplayBacteriaColorsIndices[-1]){
-                enemyPrice *= NEW_COLOR_MULTIPLIER;
-            }
             if (enemyPrice <= coins){
                 bacList.push(new Bacterium(color, x, y, bacteriaRadius, BASE_BACTERIAL_HEALTH, price));
                 coins -= enemyPrice;
 
             }
         } else if (enemy == Virus){
+            var colorIndex = randomChoice(inplayVirusesColorsIndices, viralColorProbs);
+            var color = BACTERIA_COLORS[colorIndex];
             enemyPrice = VIRUSES_CLASSIFICATION[color].price;
             if (enemyPrice <= coins){
                 virList.push(new Virus(color, VIRUSES_CLASSIFICATION[color].doublingTime, null)); 
@@ -382,7 +364,10 @@ var buttons;
 var spleen;
 var tissuecells;
 var inplayBacteriaColorsIndices;
-var colorProbs;
+var inplayVirusesColorsIndices;
+var bacterialColorProbs;
+var viralColorProbs;
+
 var bacteria;
 var hiv_particles;
 var viruses;
@@ -408,7 +393,7 @@ const MENU_BUTTONS = [
 ]
 
 const T_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + shopWidth + spaceBetweenShops, shopY, TLymphocyte, T_LYMPHOCYTE_PRICE, T_LYMPHOCYTES_IMAGE, false, true, "yellow");
-const B_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + 3 * shopWidth + 3 * spaceBetweenShops, shopY, BLymphocyte, B_LYMPHOCYTE_PRICE, LYMPHOCYTES_IMAGES.get("green"), true, true, "green");
+const B_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + 3 * shopWidth + 3 * spaceBetweenShops, shopY, BLymphocyte, B_LYMPHOCYTE_PRICE, T_LYMPHOCYTES_IMAGE, true, true, "green");
 
 shops = [
     new Shop(xLeftOffset, shopY, NaturalKiller, NK_PRICE, T_LYMPHOCYTES_IMAGE, true, true, "yellow"),
@@ -448,7 +433,11 @@ function setupGame(tutorial=false){
     spleen = new Spleen(spleenX, spleenY, spleenSize, spleenSize, 12);
     tissueCells = addTissueCells([]);
     inplayBacteriaColorsIndices = [0];
-    colorProbs = [MAX_COLOR_PROB_VAL];
+    inplayVirusesColorsIndices = [0];
+    
+    bacterialColorProbs = [MAX_COLOR_PROB_VAL];
+    viralColorProbs = [MAX_COLOR_PROB_VAL];
+    
     bacteria = [];
     viruses = [];
     helmintes = [];
@@ -458,7 +447,7 @@ function setupGame(tutorial=false){
     if(!tutorial) {
         [bacteria, viruses, helmintes, hiv_particles] = formNewWave(wave, bacteria, viruses, helmintes, hiv_particles);
     } else {
-        bacteria.push(new Bacterium("blue", 0, fieldHeight / 2, bacteriaRadius, BASE_BACTERIAL_HEALTH, BACTERIUM_PRICE));
+        bacteria.push(new Bacterium("first", 0, fieldHeight / 2, bacteriaRadius, BASE_BACTERIAL_HEALTH, BACTERIUM_PRICE));
     }
     
     fullWaveSize = bacteria.length;

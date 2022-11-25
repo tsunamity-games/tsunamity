@@ -44,7 +44,7 @@ class Antibody {
     
     draw(){
         ctx.beginPath();
-        ctx.strokeStyle = this.color;
+        ctx.strokeStyle = bacteriaColors[this.color]["colorCode"];
         ctx.moveTo(this.x, this.y-5);
         ctx.lineTo(this.x, this.y);
         ctx.lineTo(this.x+2, this.y+2);
@@ -264,7 +264,7 @@ class NaturalKiller extends ImmuneCell {
 }
 class BLymphocyte extends ImmuneCell {
     constructor(x, y, mode="naive", color="#FFFFFF") {
-        super(LYMPHOCYTES_IMAGES.get(color), x, y, 20, 0.3, 1);
+        super(T_LYMPHOCYTES_IMAGE, x, y, 20, 0.3, 1);
         this.mode = mode;
         this.shootingRadius = 40;
         this.iteration = 0;
@@ -340,7 +340,7 @@ class BLymphocyte extends ImmuneCell {
             }
             if (this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size/2)){
                 if (this.target.antigen != null && doCirclesIntersect(this.target.x, this.target.y, this.target.size/2, this.target.antigen.x, this.target.antigen.y, this.target.antigen.radius) && randomUniform(0, 1) < 0.01){
-                    this.texture = LYMPHOCYTES_IMAGES.get(this.target.antigen.color);
+                    this.texture = bacteriaColors[this.target.antigen.color]["lymphocyteImage"];
                     this.color = this.target.antigen.color;
                     this.mode = "mature";
                     this.target = null;
@@ -360,7 +360,13 @@ class BLymphocyte extends ImmuneCell {
     }
     
     draw() {
-        ctx.fillStyle = this.color;
+        var color;
+        if (this.mode == "naive"){
+            color = this.color
+        } else{
+            color = bacteriaColors[this.color]["colorCode"]; 
+        }
+        ctx.fillStyle = color;
 
         // Visualize shooting radius
         if (this.x > 0 && this.y > 0 && this.x < fieldWidth && this.y < fieldHeight) {
@@ -408,7 +414,7 @@ class TLymphocyte extends ImmuneCell {
             T_LYMPHOCYTE_SHOP.pockets.push(
                 new Pocket(T_LYMPHOCYTE_SHOP, 
                            pocketX, 
-                           shopY + T_LYMPHOCYTE_SHOP.height,
+                           shopY + T_LYMPHOCYTE_SHOP.height - T_LYMPHOCYTE_SHOP.height*0.02,
                            this.color));
             
         }
@@ -440,8 +446,8 @@ class TLymphocyte extends ImmuneCell {
     }
     
     draw(){
-        ctx.fillStyle = this.color;
-        ctx.globalAlpha = 0.2;
+        ctx.fillStyle = VIRUSES_CLASSIFICATION[this.color]["colorCode"];
+        ctx.globalAlpha = 0.4;
         circle(this.x, this.y, 30, true);
         circle(this.x, this.y, 30, false);
         ctx.globalAlpha = 1;

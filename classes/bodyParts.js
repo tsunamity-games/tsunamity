@@ -22,7 +22,13 @@ class BodyPart {
 }
 class Shop extends BodyPart {  
     constructor(x, y, cellType, price, cellTexture, isEnemyAnimated, isCellAnimated, color) {
-        super(ShopColors[color]["scrollImage"], 
+        var texture;
+        if (['blue', 'green', 'yellow'].includes(color)){
+            texture = ShopColors[color]["scrollImage"]
+        } else {
+            texture = ShopColors["blue"]["scrollImage"]
+        }
+        super(texture, 
               x, y, 
               shopWidth, 
               shopHeight);
@@ -181,12 +187,12 @@ class TissueCell{
             this.size)
         
         if (this.virus != null){
-            ctx.fillStyle = this.virus.color;
+            ctx.fillStyle = VIRUSES_CLASSIFICATION[this.virus.color]["colorCode"];
             ctx.globalAlpha = (this.virus.number+this.virus.number*0.2)/(maxVirusesInTissueCell+this.virus.number*0.2);
             circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 2, true);
         } else if (this.vaccine != null){
-            ctx.fillStyle = this.vaccine;
-            ctx.globalAlpha = 0.1;
+            ctx.fillStyle = VIRUSES_CLASSIFICATION[this.vaccine]["colorCode"];
+            ctx.globalAlpha = 0.5;
             circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 2, true);
             ctx.globalAlpha = 1;
             ctx.textAlign = "center";
