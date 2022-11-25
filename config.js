@@ -412,7 +412,7 @@ ANTIBODY_SLOWING_COEFFICIENT = 0.5;
 
 // Game parameters
 var livesLeft = 10;
-var STARTING_MONEY = 100;
+var STARTING_MONEY = 0;
 var baseIncome = 0.01;
 var chanceToGetAntigen = 0.02;
 var garbagePileSlowingCoefficient = 0.4;
