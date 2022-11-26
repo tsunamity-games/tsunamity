@@ -1,4 +1,4 @@
-const BASE_GAME_SPEED = 2;
+const BASE_GAME_SPEED = 3;
 
 
 // Field parameters
