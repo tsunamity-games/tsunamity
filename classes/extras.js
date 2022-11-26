@@ -29,25 +29,26 @@ class Button extends BodyPart {
             ctx.globalAlpha = 1;
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
+            if (this.text != ""){
+                if(this.isCircle) {
+                    circle(this.x+this.width/2, this.y+this.height/2, this.width/2, false);
+                    ctx.fillStyle = "black";
+                    ctx.font = this.height * 0.7 + "px Courier"
+                }
+                else {
+                    ctx.fillStyle = "white";
+                    ctx.font = this.height * 0.4 + "px Courier"
+                }
 
-            if(this.isCircle) {
-                circle(this.x+this.width/2, this.y+this.height/2, this.width/2, false);
-                ctx.fillStyle = "black";
-                ctx.font = this.height * 0.7 + "px Courier"
+                ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
             }
-            else {
-                ctx.fillStyle = "white";
-                ctx.font = this.height * 0.4 + "px Courier"
-            }
-
-            ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
         }
     }
     
 }
 class Antibiotic extends Button {
     constructor(color, x, y, width, height, price){
-        super(color, x, y, width, height, "A", false, bacteriaColors[color]["antibioticButtonImage"]["inactive"]);
+        super(color, x, y, width, height, "", false, bacteriaColors[color]["antibioticButtonImage"]["inactive"]);
         this.price = price;
         this.course = 0;
         this.lastWave = null;
@@ -130,7 +131,6 @@ class Vaccine extends Button{
         roundRect(ctx,
                   this.x, this.y, this.width, this.height,
                   leftRadius = 3, rightRadius = 3, fill = true, stroke = false);
-        ctx.font = "bold " + this.height * 0.8 + "px Courier";
         ctx.fillStyle = "black";
         ctx.globalAlpha = 0.2;
         ctx.textBaseline = "middle";

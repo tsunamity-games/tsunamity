@@ -67,14 +67,13 @@ class Shop extends BodyPart {
         this.discount = 0;
     }
     
-    draw() {
+    draw1() {
         super.draw();
     
         ctx.fillStyle =  ShopColors[this.color]["colorCode"];
         ctx.textBaseline = "top";
         
         // Name of the cell type sold
-        ctx.font = "bold " + this.width/8 + "px Courier";
         ctx.textAlign = "center";
         var name = cell_names[this.cellType.name];
         for (let i = 0; i < name.length; i++) {
@@ -92,17 +91,18 @@ class Shop extends BodyPart {
             this.y + this.height/2 - 4.5/2*this.height/10 - this.height/12,
             6*this.width/10,
             9/2*this.height/10)
-
+        }
+    
+    draw2(){
         // Draw coloured rectangle for price
         ctx.fillStyle = ShopColors[this.color]["colorCode"];
-        var priceX = this.x + this.width*(53/123), priceY = this.y + this.height*(1-0.125), priceWidth = this.width*(1-53/123), priceHeight = this.height*0.125;
+        var priceX = this.x + this.width*(53/123), priceY = this.y + this.height*(1-0.125), priceWidth = this.width*(1-53/123);
         roundRect(ctx, 
               priceX, priceY, priceWidth, priceHeight, 
               8, 0, true, false, 0);
         
         // Write price
         ctx.fillStyle = "#F9EAC4";
-        ctx.font = "bold " + priceHeight*0.9 + "px Courier";
         ctx.textAlign = "left";
         ctx.textBaseline = "middle";
         
@@ -118,7 +118,8 @@ class Shop extends BodyPart {
                       priceHeight*0.9*1.282,
                       priceHeight*0.9
                      );
-        }
+    }
+    
 }
 class SpleenSection{
     constructor(x, y, size){

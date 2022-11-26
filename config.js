@@ -52,7 +52,7 @@ const shopHeight = 0.16*fieldHeight;
 const spaceBetweenShops = 0.0125*fieldWidth;
 const BACTERIA_COLORS = ["first", "second", "third", "fourth"];
 const xLeftOffset = playableFieldX;
-
+const priceHeight = shopHeight*0.125
 // Top menu
 const topMenuColor = "#142029";
 const topMenuHeight = fieldHeight*0.075;
@@ -350,7 +350,7 @@ const spaceBetweenTissueCellsVertical = 0.003472*playableFieldHeight;
 var EdgeCellX;
 
 const TISSUE_CELL_COLOR = "#facdf3";
-const cancerMutationsThreshold = 50;
+const cancerMutationsThreshold = 20;
 const mutationProbability = 0.1;
 const tissueCellDeathRate = 0.000001;
 

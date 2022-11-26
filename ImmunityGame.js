@@ -153,7 +153,7 @@ function drawField(){
     ctx.moveTo((312/1440)*fieldWidth, linesY)
     ctx.lineTo(((312+258)/1440)*fieldWidth, linesY)
     ctx.stroke();
-    ctx.font = "bold " + (37/1080)*fieldHeight + "px Courier";
+//    ctx.font = "bold " + (37/1080)*fieldHeight + "px Courier";
     ctx.fillStyle = ShopColors.green.colorCode;  
     ctx.fillText("Bacteria", (312/1440)*fieldWidth, (120/1080)*fieldHeight);
     
@@ -162,7 +162,7 @@ function drawField(){
     ctx.moveTo((595/1440)*fieldWidth, linesY);
     ctx.lineTo(((595+391)/1440)*fieldWidth, linesY);
     ctx.stroke();
-    ctx.font = "bold " + (37/1080)*fieldHeight + "px Courier";
+//    ctx.font = "bold " + (37/1080)*fieldHeight + "px Courier";
     ctx.fillStyle = ShopColors.blue.colorCode;  
     ctx.fillText("Other", (595/1440)*fieldWidth, (120/1080)*fieldHeight)
     
@@ -182,18 +182,6 @@ function addTissueCells(tissueCellsList){
     }
     EdgeCellX = x;
     return tissueCellsList;
-}
-
-
-function printGameInfo(){
-    ctx.fillStyle = "Black";
-    ctx.textBaseline = "top";
-    ctx.textAlign = "left";
-    ctx.font = "20px Courier";
-    ctx.fillText("Wave: "+ wave, offset, offset);
-    ctx.fillText("Money: "+ Math.floor(money), offset, offset+20);
-    ctx.fillText("Lives: "+ livesLeft, offset, offset+40);
-    reset.draw();
 }
 
 function stopGame(why){
@@ -648,7 +636,6 @@ function playGame(tutorial=false) {
         stopGame("Pause");
     } else {
     drawField();
-//    printGameInfo();
         
     shops.forEach((shop) => {
         shop.reset();
@@ -662,6 +649,7 @@ function playGame(tutorial=false) {
         });
         shop.pockets.forEach((pocket) => pocket.draw());
     })
+    ctx.font = "bold " + buttonHeight * 0.8 + "px Courier";
     buttons.forEach((button) => {button.draw()})
 //    ctx.fillText("Price: 100", buttons[0].x - 60, buttons[0].y + buttons[0].height/2);
     
@@ -772,13 +760,18 @@ function playGame(tutorial=false) {
         antibody.move();
         antibody.draw();
     })
-
+        
+    // Setting the font multiple times apparently hinders performance
+    ctx.font = "bold " + shopWidth/8 + "px Courier";
     shops.forEach((shop) => {
         // Set price with discount
         shop.price = Math.round(shop.base_price * Math.pow(HELPER_DISCOUNT_RATE, shop.discount));
-        shop.draw();
-
+        shop.draw1();
     });
+    ctx.font = "bold " + priceHeight*0.9 + "px Courier";
+    shops.forEach((shop) => {
+        shop.draw2();
+    }); 
 
     spleen.sections.forEach((section) => {
         if (section.antigen != null){
