@@ -1,4 +1,4 @@
-const BASE_GAME_SPEED = 3;
+var BASE_GAME_SPEED = 1;
 
 
 // Field parameters
@@ -173,6 +173,13 @@ PAUSE_IMAGE.src = "./images/pause.png";
 
 const RESUME_IMAGE = new Image();
 RESUME_IMAGE.src = "./images/resume.png";
+
+const SPEED_UP_IMAGE = new Image();
+SPEED_UP_IMAGE.src = "./images/speed_up.png";
+
+const SPEED_DOWN_IMAGE = new Image();
+SPEED_DOWN_IMAGE.src = "./images/speed_down.png";
+
 
 const BONE_MARROW_BACKGROUND_IMAGE = new Image();
 BONE_MARROW_BACKGROUND_IMAGE.src = "./images/boneMarrow.png";
@@ -372,27 +379,33 @@ const PLASMATIC_CELL_UPGRADE_PRICE = 10;
 const MEMORY_CELL_UPGRADE_PRICE = 20;
 
 // speeds
-const NK_SPEED = 0.5*BASE_GAME_SPEED;
-const TLYMPHOCYTE_SPEED = 0.5*BASE_GAME_SPEED;
-const NEUTROPHIL_SPEED = 0.4*BASE_GAME_SPEED;
-const BLYMPHOCYTE_SPEED = 0.3*BASE_GAME_SPEED;
-const THELPER_SPEED = 0.5*BASE_GAME_SPEED;
-const EOSINOPHILE_SPEED = 0.2*BASE_GAME_SPEED;
-const MACROPHAGE_SPEED = 0.4*BASE_GAME_SPEED;
+var NK_SPEED = 0.5;
+var TLYMPHOCYTE_SPEED = 0.5;
+var NEUTROPHIL_SPEED = 0.4;
+var BLYMPHOCYTE_SPEED = 0.3;
+var THELPER_SPEED = 0.5;
+var EOSINOPHILE_SPEED = 0.2;
+var MACROPHAGE_SPEED = 0.4;
 
 // damages
-const EOSINOPHILES_DAMAGE = 0.01*BASE_GAME_SPEED;
-const NEUTROPHIL_DAMAGE = 0.2*BASE_GAME_SPEED;
-const MACROPHAGE_DAMAGE = 1*BASE_GAME_SPEED;
-const NK_DAMAGE = 1*BASE_GAME_SPEED;
-const BLYMPHOCYTE_DAMAGE = 1*BASE_GAME_SPEED;
-const TLYMPHOCYTE_DAMAGE = 1*BASE_GAME_SPEED;
+var EOSINOPHILES_DAMAGE = 0.01;
+var NEUTROPHIL_DAMAGE = 0.2;
+var MACROPHAGE_DAMAGE = 1;
+var NK_DAMAGE = 1;
+var BLYMPHOCYTE_DAMAGE = 1;
+var TLYMPHOCYTE_DAMAGE = 1;
+
+var HELPER_BUYING_COOLDOWN = 30000;
+var BASE_IMMUNITY_CELL_LONGEVITY = 40000;
+
+var VIRUS_DOUBLING_TIME = 200;
+var BACTERIUM_BASE_SPEED = 0.2*0.86;
+var baseIncome = 0.01;
+
 
 const HELPER_DISCOUNT_RATE = 1;
 const HELPER_DAMAGE_INCREASE = 1.1;
-const HELPER_BUYING_COOLDOWN = 30000/BASE_GAME_SPEED;
 
-BASE_IMMUNITY_CELL_LONGEVITY = 40000/BASE_GAME_SPEED;
 const HIV_LONGEVITY = 10000;
 
 
@@ -405,7 +418,6 @@ const TlymphocyteReproductionNumber = 5;
 const maxVirusesInTissueCell = 64;
 const viralSpreadThreshold = 63;
 const VIRUS_COLOR = "#800080";
-const VIRUS_DOUBLING_TIME = 200/BASE_GAME_SPEED;
 var starting_nViruses = 2;
 
 
@@ -417,7 +429,6 @@ const HIV_DAMAGE = 0.05;
 //      Bacteria
 const bacteriaRadius = 6;
 var starting_nBacteria = 30;
-const BACTERIUM_BASE_SPEED = BASE_GAME_SPEED*0.2*0.86;
 
 var BASE_BACTERIAL_HEALTH = 200;
 
@@ -430,7 +441,6 @@ ANTIBODY_SLOWING_COEFFICIENT = 0.5;
 // Game parameters
 var livesLeft = 10;
 var STARTING_MONEY = 0;
-var baseIncome = 0.01*BASE_GAME_SPEED;
 var chanceToGetAntigen = 0.02;
 var garbagePileSlowingCoefficient = 0.4;
 var nVaccinate = 30;

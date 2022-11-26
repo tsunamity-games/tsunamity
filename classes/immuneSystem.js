@@ -5,7 +5,6 @@ class MovingObject {
         this.radius = radius;
         this.x = x;
         this.y = y;
-
         this.animation_frame = 0;  // Animation frame
     }
 
@@ -79,8 +78,10 @@ class ImmuneCell extends MovingObject {
         this.xSpeed = 0;
         this.ySpeed = 0;
         this.target = undefined;
-        this.baseSpeed = baseSpeed;
-        this.damage = damage;
+        this.realBaseSpeed = baseSpeed;
+        this.realDamage = damage;
+        this.baseSpeed = this.realBaseSpeed*BASE_GAME_SPEED;
+        this.damage = this.realDamage*BASE_GAME_SPEED;
         this.age = 0;
         this.longevity = longevity;
         this.iteration = 0;
@@ -91,6 +92,8 @@ class ImmuneCell extends MovingObject {
     }
     
     changeDirection(targetsList, nCandidates=randomTargetNumber) {
+        this.baseSpeed = this.realBaseSpeed*BASE_GAME_SPEED;
+        this.damage = this.realDamage*BASE_GAME_SPEED;
         if (this.y < playableFieldY && this.x < spleen.x) {
             // Get away from shop
             this.xSpeed = randomUniform(-0.5, 0.5);
@@ -141,7 +144,7 @@ class ImmuneCell extends MovingObject {
     }
     live(){
         if (this.y > playableFieldY){
-            this.age++;
+            this.age += 1*BASE_GAME_SPEED;
         }
     }
 }
@@ -534,7 +537,7 @@ class THelper extends ImmuneCell {
 
         // Buy the cell once in a cooldown
         if(this.timeFromTheLastPurchase < this.cooldown) {
-            this.timeFromTheLastPurchase += 1;
+            this.timeFromTheLastPurchase += 1*BASE_GAME_SPEED;
         }
         else {
             this.timeFromTheLastPurchase = 0;

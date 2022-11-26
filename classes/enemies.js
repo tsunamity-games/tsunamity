@@ -18,8 +18,8 @@ class Virus{
     grow(){
 
         this.host.health -= 0.001*this.number;
-        
-        if (++this.timeToDouble === this.doublingTime){
+        this.timeToDouble += 1*BASE_GAME_SPEED;
+        if (this.timeToDouble === this.doublingTime){
             this.timeToDouble = 0;
             var spreadDisease
             if (this.number < viralSpreadThreshold){
@@ -62,7 +62,8 @@ class Bacterium extends MovingObject {
         this.health = maxHealth;
         this.mode = "enemy";
         this.spleenSection;
-        this.baseSpeed = BACTERIUM_BASE_SPEED;
+        this.realBaseSpeed = BACTERIUM_BASE_SPEED;
+        this.baseSpeed = BACTERIUM_BASE_SPEED*BASE_GAME_SPEED;
         this.angle = randomUniform(0, 2*Math.PI);
     }
 
@@ -82,6 +83,7 @@ class Bacterium extends MovingObject {
     }
 
     changeDirection() {
+        this.baseSpeed = BACTERIUM_BASE_SPEED*BASE_GAME_SPEED;
         if (this.mode === "enemy"){
             this.xSpeed = randomUniform(-1+this.baseSpeed, 1+this.baseSpeed); 
             this.ySpeed = randomUniform(-1, 1);            
@@ -188,7 +190,8 @@ class Helmint {
     }
     
     move(){
-        if (++this.movingtime >= this.delay){
+        this.movingtime += 1*BASE_GAME_SPEED;
+        if (this.movingtime >= this.delay){
             this.movingtime = 0;
             var segment = this.parts.pop();
             if (this.parts.length > 0){

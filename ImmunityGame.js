@@ -169,9 +169,12 @@ function drawField(){
     reset.draw();
     toMainMenu.draw();  
     pause.draw();
+    speed_up.draw();
+    speed_down.draw();
 }
 
 //-----GAME SETUP FUNCTIONS------
+
 function addTissueCells(tissueCellsList){
     for (i=0; i< nTissueCellColumns; i++){
         x = playableFieldX + tissueCellsLeftOffset + i*(tissueCellSize+spaceBetweenTissueCellsHorizontal);
@@ -366,6 +369,8 @@ var gameOverTrue;
 var pauseTrue;
 var historyObject;
 var reset;
+var speed_up;
+var speed_down;
 var fullWaveSize;
 var tutorialState = 0;
 var waitingForClick = false;
@@ -456,6 +461,22 @@ function setupGame(tutorial=false){
                        topMenuHeight*0.5,
                        "Q", false, 
                        PAUSE_IMAGE);
+    
+    speed_up = new Button("white",
+                       fieldWidth*0.75,
+                       (topMenuHeight-topMenuHeight*0.5)/2,
+                       topMenuHeight*0.5,
+                       topMenuHeight*0.5,
+                       "", false, 
+                       SPEED_UP_IMAGE);
+    speed_down = new Button("white",
+                       fieldWidth*0.8,
+                       (topMenuHeight-topMenuHeight*0.5)/2,
+                       topMenuHeight*0.5,
+                       topMenuHeight*0.5,
+                       "", false, 
+                       SPEED_DOWN_IMAGE);
+    
     livesLeft = 10;
     money = STARTING_MONEY;
 }
@@ -541,6 +562,14 @@ $("#field").click(function(event){
                  
             }
             
+            if(speed_up.isIntersected(x, y)) {
+                BASE_GAME_SPEED += 0.1;
+                update_game_speed();
+            }
+            if(speed_down.isIntersected(x, y)) {
+                BASE_GAME_SPEED = Math.max(1, BASE_GAME_SPEED-0.1);
+                update_game_speed();
+            }
             
             if(gameState == "tutorial" && waitingForClick) {
                 tutorialState += 1;
@@ -825,7 +854,7 @@ function playGame(tutorial=false) {
         (296/1440)*fieldWidth, 
         (147/1080)*fieldHeight);
     immunityCells.filter(cell => cell instanceof BLymphocyte || cell instanceof TLymphocyte).forEach(cell => cell.label.draw());
-    money += baseIncome * tissueCells.filter((cell) => cell.virus == null).length/tissueCells.length;
+    money += baseIncome * BASE_GAME_SPEED * tissueCells.filter((cell) => cell.virus == null).length/tissueCells.length;
         
     
     ctx.lineWidth = 1;
