@@ -390,9 +390,9 @@ const TLYMPHOCYTE_DAMAGE = 1*BASE_GAME_SPEED;
 
 const HELPER_DISCOUNT_RATE = 1;
 const HELPER_DAMAGE_INCREASE = 1.1;
-const HELPER_BUYING_COOLDOWN = 30000;
+const HELPER_BUYING_COOLDOWN = 30000/BASE_GAME_SPEED;
 
-BASE_IMMUNITY_CELL_LONGEVITY = 40000;
+BASE_IMMUNITY_CELL_LONGEVITY = 40000/BASE_GAME_SPEED;
 const HIV_LONGEVITY = 10000;
 
 
@@ -405,7 +405,7 @@ const TlymphocyteReproductionNumber = 5;
 const maxVirusesInTissueCell = 64;
 const viralSpreadThreshold = 63;
 const VIRUS_COLOR = "#800080";
-const VIRUS_DOUBLING_TIME = 200;
+const VIRUS_DOUBLING_TIME = 200/BASE_GAME_SPEED;
 var starting_nViruses = 2;
 
 
@@ -455,25 +455,25 @@ var HELMINT_DELAY_NOISE = 10;
 var PROB_TO_ADD_NEW_COLOR = 0.12;
 var VIRUSES_CLASSIFICATION = {
     first:{
-        doublingTime: 200,
+        doublingTime: VIRUS_DOUBLING_TIME,
         price: 50,
         pocketImage: FIRST_POCKET_V,
         colorCode: "#52BBEE"
     },
     second:{
-        doublingTime: 180,
+        doublingTime: VIRUS_DOUBLING_TIME*0.9,
         price: 55,
         pocketImage: SECOND_POCKET_V,
         colorCode: "#718BCF"
     },
     third:{
-        doublingTime: 150, 
+        doublingTime: VIRUS_DOUBLING_TIME*0.75, 
         price: 66,
         pocketImage: THIRD_POCKET_V,
         colorCode: "#8A71CF"
     },
     fourth:{
-        doublingTime: 100,
+        doublingTime: VIRUS_DOUBLING_TIME*0.5,
         price: 100,
         pocketImage: FOURTH_POCKET_V,
         colorCode: "#B159DB"

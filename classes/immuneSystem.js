@@ -457,7 +457,7 @@ class TLymphocyte extends ImmuneCell {
 
 class THelper extends ImmuneCell {
     constructor(x, y) {
-        super(T_LYMPHOCYTES_IMAGE, x, y, 20, TLYMPHOCYTE_SPEED, 0, 100000);
+        super(T_LYMPHOCYTES_IMAGE, x, y, 20, TLYMPHOCYTE_SPEED, 0);
 
         this.place = this.choosePlace();
         this.placeReached = false;
