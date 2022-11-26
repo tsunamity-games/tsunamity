@@ -1,3 +1,6 @@
+const BASE_GAME_SPEED = 2;
+
+
 // Field parameters
 const field = document.getElementById("field");
 var ctx = field.getContext("2d");
@@ -368,8 +371,22 @@ const VACCINE_PRICE = 5;
 const PLASMATIC_CELL_UPGRADE_PRICE = 10;
 const MEMORY_CELL_UPGRADE_PRICE = 20;
 
+// speeds
+const NK_SPEED = 0.5*BASE_GAME_SPEED;
+const TLYMPHOCYTE_SPEED = 0.5*BASE_GAME_SPEED;
+const NEUTROPHIL_SPEED = 0.4*BASE_GAME_SPEED;
+const BLYMPHOCYTE_SPEED = 0.3*BASE_GAME_SPEED;
+const THELPER_SPEED = 0.5*BASE_GAME_SPEED;
+const EOSINOPHILE_SPEED = 0.2*BASE_GAME_SPEED;
+const MACROPHAGE_SPEED = 0.4*BASE_GAME_SPEED;
 
-const EOSINOPHILES_DAMAGE = 0.01;
+// damages
+const EOSINOPHILES_DAMAGE = 0.01*BASE_GAME_SPEED;
+const NEUTROPHIL_DAMAGE = 0.2*BASE_GAME_SPEED;
+const MACROPHAGE_DAMAGE = 1*BASE_GAME_SPEED;
+const NK_DAMAGE = 1*BASE_GAME_SPEED;
+const BLYMPHOCYTE_DAMAGE = 1*BASE_GAME_SPEED;
+const TLYMPHOCYTE_DAMAGE = 1*BASE_GAME_SPEED;
 
 const HELPER_DISCOUNT_RATE = 1;
 const HELPER_DAMAGE_INCREASE = 1.1;
@@ -400,7 +417,7 @@ const HIV_DAMAGE = 0.05;
 //      Bacteria
 const bacteriaRadius = 6;
 var starting_nBacteria = 30;
-const BACTERIUM_BASE_SPEED = 0.2*0.86;
+const BACTERIUM_BASE_SPEED = BASE_GAME_SPEED*0.2*0.86;
 
 var BASE_BACTERIAL_HEALTH = 200;
 
@@ -413,7 +430,7 @@ ANTIBODY_SLOWING_COEFFICIENT = 0.5;
 // Game parameters
 var livesLeft = 10;
 var STARTING_MONEY = 0;
-var baseIncome = 0.01;
+var baseIncome = 0.01*BASE_GAME_SPEED;
 var chanceToGetAntigen = 0.02;
 var garbagePileSlowingCoefficient = 0.4;
 var nVaccinate = 30;

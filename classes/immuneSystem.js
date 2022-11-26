@@ -147,7 +147,7 @@ class ImmuneCell extends MovingObject {
 }
 class Neutrophil extends ImmuneCell {
     constructor(x, y) {
-        super(NEUTROPHILS_IMAGE, x, y, 20, 0.4, 0.2);
+        super(NEUTROPHILS_IMAGE, x, y, 20, NEUTROPHIL_SPEED, NEUTROPHIL_DAMAGE);
     }
 
     move() {
@@ -168,7 +168,7 @@ class Neutrophil extends ImmuneCell {
 }
 class Macrophage extends ImmuneCell {
     constructor(x, y) {
-        super(MACROPHAGES_IMAGE, x, y, 40, 0.4, 1);
+        super(MACROPHAGES_IMAGE, x, y, 40, MACROPHAGE_SPEED, MACROPHAGE_DAMAGE);
         this.texture = MACROPHAGES_IMAGE;
     }
     move(){
@@ -182,7 +182,7 @@ class Macrophage extends ImmuneCell {
 }
 class Eosinophile extends ImmuneCell {
     constructor(x, y) {
-        super(EOSINOPHILES_IMAGE, x, y, 10, 0.2, EOSINOPHILES_DAMAGE);
+        super(EOSINOPHILES_IMAGE, x, y, 10, EOSINOPHILE_SPEED, EOSINOPHILES_DAMAGE);
     } 
     move() {
         super.move();
@@ -242,7 +242,7 @@ class Eosinophile extends ImmuneCell {
 }
 class NaturalKiller extends ImmuneCell {
     constructor(x, y) {
-        super(T_LYMPHOCYTES_IMAGE, x, y, 20, 0.5, 1);
+        super(T_LYMPHOCYTES_IMAGE, x, y, 20, NK_SPEED, NK_DAMAGE);
         this.iteration = 0;
     }
 
@@ -264,7 +264,7 @@ class NaturalKiller extends ImmuneCell {
 }
 class BLymphocyte extends ImmuneCell {
     constructor(x, y, mode="naive", color="#FFFFFF") {
-        super(T_LYMPHOCYTES_IMAGE, x, y, 20, 0.3, 1);
+        super(T_LYMPHOCYTES_IMAGE, x, y, 20, BLYMPHOCYTE_SPEED, BLYMPHOCYTE_DAMAGE);
         this.mode = mode;
         this.shootingRadius = 40;
         this.iteration = 0;
@@ -381,7 +381,7 @@ class BLymphocyte extends ImmuneCell {
 }
 class TLymphocyte extends ImmuneCell {
     constructor(x, y, mode="killer", color=null, active=false) {
-        super(T_LYMPHOCYTES_IMAGE, x, y, 20, 0.5, 1);
+        super(T_LYMPHOCYTES_IMAGE, x, y, 20, TLYMPHOCYTE_SPEED, TLYMPHOCYTE_DAMAGE);
         this.iteration = 0;
         if (color === null){
             var probs = []
@@ -457,7 +457,7 @@ class TLymphocyte extends ImmuneCell {
 
 class THelper extends ImmuneCell {
     constructor(x, y) {
-        super(T_LYMPHOCYTES_IMAGE, x, y, 20, 0.5, 0, 100000);
+        super(T_LYMPHOCYTES_IMAGE, x, y, 20, TLYMPHOCYTE_SPEED, 0, 100000);
 
         this.place = this.choosePlace();
         this.placeReached = false;
