@@ -321,12 +321,13 @@ class BLymphocyte extends ImmuneCell {
     }
 
     goToSpleen(){
+        this.baseSpeed = this.realBaseSpeed*BASE_GAME_SPEED;
         if (this.y < (shopY + shopHeight) + (playableFieldY-(shopY + shopHeight))/2) {
             // Get away from shop
             this.xSpeed = 0;
             this.ySpeed = this.baseSpeed * 3;}
         else if (this.y >= shopHeight){
-            this.xSpeed = 0.5;
+            this.xSpeed = 0.5*BASE_GAME_SPEED;
             this.ySpeed = 0;
         } else{
             super.changeDirection()

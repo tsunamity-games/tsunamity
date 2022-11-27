@@ -19,7 +19,7 @@ class Virus{
 
         this.host.health -= 0.001*this.number;
         this.timeToDouble += 1*BASE_GAME_SPEED;
-        if (this.timeToDouble === this.doublingTime){
+        if (this.timeToDouble >= this.doublingTime){
             this.timeToDouble = 0;
             var spreadDisease
             if (this.number < viralSpreadThreshold){
@@ -88,7 +88,7 @@ class Bacterium extends MovingObject {
             this.xSpeed = randomUniform(-1+this.baseSpeed, 1+this.baseSpeed); 
             this.ySpeed = randomUniform(-1, 1);            
         } else if (this.mode === "antigen"){
-            [this.xSpeed, this.ySpeed] = moveTo(this.x, this.y, this.spleenSection.x, this.spleenSection.y, 1);
+            [this.xSpeed, this.ySpeed] = moveTo(this.x, this.y, this.spleenSection.x, this.spleenSection.y, 1*BASE_GAME_SPEED);
         }
     }
 

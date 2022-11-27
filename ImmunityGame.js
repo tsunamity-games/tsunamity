@@ -328,7 +328,7 @@ function chooseEnemy(bacList, virList, helList, hivList, coins, waveNumber){
         var width = randomInteger(MIN_HELMINT_LENGTH*HELMINT_WIDTH_MIN_LENGTH_MULTIPLIER, length*HELMINT_WIDTH_LENGTH_MULTIPLIER);
         var health = length*width*HELMINT_HEALTH_LENGTH_WIDTH_MULTIPLIER;
         var price = health;
-        var delay = Math.round((health*HELMINT_DELAY_HEALTH_MULTIPLIER + randomUniform(-HELMINT_DELAY_NOISE, HELMINT_DELAY_NOISE))/BASE_GAME_SPEED);
+        var delay = Math.round((health*HELMINT_DELAY_HEALTH_MULTIPLIER + randomUniform(-HELMINT_DELAY_NOISE, HELMINT_DELAY_NOISE)));
         enemyPrice = health;
         if (enemyPrice <= coins){
             helList.push(new Helmint(-100, randomUniform(playableFieldY, playableFieldY+playableFieldHeight), health, price, delay, width, length));
@@ -751,7 +751,7 @@ function playGame(tutorial=false) {
     viruses.forEach((virus) => {
         virus.grow();
     })
-
+    console.log(viruses.length);
                 
     if (bacteria.length > 0){
         immunityCells.forEach((cell) => {
