@@ -97,15 +97,20 @@ class Antibiotic extends Button {
         
 
         if (!this.available){
-            ctx.strokeStyle = "red";
-            ctx.lineWidth = 4;
-            ctx.strokeRect(this.x, this.y, this.width, this.height);
-            ctx.beginPath();
-            ctx.moveTo(this.x, this.y);
-            ctx.lineTo(this.x + this.width, this.y + this.height);
-            ctx.moveTo(this.x + this.width, this.y);
-            ctx.lineTo(this.x, this.y + this.height);
-            ctx.stroke();
+            ctx.drawImage(RESISTANCE_IMAGE, 
+                          this.x-0.156*this.width, 
+                          this.y-0.0312*this.height, 
+                          this.width*1.354, 
+                          this.height*1.0575);
+//            ctx.strokeStyle = "red";
+//            ctx.lineWidth = 4;
+//            ctx.strokeRect(this.x, this.y, this.width, this.height);
+//            ctx.beginPath();
+//            ctx.moveTo(this.x, this.y);
+//            ctx.lineTo(this.x + this.width, this.y + this.height);
+//            ctx.moveTo(this.x + this.width, this.y);
+//            ctx.lineTo(this.x, this.y + this.height);
+//            ctx.stroke();
         }
     }
 }

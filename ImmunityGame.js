@@ -225,6 +225,8 @@ function checkAntibiotics(){
     buttons.filter((button) => button instanceof Antibiotic).forEach((anti) => {
         if ((anti.lastWave != null) && this.wave > anti.lastWave + 1){
             anti.available = false;
+            anti.texture = bacteriaColors[anti.color]["antibioticButtonImage"]["inactive"];
+            anti.course = 0;
         }
     }
     );
@@ -564,11 +566,9 @@ $("#field").click(function(event){
             
             if(speed_up.isIntersected(x, y)) {
                 BASE_GAME_SPEED += 0.1;
-                update_game_speed();
             }
             if(speed_down.isIntersected(x, y)) {
                 BASE_GAME_SPEED = Math.max(1, BASE_GAME_SPEED-0.1);
-                update_game_speed();
             }
             
             if(gameState == "tutorial" && waitingForClick) {

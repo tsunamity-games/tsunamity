@@ -180,6 +180,9 @@ SPEED_UP_IMAGE.src = "./images/speed_up.png";
 const SPEED_DOWN_IMAGE = new Image();
 SPEED_DOWN_IMAGE.src = "./images/speed_down.png";
 
+const RESISTANCE_IMAGE = new Image();
+RESISTANCE_IMAGE.src = "./images/resistence.png"
+
 
 const BONE_MARROW_BACKGROUND_IMAGE = new Image();
 BONE_MARROW_BACKGROUND_IMAGE.src = "./images/boneMarrow.png";
