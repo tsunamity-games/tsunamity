@@ -11,8 +11,6 @@ ctx.width = Math.round(field.width * WIDTH_HEIGHT_RATIO);
 const fieldWidth = field.width;
 const fieldHeight = field.height;
 
-
-
 // Playable field
 const playableFieldX = 0.0208*fieldWidth;
 const playableFieldY = 0.4*fieldHeight;
@@ -32,7 +30,7 @@ const antibioticBarWidth = 0.0727*rightMenuWidth;
 // Antibiotics & vaccines
 const buttonWidth = 0.02777*fieldHeight;
 const buttonHeight = 0.02777*fieldHeight;
-const antibioticsX = rightMenuX + rightMenuWidth/2 - buttonWidth/2;
+const antibioticsX = rightMenuX + rightMenuWidth/2 - buttonWidth/2 + rightMenuWidth*0.1;
 const topAntibioticY =  0.424*fieldHeight;
 const spaceBetweenAntibioticButtons = 0.01667*fieldHeight;
 const topVaccineY = 0.6842*fieldHeight;
@@ -147,7 +145,6 @@ BONE_MARROW_IMAGE.src = "./images/bone_marrow.png";
 const CELL_IMAGES = [new Image(), new Image(), new Image(), new Image()];
 for (var i=1; i < CELL_IMAGES.length+1; i++){
     CELL_IMAGES[i-1].src = "./images/Cell" + i + ".png";
-    //CELL_IMAGES[i-1].src = "./cell.png";
 }
 
 const VIRUS_IMAGE = new Image();
@@ -161,6 +158,10 @@ LIFES_IMAGE.src = "./images/lifes.png";
 
 const MONEY_IMAGE = new Image();
 MONEY_IMAGE.src = "./images/sugar.png";
+
+const MONEY_RIGHT_PANEL_IMAGE = new Image();
+MONEY_RIGHT_PANEL_IMAGE.src = "./images/sugar_right_menu.png";
+
 
 const WAVE_IMAGE = new Image();
 WAVE_IMAGE.src = "./images/wave.png";
@@ -182,6 +183,7 @@ SPEED_DOWN_IMAGE.src = "./images/speed_down.png";
 
 const RESISTANCE_IMAGE = new Image();
 RESISTANCE_IMAGE.src = "./images/resistence.png"
+
 
 
 const BONE_MARROW_BACKGROUND_IMAGE = new Image();

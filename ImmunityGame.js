@@ -24,6 +24,55 @@ function drawField(){
     // Right Menu
     ctx.fillStyle = rightMenuColor;
     ctx.fillRect(rightMenuX, 0, rightMenuWidth, fieldHeight);
+    ctx.beginPath();
+    ctx.strokeStyle = "#D9D9D9";
+    ctx.lineWidth = 1;
+    ctx.moveTo(rightMenuX+rightMenuWidth*(1-0.675)/2, 
+               topAntibioticY-0.018*fieldHeight);
+    ctx.lineTo(rightMenuX+rightMenuWidth*(0.675+(1-0.675)/2), 
+               topAntibioticY-0.018*fieldHeight);
+    ctx.moveTo(rightMenuX+rightMenuWidth*(1-0.675)/2, 
+               topVaccineY-0.018*fieldHeight);
+    ctx.lineTo(rightMenuX+rightMenuWidth*(0.675+(1-0.675)/2), 
+               topVaccineY-0.018*fieldHeight);
+    ctx.stroke();
+    
+    ctx.drawImage(
+        MONEY_RIGHT_PANEL_IMAGE, 
+        rightMenuX+rightMenuWidth*(1-0.675)/2 + rightMenuWidth*0.675*0.2, 
+        topAntibioticY-0.018*fieldHeight - moneyRectangleHeight*0.6*0.8, 
+        moneyRectangleHeight*0.6*0.8*1.23, 
+        moneyRectangleHeight*0.6*0.8);
+    ctx.drawImage(
+        MONEY_RIGHT_PANEL_IMAGE, 
+        rightMenuX+rightMenuWidth*(1-0.675)/2 + rightMenuWidth*0.675*0.2, 
+        topVaccineY-0.018*fieldHeight - moneyRectangleHeight*0.6*0.8, 
+        moneyRectangleHeight*0.6*0.8*1.23, 
+        moneyRectangleHeight*0.6*0.8);
+    
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = "#D9D9D9";
+    ctx.fillText(ANTIBIOTIC_PRICE, 
+                 rightMenuX+rightMenuWidth*(1-0.675)/2 + rightMenuWidth*0.675*0.2 + moneyRectangleHeight*0.6*0.8*1.23 + moneyRectangleHeight*0.1, 
+                 topAntibioticY-0.018*fieldHeight - moneyRectangleHeight*0.6*0.8/2);
+    ctx.fillText(VACCINE_PRICE, 
+                 rightMenuX+rightMenuWidth*(1-0.675)/2 + rightMenuWidth*0.675*0.2 + moneyRectangleHeight*0.6*0.8*1.23 + moneyRectangleHeight*0.1, 
+                 topVaccineY-0.018*fieldHeight - moneyRectangleHeight*0.6*0.8/2);
+    ctx.textBaseline = "top";
+    var name = "Antibiotics";
+    for (let i = 0; i < name.length; i++) {
+        ctx.fillText(
+            name[i], 
+            rightMenuX + rightMenuWidth / 5, 
+            topAntibioticY + fieldHeight/50*i);
+    }
+    var name = "Vaccines";
+    for (let i = 0; i < name.length; i++) {
+        ctx.fillText(
+            name[i], 
+            rightMenuX + rightMenuWidth / 5, 
+            topVaccineY + fieldHeight/55*i);
+    }
     
     // Blood
     ctx.fillStyle = bloodColor;
@@ -153,7 +202,6 @@ function drawField(){
     ctx.moveTo((312/1440)*fieldWidth, linesY)
     ctx.lineTo(((312+258)/1440)*fieldWidth, linesY)
     ctx.stroke();
-//    ctx.font = "bold " + (37/1080)*fieldHeight + "px Courier";
     ctx.fillStyle = ShopColors.green.colorCode;  
     ctx.fillText("Bacteria", (312/1440)*fieldWidth, (120/1080)*fieldHeight);
     
@@ -162,7 +210,6 @@ function drawField(){
     ctx.moveTo((595/1440)*fieldWidth, linesY);
     ctx.lineTo(((595+391)/1440)*fieldWidth, linesY);
     ctx.stroke();
-//    ctx.font = "bold " + (37/1080)*fieldHeight + "px Courier";
     ctx.fillStyle = ShopColors.blue.colorCode;  
     ctx.fillText("Other", (595/1440)*fieldWidth, (120/1080)*fieldHeight)
     
@@ -485,6 +532,7 @@ function setupGame(tutorial=false){
 
 // Gameplay
 $("#field").click(function(event){
+    console.log(event.pageX, event.pageY);
     const WIDTH_RATIO = fieldWidth / $("#field").width();
     const HEIGHT_RATIO = fieldHeight / $("#field").height();
 
@@ -751,8 +799,6 @@ function playGame(tutorial=false) {
     viruses.forEach((virus) => {
         virus.grow();
     })
-    console.log(viruses.length);
-                
     if (bacteria.length > 0){
         immunityCells.forEach((cell) => {
             cell.live();

@@ -81,7 +81,6 @@ class Shop extends BodyPart {
                 name[i], 
                 this.x + this.width / 5, 
                 this.y + this.height/9 + this.height/12*i);
-        
         }
         ctx.drawImage(
             this.cellTexture, 0, 0,
