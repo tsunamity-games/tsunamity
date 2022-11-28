@@ -96,6 +96,7 @@ const AUTHORS_INFO = ["Dmitry Biba & Vladimir Shitov",
                       "Design by Anastasia Troshina",
                       "BioMolText 2022"];
 
+const TESTERS = ["Andrey Biba", "Olesya Biba", "Roman Soldatov"];
 
 // fieldwidth = 1440 
 // fieldheight = 1068
@@ -473,7 +474,7 @@ ANTIBODY_PRODUCTION_FREQUENCY = 50;
 ANTIBODY_SLOWING_COEFFICIENT = 0.5;
 
 // ART
-ART_SLOWING_COEFFICIENT = 0.1;
+ART_SLOWING_COEFFICIENT = 0;
 
 // Game parameters
 var livesLeft = 10;

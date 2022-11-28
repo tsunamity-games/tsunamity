@@ -260,7 +260,6 @@ class ART extends Button{
             this.course = ART_DURATION;
             this.available = false;
             this.texture = ART_ACTIVE_IMAGE;
-            console.log("doing");
         }   
     }
     

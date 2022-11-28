@@ -489,7 +489,7 @@ const MENU_BUTTONS = [
     new Button(MAIN_MENU_RIGHT_PANEL_COLOR, MAIN_MENU_BUTTONS_X, MAIN_MENU_BUTTONS_Y + MAIN_MENU_BUTTONS_HEIGHT + SPACE_BETWEEN_MAIN_MENU_BUTTONS,
            MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, "Tutorial", isCircle=false),
     new Button(MAIN_MENU_RIGHT_PANEL_COLOR, MAIN_MENU_BUTTONS_X, MAIN_MENU_BUTTONS_Y + 2 * (MAIN_MENU_BUTTONS_HEIGHT + SPACE_BETWEEN_MAIN_MENU_BUTTONS),
-           MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, "Settings", isCircle=false),
+           MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, "About", isCircle=false),
 ]
 
 const T_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + shopWidth + spaceBetweenShops, shopY, TLymphocyte, T_LYMPHOCYTE_PRICE, T_LYMPHOCYTES_IMAGE, false, true, "yellow");
@@ -611,7 +611,17 @@ $("#field").click(function(event){
                 setupGame(tutorial=true);
                 gameState = "tutorial";
             }
+            
+            if(MENU_BUTTONS[2].isIntersected(x, y)) {
+                gameStart = false;
+                gameState = "about";
+            }
             break;
+        case "about":
+            if(MENU_BUTTONS[0].isIntersected(x, y)) {
+                gameState = "menu";
+                MENU_BUTTONS[0].text = "Start game";
+            }
         default:  // game and tutorial
             // If any of the shops clicked, try to buy cell;
             shops.forEach((shop) => {
@@ -975,29 +985,67 @@ function playGame(tutorial=false) {
 function drawMenu() {
     // Top panel
     ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, fieldWidth, 80);
+    ctx.fillRect(0, 0, fieldWidth, topMenuHeight);
 
     // Left panel
     ctx.fillStyle = MAIN_MENU_LEFT_PANEL_COLOR;
-    ctx.fillRect(0, 80, 884, fieldHeight - 80);
+    ctx.fillRect(0, topMenuHeight, 0.61*fieldWidth, fieldHeight - topMenuHeight);
 
     // Right panel
     ctx.fillStyle = MAIN_MENU_RIGHT_PANEL_COLOR;
-    ctx.fillRect(884, 80, fieldWidth - 884, fieldHeight - 80);
+    ctx.fillRect(0.61*fieldWidth, 
+                 topMenuHeight, 
+                 fieldWidth - 0.61*fieldWidth, 
+                 fieldHeight - topMenuHeight);
 
     ctx.fillStyle = "white";
-    ctx.font = 20 + "px Courier";
+    ctx.font = 0.0187*fieldHeight + "px Courier";
     ctx.textAlign = "left";
     ctx.textBaseline = "left";
 
     for (var i = 0; i < AUTHORS_INFO.length; i++){
-        ctx.fillText(AUTHORS_INFO[i], 884 + 123.5, 966 + (i * 30));
+        ctx.fillText(AUTHORS_INFO[i], 0.61*fieldWidth + 0.0857*fieldWidth,  0.9*fieldHeight + (i * 0.028*fieldHeight));
     }
 
     MENU_BUTTONS.forEach((button) => {
         button.draw();
     })
 
+}
+
+function drawAbout(){
+    // Top panel
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, fieldWidth, topMenuHeight);
+
+    // Left panel
+    ctx.fillStyle = MAIN_MENU_LEFT_PANEL_COLOR;
+    ctx.fillRect(0, topMenuHeight, 0.61*fieldWidth, fieldHeight - topMenuHeight);
+
+    // Right panel
+    ctx.fillStyle = MAIN_MENU_RIGHT_PANEL_COLOR;
+    ctx.fillRect(0.61*fieldWidth, 
+                 topMenuHeight, 
+                 fieldWidth - 0.61*fieldWidth, 
+                 fieldHeight - topMenuHeight);
+
+    MENU_BUTTONS[0].text = "Back";
+    MENU_BUTTONS[0].draw();
+
+    ctx.fillStyle = "white";
+    ctx.font = "bold" +  0.024*fieldHeight + "px Courier";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "left";
+    ctx.fillText("Tester team:", fieldWidth*0.7, fieldHeight*0.36);
+    ctx.font = 0.024*fieldHeight + "px Courier";
+    
+    for (let i=0; i < TESTERS.length; i++){
+        ctx.fillText(TESTERS[i], fieldWidth*0.7, fieldHeight*0.40 + i * fieldHeight*0.04);
+    }
+    ctx.font = 0.0187*fieldHeight + "px Courier";
+    for (var i = 0; i < AUTHORS_INFO.length; i++){
+        ctx.fillText(AUTHORS_INFO[i], 0.61*fieldWidth + 0.0857*fieldWidth,  0.9*fieldHeight + (i * 0.028*fieldHeight));
+    }
 }
 
 var game = setInterval(function(){
@@ -1011,6 +1059,8 @@ var game = setInterval(function(){
         case "tutorial":
             tutorialState = handleTutorialState(tutorialState);
             break;
+        case "about":
+            drawAbout();
         default:
             break;
     }

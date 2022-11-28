@@ -164,11 +164,10 @@ class Helmint {
     }
     
     draw(){
-        this.parts.forEach((part) => {
-            part.draw(false)
-        });
+        for (let i = this.parts.length - 1; i >= 0; i--){
+            this.parts[i].draw(false);
+        }
         // Draw a healthbar
-
         if (this.health > 0 && this.parts.length > 0){
             var barY = this.parts.slice().sort(function(a, b){return a.y-b.y;})[0].y - this.width;
             var barX = this.parts[this.parts.length-1].x - this.width/2;

@@ -315,7 +315,8 @@ class BLymphocyte extends ImmuneCell {
         }
         if (this.mode === "plasmatic"){
             this.y = clip(this.y, playableFieldY+this.radius, playableFieldY+playableFieldHeight-this.radius);
-            if (this.counter++ % ANTIBODY_PRODUCTION_FREQUENCY == 0)
+            this.counter += 1*BASE_GAME_SPEED;
+            if (this.counter % ANTIBODY_PRODUCTION_FREQUENCY == 0)
                 antibodies.push(new Antibody(this.x, this.y, this.color));
         }
     }
