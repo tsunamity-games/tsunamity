@@ -31,10 +31,10 @@ const antibioticBarWidth = 0.0727*rightMenuWidth;
 const buttonWidth = 0.02777*fieldHeight;
 const buttonHeight = 0.02777*fieldHeight;
 const antibioticsX = rightMenuX + rightMenuWidth/2 - buttonWidth/2 + rightMenuWidth*0.1;
-const topAntibioticY =  0.38*fieldHeight;
+const topAntibioticY = 0.17*fieldHeight;
 const spaceBetweenAntibioticButtons = 0.01667*fieldHeight;
-const topVaccineY = 0.65*fieldHeight;
-const ARTY = 0.88*fieldHeight;
+const topVaccineY = 0.52*fieldHeight;
+const ARTY = 0.82*fieldHeight;
 
 
 // Spleen
@@ -56,25 +56,32 @@ const spaceBetweenShops = 0.0125*fieldWidth;
 const BACTERIA_COLORS = ["first", "second", "third", "fourth"];
 const xLeftOffset = playableFieldX;
 const priceHeight = shopHeight*0.125
+
 // Top menu
 const topMenuColor = "#142029";
 const topMenuHeight = fieldHeight*0.075;
 const lifesSize = topMenuHeight*0.6;
 const homeHeight = topMenuHeight*0.5;
 
-const wavesBackColor = "#009EEB";
-const wavesFillingColor = "#01567F";
-const wavesFillingOpacity = 0.6;
+const wavesBackColor = "#E8D9B4";
+const wavesFillingColor = "#D3B97F";
 const wavesRectangleX = fieldWidth*0.11875;
 const wavesRectangleY = topMenuHeight*0.25;
 const wavesRectangleWidth = fieldWidth*0.0970;
 const wavesRectangleHeight = topMenuHeight*0.5;
 
-const moneyRectangleColor = "#E6BE4A";
-const moneyRectangleX = 0.35*fieldWidth;
+const moneyRectangleColor = "#E8D9B4";
+const moneyRectangleX = 0.276*fieldWidth;
 const moneyRectangleY = wavesRectangleY;
 const moneyRectangleWidth = wavesRectangleWidth;
 const moneyRectangleHeight = wavesRectangleHeight;
+
+// Speed
+const speedRectangleColor = "#E8D9B4";
+const speedRectangleX = 0.456*fieldWidth;
+const speedRectangleY = wavesRectangleY;
+const speedRectangleWidth = wavesRectangleWidth;
+const speedRectangleHeight = wavesRectangleHeight;
 
 // Main menu
 const MAIN_MENU_RIGHT_PANEL_COLOR = "#828282";
@@ -120,8 +127,15 @@ const LYMPHOCYTES_DEFAULT_IMAGE = new Image();
 LYMPHOCYTES_DEFAULT_IMAGE.src = "./images/lymphocytes_dark.png";
 LYMPHOCYTES_IMAGES.set("#FFFFFF", LYMPHOCYTES_DEFAULT_IMAGE);
 
-const GARBAGE_IMAGE = new Image();
-GARBAGE_IMAGE.src = "./images/garbage.png";
+const GARBAGE_IMAGE_1 = new Image();
+GARBAGE_IMAGE_1.src = "./images/garbage_1.png";
+
+const GARBAGE_IMAGE_2 = new Image();
+GARBAGE_IMAGE_2.src = "./images/garbage_2.png";
+
+const GARBAGE_IMAGE_3 = new Image();
+GARBAGE_IMAGE_3.src = "./images/garbage_3.png";
+const GARBAGE_IMAGES = [GARBAGE_IMAGE_1, GARBAGE_IMAGE_2, GARBAGE_IMAGE_3];
 
 const T_LYMPHOCYTES_IMAGE = new Image();
 T_LYMPHOCYTES_IMAGE.src = "./images/lymphocytes.png";
@@ -139,7 +153,7 @@ const BACTERIA_IMAGE = new Image();
 BACTERIA_IMAGE.src = "./images/bacteria.png";
 
 const HELMINTH_IMAGE = new Image();
-HELMINTH_IMAGE.src = "./images/helmint_trial.png"; //"./images/helminth.png";
+HELMINTH_IMAGE.src = "./images/helminth.png";
 
 const BONE_MARROW_IMAGE = new Image();
 BONE_MARROW_IMAGE.src = "./images/bone_marrow.png";
@@ -492,25 +506,25 @@ var VIRUSES_CLASSIFICATION = {
         doublingTime: VIRUS_DOUBLING_TIME,
         price: 50,
         pocketImage: FIRST_POCKET_V,
-        colorCode: "#52BBEE"
+        colorCode: "#35B1F6"
     },
     second:{
         doublingTime: VIRUS_DOUBLING_TIME*0.9,
         price: 55,
         pocketImage: SECOND_POCKET_V,
-        colorCode: "#718BCF"
+        colorCode: "#1B68D2"
     },
     third:{
         doublingTime: VIRUS_DOUBLING_TIME*0.75, 
         price: 66,
         pocketImage: THIRD_POCKET_V,
-        colorCode: "#8A71CF"
+        colorCode: "#5C43E7"
     },
     fourth:{
         doublingTime: VIRUS_DOUBLING_TIME*0.5,
         price: 100,
         pocketImage: FOURTH_POCKET_V,
-        colorCode: "#B159DB"
+        colorCode: "#A441DE"
     }
 }
 var MAX_COLOR_PROB_VAL = 10;

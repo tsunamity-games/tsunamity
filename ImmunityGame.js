@@ -4,6 +4,12 @@ function drawField(){
     
     
     // Blood
+    ctx.drawImage(
+        BLOOD_IMAGE_6, 
+        (1243/1440)*fieldWidth, 
+        (299/1080)*fieldHeight, 
+        ((1440-1243)/1440)*fieldWidth, 
+        (118/1080)*fieldHeight);
     
     ctx.drawImage(
         BLOOD_IMAGE_7, 
@@ -11,6 +17,7 @@ function drawField(){
         (320/1080)*fieldHeight, 
         (96/1440)*fieldWidth, 
         (290/1080)*fieldHeight);
+    
     
     // Bone marrow
     ctx.drawImage(
@@ -130,7 +137,6 @@ function drawField(){
               wavesRectangleHeight, 
               leftRadius = 8, rightRadius = 8, fill = true);
     ctx.fillStyle = wavesFillingColor;
-    ctx.globalAlpha = wavesFillingOpacity;
     if (bacteria.length != fullWaveSize){
             roundRect(ctx, 
               wavesRectangleX, 
@@ -140,7 +146,6 @@ function drawField(){
               leftRadius = 8, rightRadius = 0, fill = true);
 
     }
-    ctx.globalAlpha = 1;
     ctx.fillStyle = "Black";
     ctx.textBaseline = "middle";
     ctx.textAlign = "right";
@@ -176,10 +181,24 @@ function drawField(){
         moneyRectangleHeight*0.8);
 
     
+    // Speed
+    ctx.fillStyle = speedRectangleColor;
+    roundRect(ctx, 
+              speedRectangleX, 
+              speedRectangleY, 
+              speedRectangleWidth, 
+              speedRectangleHeight, 
+              leftRadius = 8, rightRadius = 8, fill = true, stroke = true);
+    ctx.fillStyle = "Black";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+    ctx.fillText("Speed " + BASE_GAME_SPEED.toFixed(1), 
+                 speedRectangleX+speedRectangleWidth*0.5, speedRectangleY+speedRectangleHeight*0.5);
+    
     // Lifes
     ctx.drawImage(
         LIFES_IMAGE,
-        rightMenuX + rightMenuWidth*0.5 - lifesSize*1.1/2, 
+        fieldWidth*0.02,
         (topMenuHeight-lifesSize)/2, 
         lifesSize*1.1, 
         lifesSize);
@@ -189,7 +208,7 @@ function drawField(){
     ctx.textAlign = "center";
     ctx.font = "bold " + lifesSize*1.1*0.5 + "px Courier";
     ctx.fillText(livesLeft, 
-                 rightMenuX + rightMenuWidth*0.5, 
+                 fieldWidth*0.02+lifesSize*1.1/2, 
                  topMenuHeight/2);
     
     // Playable Field
@@ -198,13 +217,6 @@ function drawField(){
     ctx.fillStyle = "white";
     ctx.fillRect(playableFieldX, playableFieldY, playableFieldWidth, playableFieldHeight);
     
-    // Blood over
-    ctx.drawImage(
-        BLOOD_IMAGE_6, 
-        (1243/1440)*fieldWidth, 
-        (299/1080)*fieldHeight, 
-        ((1440-1243)/1440)*fieldWidth, 
-        (118/1080)*fieldHeight);
     
     // Shop names
     var linesY = (165/1080)*fieldHeight;
@@ -237,7 +249,7 @@ function drawField(){
     ctx.fillStyle = ShopColors.blue.colorCode;  
     ctx.fillText("Other", (595/1440)*fieldWidth, (120/1080)*fieldHeight)
     
-    reset.draw();
+//    reset.draw();
     toMainMenu.draw();  
     pause.draw();
     speed_up.draw();
@@ -545,13 +557,13 @@ function setupGame(tutorial=false){
     historyObject = new GameHistory();
     reset = new ResetButton("red", rightMenuX+rightMenuWidth/2 - 120, 10, 60, 60, "R");
     toMainMenu = new Button("white", 
-                            fieldWidth*0.02, 
+                            fieldWidth*0.95, 
                             (topMenuHeight-homeHeight)/2,
-                            homeHeight*0.85,
-                            homeHeight, 
+                            topMenuHeight*0.5,
+                            topMenuHeight*0.5, 
                             "Q", false, HOME_IMAGE);
     pause = new Button("white",
-                       fieldWidth*0.7,
+                       fieldWidth*0.9,
                        (topMenuHeight-topMenuHeight*0.5)/2,
                        topMenuHeight*0.5,
                        topMenuHeight*0.5,
@@ -559,17 +571,17 @@ function setupGame(tutorial=false){
                        PAUSE_IMAGE);
     
     speed_up = new Button("white",
-                       fieldWidth*0.75,
-                       (topMenuHeight-topMenuHeight*0.5)/2,
-                       topMenuHeight*0.5,
-                       topMenuHeight*0.5,
+                       speedRectangleX+speedRectangleWidth + fieldWidth*0.0042,
+                       speedRectangleY + speedRectangleHeight/2 - speedRectangleHeight*0.625/2,
+                       speedRectangleWidth*0.14,
+                       speedRectangleHeight*0.625,
                        "", false, 
                        SPEED_UP_IMAGE);
     speed_down = new Button("white",
-                       fieldWidth*0.8,
-                       (topMenuHeight-topMenuHeight*0.5)/2,
-                       topMenuHeight*0.5,
-                       topMenuHeight*0.5,
+                       speedRectangleX - fieldWidth*0.0042 - speedRectangleWidth*0.14,
+                       speedRectangleY + speedRectangleHeight/2 - speedRectangleHeight*0.625/2,
+                       speedRectangleWidth*0.14,
+                       speedRectangleHeight*0.625,
                        "", false, 
                        SPEED_DOWN_IMAGE);
     
@@ -660,7 +672,7 @@ $("#field").click(function(event){
             }
             
             if(speed_up.isIntersected(x, y)) {
-                BASE_GAME_SPEED += 0.1;
+                BASE_GAME_SPEED = Math.min(9.9, BASE_GAME_SPEED+0.1);
             }
             if(speed_down.isIntersected(x, y)) {
                 BASE_GAME_SPEED = Math.max(1, BASE_GAME_SPEED-0.1);

@@ -223,7 +223,7 @@ class GarbagePile{
         this.x = x;
         this.y = y;
         this.radius = radius;
-        this.texture = GARBAGE_IMAGE;
+        this.texture = randomChoice(GARBAGE_IMAGES);
         this.health = this.radius * 30;
     }
     draw(){
@@ -231,7 +231,7 @@ class GarbagePile{
             this.texture,
             this.x-this.radius/2,
             this.y-this.radius/2,
-            this.radius*2, this.radius*2)
+            this.radius*2, this.radius*2*0.994);
     }
 }
 
