@@ -184,6 +184,13 @@ SPEED_DOWN_IMAGE.src = "./images/speed_down.png";
 const RESISTANCE_IMAGE = new Image();
 RESISTANCE_IMAGE.src = "./images/resistence.png"
 
+const PAUSE_SCREEN = new Image();
+PAUSE_SCREEN.src = "./images/pause_screen.png";
+const pauseScreenWidth = 0.5*fieldWidth;
+const pauseScreenHeight = 0.16*fieldHeight;
+
+const PAUSE_RECTANGLE = new Image();
+PAUSE_RECTANGLE.src = "./images/pause_rectangle.png";
 
 
 const BONE_MARROW_BACKGROUND_IMAGE = new Image();

@@ -51,6 +51,7 @@ function drawField(){
         moneyRectangleHeight*0.6*0.8);
     
     ctx.textBaseline = 'middle';
+    ctx.font = "bold " + wavesRectangleHeight*0.6 + "px Courier";
     ctx.fillStyle = "#D9D9D9";
     ctx.fillText(ANTIBIOTIC_PRICE, 
                  rightMenuX+rightMenuWidth*(1-0.675)/2 + rightMenuWidth*0.675*0.2 + moneyRectangleHeight*0.6*0.8*1.23 + moneyRectangleHeight*0.1, 
@@ -71,7 +72,7 @@ function drawField(){
         ctx.fillText(
             name[i], 
             rightMenuX + rightMenuWidth / 5, 
-            topVaccineY + fieldHeight/55*i);
+            topVaccineY + fieldHeight/55    *i);
     }
     
     // Blood
@@ -235,25 +236,34 @@ function addTissueCells(tissueCellsList){
 }
 
 function stopGame(why){
-    ctx.fillStyle = "Black";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-
-    ctx.drawImage(
-        SCROLL_IMAGE, 
-        fieldWidth*0.35, 
-        fieldHeight*0.3, 
-        fieldWidth*0.3, 
-        fieldHeight*0.63);
-
-    ctx.fillStyle = "black";
-
     if(why instanceof Array) {  // Tutorial's text is a list of strings
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.drawImage(
+            SCROLL_IMAGE, 
+            fieldWidth*0.35, 
+            fieldHeight*0.3, 
+            fieldWidth*0.3, 
+            fieldHeight*0.63);
+
+        ctx.fillStyle = "black";
+
         ctx.font = "22px Courier";
         for (var i = 0; i < why.length; i++)
                 ctx.fillText(why[i], fieldWidth/2, fieldHeight/2 + ((i-3)*29));        
     } else {
         if (why == "Game Over"){
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            ctx.drawImage(
+                SCROLL_IMAGE, 
+                fieldWidth*0.35, 
+                fieldHeight*0.3, 
+                fieldWidth*0.3, 
+                fieldHeight*0.63);
+            ctx.fillStyle = "black";
             ctx.font = "40px Courier";
             ctx.fillText(why, fieldWidth/2, fieldHeight/3);
             ctx.font = "20px Courier";
@@ -261,8 +271,22 @@ function stopGame(why){
             for (var i = 0; i < lines.length; i++)
                 ctx.fillText(lines[i], fieldWidth/2, fieldHeight/2 + ((i-3)*20));        
         } else {
-            ctx.font = "60px Courier";
-            ctx.fillText(why, fieldWidth/2, fieldHeight/2);
+            ctx.globalAlpha = 0.2;
+            ctx.fillStyle = "#2C363E";
+            ctx.fillRect(0, 0, fieldWidth, fieldHeight);
+            ctx.globalAlpha = 1;
+//            ctx.drawImage(
+//                PAUSE_RECTANGLE,
+//                0, 0, fieldWidth, fieldHeight
+//            );
+            ctx.drawImage(
+                PAUSE_SCREEN,
+                fieldWidth/2 - pauseScreenWidth/2,
+                fieldHeight/2 - pauseScreenHeight/2,
+                pauseScreenWidth, pauseScreenHeight
+            );
+//            ctx.font = "60px Courier";
+//            ctx.fillText(why, fieldWidth/2, fieldHeight/2);
         }
     }
 
