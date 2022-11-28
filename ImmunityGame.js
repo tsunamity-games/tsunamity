@@ -50,9 +50,9 @@ function drawField(){
         moneyRectangleHeight*0.6*0.8*1.23, 
         moneyRectangleHeight*0.6*0.8);
     
-    ctx.textBaseline = 'middle';
     ctx.font = "bold " + wavesRectangleHeight*0.6 + "px Courier";
     ctx.fillStyle = "#D9D9D9";
+    ctx.textAlign = "left";    
     ctx.fillText(ANTIBIOTIC_PRICE, 
                  rightMenuX+rightMenuWidth*(1-0.675)/2 + rightMenuWidth*0.675*0.2 + moneyRectangleHeight*0.6*0.8*1.23 + moneyRectangleHeight*0.1, 
                  topAntibioticY-0.018*fieldHeight - moneyRectangleHeight*0.6*0.8/2);
@@ -270,23 +270,20 @@ function stopGame(why){
             var lines = historyObject.makeReport().split('\n');
             for (var i = 0; i < lines.length; i++)
                 ctx.fillText(lines[i], fieldWidth/2, fieldHeight/2 + ((i-3)*20));        
-        } else {
-            ctx.globalAlpha = 0.2;
+        } else if (!pauseScreenDrawn){
+            ctx.globalAlpha = 0.7;
+            ctx.globalAlpha = 0.7;
             ctx.fillStyle = "#2C363E";
             ctx.fillRect(0, 0, fieldWidth, fieldHeight);
             ctx.globalAlpha = 1;
-//            ctx.drawImage(
-//                PAUSE_RECTANGLE,
-//                0, 0, fieldWidth, fieldHeight
-//            );
             ctx.drawImage(
                 PAUSE_SCREEN,
                 fieldWidth/2 - pauseScreenWidth/2,
                 fieldHeight/2 - pauseScreenHeight/2,
                 pauseScreenWidth, pauseScreenHeight
             );
-//            ctx.font = "60px Courier";
-//            ctx.fillText(why, fieldWidth/2, fieldHeight/2);
+            pause.draw();
+            pauseScreenDrawn=true;
         }
     }
 
@@ -440,6 +437,8 @@ var garbagePiles;
 var wave;
 var gameOverTrue;
 var pauseTrue;
+var pauseScreenDrawn;
+var pause;
 var historyObject;
 var reset;
 var speed_up;
@@ -631,8 +630,8 @@ $("#field").click(function(event){
                 if (pauseTrue){
                     pause.texture = PAUSE_IMAGE;
                 } else {pause.texture = RESUME_IMAGE;}
-                pause.draw();
                 pauseTrue = !pauseTrue;
+                pauseScreenDrawn = false;
                  
             }
             
@@ -687,6 +686,7 @@ $("body").keydown(function(event){
             else {pause.texture = RESUME_IMAGE;}
             pause.draw();
             pauseTrue = !pauseTrue;
+            pauseScreenDrawn = false;
         } else if (action == "upgrade"){
             immunityCells.filter((cell) => cell.label != undefined && cell.label.active && cell.label.upgradeAvailable).forEach((cell) => {
                 money -= cell.upgradePrice;
