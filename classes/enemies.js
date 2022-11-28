@@ -240,14 +240,14 @@ class IntracellularPathogen extends MovingObject {
         super(texture, x, y, radius);
         this.possibleHostTypes = possibleHostTypes;
         this.target = undefined;
-        this.baseSpeed = 1;
+        this.baseSpeed = 5;
         this.doublingProbability = HIV_DOUBLING_PROBABILITY;
     }
 
     changeDirection() {
         if(this.target == undefined) {
-            this.xSpeed = randomUniform(-this.baseSpeed, this.baseSpeed);
-            this.ySpeed = randomUniform(-this.baseSpeed, this.baseSpeed);
+            this.xSpeed = randomUniform(-this.baseSpeed*BASE_GAME_SPEED*ART_SLOWING_COEFFICIENT, this.baseSpeed*BASE_GAME_SPEED*ART_SLOWING_COEFFICIENT);
+            this.ySpeed = randomUniform(-this.baseSpeed*BASE_GAME_SPEED*ART_SLOWING_COEFFICIENT, this.baseSpeed*BASE_GAME_SPEED*ART_SLOWING_COEFFICIENT);
         }
     }
 
@@ -285,7 +285,7 @@ class IntracellularPathogen extends MovingObject {
 class HIV extends IntracellularPathogen {
     constructor(texture, x, y) {
         var radius = 3;
-        super(texture, x, y, radius, [TLymphocyte, Macrophage, THelper]);
+        super(texture, x, y, radius, [THelper]);
         this.age = 0;
     }
 
@@ -297,7 +297,7 @@ class HIV extends IntracellularPathogen {
             this.target.age += HIV_DAMAGE;
             
             // Double sometimes
-            if(randomUniform(0, 1) < this.doublingProbability) {
+            if(randomUniform(0, 1)*BASE_GAME_SPEED < this.doublingProbability) {
                 hiv_particles.push(new HIV(HIV_IMAGE, this.target.x, this.target.y));
                 console.log("HIV doubled, total number of particles: " + hiv_particles.length);
             }
@@ -306,7 +306,7 @@ class HIV extends IntracellularPathogen {
                 this.target = null;
             }
         } else {
-            this.age++;
+            this.age += 1*BASE_GAME_SPEED;
         }
     }
 }

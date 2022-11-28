@@ -31,9 +31,11 @@ const antibioticBarWidth = 0.0727*rightMenuWidth;
 const buttonWidth = 0.02777*fieldHeight;
 const buttonHeight = 0.02777*fieldHeight;
 const antibioticsX = rightMenuX + rightMenuWidth/2 - buttonWidth/2 + rightMenuWidth*0.1;
-const topAntibioticY =  0.424*fieldHeight;
+const topAntibioticY =  0.38*fieldHeight;
 const spaceBetweenAntibioticButtons = 0.01667*fieldHeight;
-const topVaccineY = 0.6842*fieldHeight;
+const topVaccineY = 0.65*fieldHeight;
+const ARTY = 0.88*fieldHeight;
+
 
 // Spleen
 const spleenTrunkX = 0.706*fieldWidth;
@@ -182,7 +184,14 @@ const SPEED_DOWN_IMAGE = new Image();
 SPEED_DOWN_IMAGE.src = "./images/speed_down.png";
 
 const RESISTANCE_IMAGE = new Image();
-RESISTANCE_IMAGE.src = "./images/resistence.png"
+RESISTANCE_IMAGE.src = "./images/resistence.png";
+
+const ART_IMAGE = new Image();
+ART_IMAGE.src = "./images/ART.png";
+
+const ART_ACTIVE_IMAGE = new Image();
+ART_ACTIVE_IMAGE.src = "./images/ART_active.png";
+
 
 const PAUSE_SCREEN = new Image();
 PAUSE_SCREEN.src = "./images/pause_screen.png";
@@ -191,7 +200,6 @@ const pauseScreenHeight = 0.16*fieldHeight;
 
 const PAUSE_RECTANGLE = new Image();
 PAUSE_RECTANGLE.src = "./images/pause_rectangle.png";
-
 
 const BONE_MARROW_BACKGROUND_IMAGE = new Image();
 BONE_MARROW_BACKGROUND_IMAGE.src = "./images/boneMarrow.png";
@@ -387,6 +395,7 @@ const MACROPHAGE_PRICE = 30;
 const EOSINOPHILE_PRICE = 5;
 const ANTIBIOTIC_PRICE = 10;
 const VACCINE_PRICE = 5;
+const ART_PRICE = 30;
 const PLASMATIC_CELL_UPGRADE_PRICE = 10;
 const MEMORY_CELL_UPGRADE_PRICE = 20;
 
@@ -449,6 +458,8 @@ ANTIBODY_LONGEVITY = 10000;
 ANTIBODY_PRODUCTION_FREQUENCY = 50;
 ANTIBODY_SLOWING_COEFFICIENT = 0.5;
 
+// ART
+ART_SLOWING_COEFFICIENT = 0.1;
 
 // Game parameters
 var livesLeft = 10;
@@ -457,13 +468,14 @@ var chanceToGetAntigen = 0.02;
 var garbagePileSlowingCoefficient = 0.4;
 var nVaccinate = 30;
 var ANTIBIOTIC_COURSE_LENGTH = 4;
+var ART_DURATION = 20000;
 
 // Wave forming algorithm parameters
 var BACTERIUM_PRICE = 1; 
 var VIRUS_PRICE = 25;
 var HELMINT_PRICE = 50;
-var HIV_PRICE = 5;
-var ENEMY_PROB_DIST = [1/BACTERIUM_PRICE, 1/VIRUS_PRICE, 1/HELMINT_PRICE, 0/HIV_PRICE];
+var HIV_PRICE = 30;
+var ENEMY_PROB_DIST = [1/BACTERIUM_PRICE, 1/VIRUS_PRICE, 1/HELMINT_PRICE, 1/HIV_PRICE];
 var MIN_HELMINT_LENGTH = 4;
 var MAX_HELMINT_LENGTH = 20;
 var HELMINT_WIDTH_MIN_LENGTH_MULTIPLIER = 3;

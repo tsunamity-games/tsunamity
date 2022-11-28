@@ -35,7 +35,13 @@ function drawField(){
                topVaccineY-0.018*fieldHeight);
     ctx.lineTo(rightMenuX+rightMenuWidth*(0.675+(1-0.675)/2), 
                topVaccineY-0.018*fieldHeight);
+    ctx.moveTo(rightMenuX+rightMenuWidth*(1-0.675)/2, 
+               ARTY-0.018*fieldHeight);
+    ctx.lineTo(rightMenuX+rightMenuWidth*(0.675+(1-0.675)/2), 
+               ARTY-0.018*fieldHeight);
+    
     ctx.stroke();
+    
     
     ctx.drawImage(
         MONEY_RIGHT_PANEL_IMAGE, 
@@ -50,6 +56,13 @@ function drawField(){
         moneyRectangleHeight*0.6*0.8*1.23, 
         moneyRectangleHeight*0.6*0.8);
     
+    ctx.drawImage(
+        MONEY_RIGHT_PANEL_IMAGE, 
+        rightMenuX+rightMenuWidth*(1-0.675)/2 + rightMenuWidth*0.675*0.2, 
+        ARTY-0.018*fieldHeight - moneyRectangleHeight*0.6*0.8, 
+        moneyRectangleHeight*0.6*0.8*1.23, 
+        moneyRectangleHeight*0.6*0.8);
+    
     ctx.font = "bold " + wavesRectangleHeight*0.6 + "px Courier";
     ctx.fillStyle = "#D9D9D9";
     ctx.textAlign = "left";    
@@ -59,6 +72,9 @@ function drawField(){
     ctx.fillText(VACCINE_PRICE, 
                  rightMenuX+rightMenuWidth*(1-0.675)/2 + rightMenuWidth*0.675*0.2 + moneyRectangleHeight*0.6*0.8*1.23 + moneyRectangleHeight*0.1, 
                  topVaccineY-0.018*fieldHeight - moneyRectangleHeight*0.6*0.8/2);
+    ctx.fillText(ART_PRICE, 
+                 rightMenuX+rightMenuWidth*(1-0.675)/2 + rightMenuWidth*0.675*0.2 + moneyRectangleHeight*0.6*0.8*1.23 + moneyRectangleHeight*0.1, 
+                 ARTY-0.018*fieldHeight - moneyRectangleHeight*0.6*0.8/2);
     ctx.textBaseline = "top";
     var name = "Antibiotics";
     for (let i = 0; i < name.length; i++) {
@@ -73,6 +89,13 @@ function drawField(){
             name[i], 
             rightMenuX + rightMenuWidth / 5, 
             topVaccineY + fieldHeight/55    *i);
+    }
+    var name = "A.R.T.";
+    for (let i = 0; i < name.length; i+=2) {
+        ctx.fillText(
+            name[i] + name[i+1], 
+            rightMenuX + rightMenuWidth / 5, 
+            ARTY + fieldHeight/50*i/2 - fieldHeight*0.008);
     }
     
     // Blood
@@ -355,7 +378,7 @@ function formNewWave(waveNumber, oldBac, oldVir, oldHel, oldHIV){
 
 function chooseEnemy(bacList, virList, helList, hivList, coins, waveNumber){
     var candidates = [Bacterium];
-    if (waveNumber > 3){
+    if (waveNumber > 4){
         candidates.push(Virus);
     }
     if (waveNumber > 10){
@@ -484,17 +507,18 @@ function setupGame(tutorial=false){
                 antibioticsX,
                 topAntibioticY + (buttonHeight+spaceBetweenAntibioticButtons)*i,
                 buttonWidth, 
-                buttonHeight, ANTIBIOTIC_PRICE));
+                buttonHeight));
         buttons.push(
             new Vaccine(
                 BACTERIA_COLORS[i], 
                 antibioticsX,
                 topVaccineY + (buttonHeight+spaceBetweenAntibioticButtons)*i, 
                 buttonWidth, 
-                buttonHeight,
-                VACCINE_PRICE));
+                buttonHeight));
     }
-
+    buttons.push(
+        new ART(antibioticsX, ARTY, buttonWidth, buttonHeight)
+    )
     spleen = new Spleen(spleenX, spleenY, spleenSize, spleenSize, 12);
     tissueCells = addTissueCells([]);
     inplayBacteriaColorsIndices = [0];

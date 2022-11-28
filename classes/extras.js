@@ -47,16 +47,16 @@ class Button extends BodyPart {
     
 }
 class Antibiotic extends Button {
-    constructor(color, x, y, width, height, price){
+    constructor(color, x, y, width, height){
         super(color, x, y, width, height, "", false, bacteriaColors[color]["antibioticButtonImage"]["inactive"]);
-        this.price = price;
+        this.price = ANTIBIOTIC_PRICE;
         this.course = 0;
         this.lastWave = null;
         this.available = true;
     }  
     
     activate(){
-        if (this.lastWave != wave && this.available && money - this.price >= 0){
+        if (this.lastWave != wave && this.available && money >= this.price){
             money -= this.price;
             bacteria.filter((bacterium) => bacterium.color === this.color).forEach((bacterium) => {
                 bacterium.health = 1;
@@ -106,9 +106,9 @@ class Antibiotic extends Button {
     }
 }
 class Vaccine extends Button{
-    constructor(color, x, y, width, height, price){
+    constructor(color, x, y, width, height){
         super(color, x, y, width, height, "V", isCircle=false);
-        this.price = price;
+        this.price = VACCINE_PRICE;
     }  
     activate(){
         if (money - this.price >= 0){
@@ -244,5 +244,52 @@ class ResetButton extends Button{
     resetGame(){
         gameStart = true;
         gameOverTrue = false;
+    }
+}
+class ART extends Button{
+    constructor(x, y, width, height){
+        super("black", x, y, width, height, "", false, ART_IMAGE);
+        this.price = ART_PRICE;
+        this.course = 0;
+        this.available = true;
+    } 
+    
+    activate(){
+        if (this.available && money >= this.price){
+            this.money -= this.price;
+            this.course = ART_DURATION;
+            this.available = false;
+            this.texture = ART_ACTIVE_IMAGE;
+            console.log("doing");
+        }   
+    }
+    
+    draw(){
+        super.draw();
+        this.course = Math.max(this.course - 1*BASE_GAME_SPEED, 0);
+        if (this.course === 0){
+            this.available = true;
+            this.texture = ART_IMAGE;
+        }
+        ctx.fillStyle = "#D9D9D9";
+        ctx.fillRect(
+            this.x+this.width + distanceBetweenAntibioticButtonAndBar, 
+            this.y,
+            antibioticBarWidth,
+            this.height);
+        ctx.fillStyle = "#E6F0A3";
+        var filledHeight = (this.course/ART_DURATION)*this.height;
+        ctx.fillRect(
+            this.x + this.width + distanceBetweenAntibioticButtonAndBar, 
+            this.y + this.height - filledHeight,
+            antibioticBarWidth,
+            filledHeight,
+        );
+        ctx.strokeStyle = "black";
+        ctx.moveTo(
+            this.x + this.width + distanceBetweenAntibioticButtonAndBar, 
+            this.y + this.height - filledHeight);
+        ctx.lineTo(this.x + this.width + distanceBetweenAntibioticButtonAndBar + antibioticBarWidth, this.y + this.height - filledHeight);
+        ctx.stroke();
     }
 }
