@@ -27,9 +27,9 @@ class Button extends BodyPart {
             }
 
             ctx.globalAlpha = 1;
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
             if (this.text != ""){
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
                 if(this.isCircle) {
                     circle(this.x+this.width/2, this.y+this.height/2, this.width/2, false);
                     ctx.fillStyle = "black";
@@ -148,32 +148,28 @@ class Label extends BodyPart{
         this.y = this.labelledObject.y - this.labelledObject.radius*3;
     }
     draw(){
-        this.upgradeAvailable = (this.labelledObject.killed || this.labelledObject.active || this.labelledObject.mode === "plasmatic") && money >= this.labelledObject.upgradePrice;
+        console.log(this.upgradeAvailable);
+        this.upgradeAvailable = (this.labelledObject.active || this.labelledObject.killed || this.labelledObject.mode === "plasmatic");
         this.updatePosition();
-        if (this.active){
-            ctx.fillStyle = "white";
-            ctx.fillRect(this.x, this.y, this.width, this.height);
-            ctx.globalAlpha = 0.1;
-            if (this.upgradeAvailable) {
-                ctx.fillStyle = "green";
-            } else {
-                ctx.fillStyle = "red";
-            }
-            ctx.fillRect(this.x, this.y, this.width, this.height);
-            ctx.globalAlpha = 1;
-            ctx.strokeRect(this.x, this.y, this.width, this.height);
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.font = this.width/13 + "px Courier";
-            ctx.fillStyle = "black";
-            var labelText;
+        if (this.active && this.upgradeAvailable){
             if (["naive", "mature"].includes(this.labelledObject.mode)){
-                labelText = "Plasmatic Cell";
+                ctx.drawImage(
+                    UPGRADE_PLASMATIC, 
+                    this.labelledObject.x-UPGRADE_LABEL_WIDTH/2, 
+                    this.labelledObject.y - this.labelledObject.radius - UPGRADE_LABEL_HEIGHT, UPGRADE_LABEL_WIDTH, UPGRADE_LABEL_HEIGHT);
             } else if (["plasmatic", "killer"].includes(this.labelledObject.mode)){
-                labelText = "Memory cell";
+                ctx.drawImage(
+                    UPGRADE_MEMORY, 
+                    this.labelledObject.x-UPGRADE_LABEL_WIDTH/2, 
+                    this.labelledObject.y - this.labelledObject.radius - UPGRADE_LABEL_HEIGHT, UPGRADE_LABEL_WIDTH, UPGRADE_LABEL_HEIGHT);
             }
-            labelText += " (" + this.labelledObject.upgradePrice + ")";
-            ctx.fillText(labelText, this.x + this.width/2, this.y + this.height/2);     
+        }
+        if (!this.active && this.upgradeAvailable) {
+            ctx.drawImage(UPGRADE_FIRST, 
+                          this.labelledObject.x - UPGRADE_FIRST_SIZE/2, 
+                          this.labelledObject.y - this.labelledObject.radius - UPGRADE_FIRST_SIZE, 
+                          UPGRADE_FIRST_SIZE, 
+                          UPGRADE_FIRST_SIZE);
         }
     }
 }

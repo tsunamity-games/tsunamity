@@ -262,6 +262,8 @@ function drawField(gameOver=false){
     
     // Setting the font multiple times apparently hinders performance
     ctx.font = "bold " + shopWidth/8 + "px Courier";
+    ctx.textBaseline = "top";
+    ctx.textAlign = "center";        
     shops.forEach((shop) => {
         shop.draw1();
     });
@@ -280,6 +282,8 @@ function drawField(gameOver=false){
     
     
     // Draw tissue cells
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";        
     tissueCells.forEach((cell) => {cell.draw();})
     
     // Draw objects on the field
@@ -567,7 +571,13 @@ function chooseEnemy(bacList, virList, helList, hivList, coins, waveNumber){
 
             var y = randomUniform(playableFieldY, 
                                   playableFieldY + playableFieldHeight);
-            var x = -100;
+            var xx = [];
+            var probs =[];
+            for (let i=0; i < waveNumber; i++){
+                xx.push(-100 - 2*i);
+                probs.push(Math.max(100-i, 1));
+            }
+            var x = randomChoice(xx, probs);
             enemyPrice = BACTERIUM_PRICE;
             if (enemyPrice <= coins){
                 bacList.push(new Bacterium(color, x, y, bacteriaRadius, BASE_BACTERIAL_HEALTH, price));
@@ -599,7 +609,7 @@ function chooseEnemy(bacList, virList, helList, hivList, coins, waveNumber){
         if (enemyPrice <= coins){
             hivList.push(new HIV(HIV_IMAGE, 
                                  100, 
-                                 randomUniform(playableFieldY + 15, playableFieldHeight-15))
+                                 randomUniform(playableFieldY + 15, playableFieldY+playableFieldHeight-15))
                         );
             coins -= enemyPrice;
         }
@@ -802,13 +812,13 @@ $("#field").click(function(event){
             // If B or T-lymphocyte is clicked, suggest upgrade
             try{immunityCells.forEach((cell) => {
                 if ((cell instanceof BLymphocyte || cell instanceof TLymphocyte) && cell.mode != "memory"){
-                    if (cell.label.active && cell.label.isIntersected(x, y) && money >= cell.upgradePrice && cell.label.upgradeAvailable){
+                    if (cell.label.active && cell.label.isIntersected(x, y) && money >= cell.upgradePrice){
                         money -= cell.upgradePrice;
                         cell.upgrade();
                         throw 'Break';
 
                     }
-                    else if (cell.isIntersected(x, y) && cell.mode != "memory"){
+                    else if (cell.isIntersected(x, y) && cell.label.upgradeAvailable){
                         cell.label.active = true;     
                         throw 'Break';
 

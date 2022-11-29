@@ -240,14 +240,18 @@ class IntracellularPathogen extends MovingObject {
         super(texture, x, y, radius);
         this.possibleHostTypes = possibleHostTypes;
         this.target = undefined;
-        this.baseSpeed = 5;
+        this.baseSpeed = 10;
         this.doublingProbability = HIV_DOUBLING_PROBABILITY;
     }
 
     changeDirection() {
         if(this.target == undefined) {
-            this.xSpeed = randomUniform(-this.baseSpeed*BASE_GAME_SPEED*ART_SLOWING_COEFFICIENT, this.baseSpeed*BASE_GAME_SPEED*ART_SLOWING_COEFFICIENT);
-            this.ySpeed = randomUniform(-this.baseSpeed*BASE_GAME_SPEED*ART_SLOWING_COEFFICIENT, this.baseSpeed*BASE_GAME_SPEED*ART_SLOWING_COEFFICIENT);
+            var coef;
+            if (ART.available){
+                coef = 1;
+            } else {coef = ART_SLOWING_COEFFICIENT};
+            this.xSpeed = randomUniform(-this.baseSpeed*BASE_GAME_SPEED*coef, this.baseSpeed*BASE_GAME_SPEED*coef);
+            this.ySpeed = randomUniform(-this.baseSpeed*BASE_GAME_SPEED*coef, this.baseSpeed*BASE_GAME_SPEED*coef);
         }
     }
 

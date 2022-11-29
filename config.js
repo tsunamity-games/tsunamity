@@ -86,7 +86,7 @@ const speedRectangleX = 0.456*fieldWidth;
 const speedRectangleY = wavesRectangleY;
 const speedRectangleWidth = wavesRectangleWidth;
 const speedRectangleHeight = wavesRectangleHeight;
-var BASE_GAME_SPEED = 9;
+var BASE_GAME_SPEED = 1;
 
 const PAUSE_IMAGE = new Image();
 PAUSE_IMAGE.src = "./images/pause.png";
@@ -409,10 +409,24 @@ var HELPER_BUYING_COOLDOWN = 30000;
 const HELPER_DISCOUNT_RATE = 1;
 const HELPER_DAMAGE_INCREASE = 1.1;
 
+// Upgrade
+const UPGRADE_FIRST = new Image();
+UPGRADE_FIRST.src = "./images/upgrade_first.png";
+const UPGRADE_FIRST_SIZE = 0.027*fieldHeight;
+
+const UPGRADE_PLASMATIC = new Image();
+UPGRADE_PLASMATIC.src = "./images/upgrade_plasmatic.png";
+const UPGRADE_MEMORY = new Image();
+UPGRADE_MEMORY.src = "./images/upgrade_memory.png";
+
+const UPGRADE_LABEL_HEIGHT = 0.037*fieldHeight;
+const UPGRADE_LABEL_WIDTH = 0.069*fieldWidth;
+
 // Antibodies
 ANTIBODY_LONGEVITY = 10000;
 ANTIBODY_PRODUCTION_FREQUENCY = 50;
 ANTIBODY_SLOWING_COEFFICIENT = 0.5;
+
 
 
 // Pathogen parameters

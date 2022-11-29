@@ -297,6 +297,7 @@ class BLymphocyte extends ImmuneCell {
                     B_LYMPHOCYTE_SHOP.x + B_LYMPHOCYTE_SHOP.width*0.0486 + BACTERIA_COLORS.indexOf(this.color)*B_LYMPHOCYTE_SHOP.width*0.9028/BACTERIA_COLORS.length,
                     shopY + B_LYMPHOCYTE_SHOP.height - B_LYMPHOCYTE_SHOP.height*0.02,
                     this.color)) 
+            this.killed = false;
             historyObject.cellsBought["BMemory"] += 1;
         }
     }
@@ -318,8 +319,11 @@ class BLymphocyte extends ImmuneCell {
         if (this.mode === "plasmatic"){
             this.y = clip(this.y, playableFieldY+this.radius, playableFieldY+playableFieldHeight-this.radius);
             this.counter += 1*BASE_GAME_SPEED;
-            if (this.counter % ANTIBODY_PRODUCTION_FREQUENCY == 0)
+            if (this.counter > ANTIBODY_PRODUCTION_FREQUENCY)
+            {
+                this.counter = 0;
                 antibodies.push(new Antibody(this.x, this.y, this.color));
+            }
         }
     }
 
@@ -423,6 +427,7 @@ class TLymphocyte extends ImmuneCell {
                            pocketX, 
                            shopY + T_LYMPHOCYTE_SHOP.height - T_LYMPHOCYTE_SHOP.height*0.02,
                            this.color));
+            this.active = false;
             historyObject.cellsBought["TMemory"] += 1;
             
         }

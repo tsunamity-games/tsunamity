@@ -69,12 +69,8 @@ class Shop extends BodyPart {
     
     draw1() {
         super.draw();
-    
-        ctx.fillStyle =  ShopColors[this.color]["colorCode"];
-        ctx.textBaseline = "top";
-        
         // Name of the cell type sold
-        ctx.textAlign = "center";
+        ctx.fillStyle =  ShopColors[this.color]["colorCode"];
         var name = cell_names[this.cellType.name];
         for (let i = 0; i < name.length; i++) {
             ctx.fillText(
@@ -84,8 +80,8 @@ class Shop extends BodyPart {
         }
         ctx.drawImage(
             this.cellTexture, 0, 0,
-            this.isCellAnimated ? ANIMATED_IMAGE_WIDTH : STATIC_IMAGE_WIDTH,
-            this.isCellAnimated ? ANIMATED_IMAGE_HEIGHT : STATIC_IMAGE_HEIGHT,
+            ANIMATED_IMAGE_WIDTH,
+            ANIMATED_IMAGE_HEIGHT,
             this.x + this.width/2 - 6*this.width/10/2 + this.width/12,
             this.y + this.height/2 - 4.5/2*this.height/10 - this.height/12,
             6*this.width/10,
@@ -176,7 +172,7 @@ class TissueCell{
     }
     
     draw(){
-        if (this.size < tissueCellSize){this.size = Math.min(this.size + 0.05, tissueCellSize)};
+        if (this.size < tissueCellSize){this.size = Math.min(this.size + 0.05*BASE_GAME_SPEED, tissueCellSize)};
             
         ctx.drawImage(
             this.texture, 0, 0, 34, 34,
@@ -194,8 +190,6 @@ class TissueCell{
             ctx.globalAlpha = 0.5;
             circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 2, true);
             ctx.globalAlpha = 1;
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
             ctx.fillStyle = "black";
             ctx.fillText("V", this.x + this.size / 2, this.y + this.size / 2)
         } else if (this.nMutations >= cancerMutationsThreshold){
