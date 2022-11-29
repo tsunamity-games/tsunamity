@@ -5,7 +5,8 @@ class Virus{
         this.doublingTime = doublingTime;
         this.timeToDouble = 0;
         if (host === null){
-            this.host = randomChoice(tissueCells.filter(function isOnEdge(cell){return cell.x === playableFieldX+tissueCellsLeftOffset;}));} 
+            this.host = randomChoice(tissueCells.filter(function isOnEdgeAndGrownUp(cell){
+                return cell.x === playableFieldX+tissueCellsLeftOffset && cell.size === tissueCellSize;}));} 
         else {
             this.host = host;
         }
