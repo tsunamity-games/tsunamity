@@ -289,22 +289,95 @@ function stopGame(why){
                 ctx.fillText(why[i], fieldWidth/2, fieldHeight/2 + ((i-3)*29));        
     } else {
         if (why == "Game Over"){
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-
-            ctx.drawImage(
-                SCROLL_IMAGE, 
-                fieldWidth*0.35, 
-                fieldHeight*0.3, 
-                fieldWidth*0.3, 
-                fieldHeight*0.63);
-            ctx.fillStyle = "black";
-            ctx.font = "40px Courier";
-            ctx.fillText(why, fieldWidth/2, fieldHeight/3);
-            ctx.font = "20px Courier";
-            var lines = historyObject.makeReport().split('\n');
-            for (var i = 0; i < lines.length; i++)
-                ctx.fillText(lines[i], fieldWidth/2, fieldHeight/2 + ((i-3)*20));        
+            ctx.drawImage(GAME_OVER_FLAG, 
+                          gameOverFlagX, 
+                          fieldHeight-gameOverFlagHeight + 0.016*gameOverFlagHeight, 
+                          gameOverFlagWidth, 
+                          gameOverFlagHeight);
+            ctx.drawImage(STATS_FLAG, 
+                          statsFlagX, 
+                          fieldHeight-statsFlagHeight + 0.016*gameOverFlagHeight, 
+                          statsFlagWidth, 
+                          statsFlagHeight);
+            var immuneCellsBought; var enemiesKilled; var boostersBought; var moneyEarned; var currentWave;
+            [immuneCellsBought, enemiesKilled, boostersBought, moneyEarned, currentWave] = historyObject.makeReport(); 
+            
+            var fontsize = statsFlagWidth*0.033;
+            ctx.fillStyle = "#BE983E";
+            ctx.textAlign = "left";
+            ctx.font = "950 " + fontsize + "px Courier";
+            var firstColumnX = statsFlagX + statsFlagWidth*0.15;
+            var firstHeaderY = fieldHeight - statsFlagHeight + 0.135*statsFlagHeight;
+            var secondColumnX = statsFlagX + statsFlagWidth*0.6;
+            var enemiesKilledHeaderY = firstHeaderY + (immuneCellsBought.split("\n").length)*fontsize*1.7 + fontsize*6;
+            var moneyEarnedY = firstHeaderY + (boostersBought.split("\n").length)*fontsize*1.7 + fontsize*5;
+            ctx.fillText("Immune cells bought", 
+                         firstColumnX,
+                         firstHeaderY);
+            ctx.fillText("Boosters bought", 
+                         secondColumnX, 
+                         firstHeaderY);
+            ctx.fillText("Enemies killed", 
+                         firstColumnX, 
+                         enemiesKilledHeaderY);
+            ctx.fillText("Sugar: " + moneyEarned, 
+                         secondColumnX, 
+                         moneyEarnedY);
+            
+            ctx.fillStyle = "#FDFBF7";
+            for (var i = 0; i < immuneCellsBought.split("\n").length; i++)
+                ctx.fillText(immuneCellsBought.split("\n")[i], firstColumnX, firstHeaderY + fontsize*2 + (i*fontsize*1.7));
+            for (var i = 0; i < boostersBought.split("\n").length; i++)
+                ctx.fillText(boostersBought.split("\n")[i], secondColumnX, firstHeaderY + fontsize*2 + (i*fontsize*1.7));
+            for (var i = 0; i < enemiesKilled.split("\n").length; i++)
+                ctx.fillText(enemiesKilled.split("\n")[i], firstColumnX, enemiesKilledHeaderY + fontsize*2 + (i*fontsize*1.7));
+            
+            ctx.font = "950 " + fontsize*1.2 + "px Courier";
+            ctx.fillStyle = "#BE983E";
+            
+            ctx.fillText("Current wave:", secondColumnX, moneyEarnedY + fontsize*4);
+            
+            if (("" + currentWave).length === 1){
+                ctx.drawImage(DIGIT_IMAGES[currentWave], 
+                              (secondColumnX + statsFlagX + statsFlagWidth)/2 - digitImageWidth/2 - statsFlagWidth*0.05, 
+                              moneyEarnedY + fontsize*6,
+                              digitImageWidth, digitImageHeight
+                             );
+            } else if (("" + currentWave).length === 2){
+                var firstDigit = Math.floor(currentWave/10);
+                var secondDigit = currentWave % 10;
+                var decreasedDigitWidth = digitImageWidth*0.7;
+                var decreasedDigitHeight = digitImageHeight*0.7;
+                ctx.drawImage(DIGIT_IMAGES[firstDigit], 
+                              (secondColumnX + statsFlagX + statsFlagWidth)/2 - decreasedDigitWidth - statsFlagWidth*0.05, 
+                              moneyEarnedY + fontsize*7,                             decreasedDigitWidth, decreasedDigitHeight
+                             );
+                ctx.drawImage(DIGIT_IMAGES[secondDigit], 
+                              (secondColumnX + statsFlagX + statsFlagWidth)/2  - statsFlagWidth*0.05, 
+                              moneyEarnedY + fontsize*7,
+                              decreasedDigitWidth, decreasedDigitHeight);
+            } else if (("" + currentWave).length === 3){
+                var firstDigit = Math.floor(currentWave/100);
+                var secondDigit = Math.floor(currentWave/10);
+                var thirdDigit = currentWave % 10;
+                var decreasedDigitWidth = digitImageWidth*0.5;
+                var decreasedDigitHeight = digitImageHeight*0.5;
+                
+                ctx.drawImage(DIGIT_IMAGES[firstDigit], 
+                              (secondColumnX + statsFlagX + statsFlagWidth)/2 - statsFlagWidth*0.05 - decreasedDigitWidth*1.5 , 
+                              moneyEarnedY + fontsize*8,                             decreasedDigitWidth, decreasedDigitHeight
+                             );
+                ctx.drawImage(DIGIT_IMAGES[secondDigit], 
+                              (secondColumnX + statsFlagX + statsFlagWidth)/2 - statsFlagWidth*0.05 - decreasedDigitWidth/2 , 
+                              moneyEarnedY + fontsize*8,
+                              decreasedDigitWidth, decreasedDigitHeight);
+                ctx.drawImage(DIGIT_IMAGES[thirdDigit], 
+                              (secondColumnX + statsFlagX + statsFlagWidth)/2 - statsFlagWidth*0.05 + decreasedDigitWidth*0.5, 
+                              moneyEarnedY + fontsize*8,
+                              decreasedDigitWidth, decreasedDigitHeight);
+                
+            }
+       
         } else if (!pauseScreenDrawn){
             ctx.globalAlpha = 0.7;
             ctx.globalAlpha = 0.7;
@@ -591,7 +664,6 @@ function setupGame(tutorial=false){
 
 // Gameplay
 $("#field").click(function(event){
-    console.log(event.pageX, event.pageY);
     const WIDTH_RATIO = fieldWidth / $("#field").width();
     const HEIGHT_RATIO = fieldHeight / $("#field").height();
 

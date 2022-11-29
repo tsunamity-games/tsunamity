@@ -224,20 +224,29 @@ class GameHistory {
             THelper: 0,
             Neutrophil: 0,
             Eosinophile: 0,
-            Macrophage: 0
+            Macrophage: 0,
+            Plasmatic: 0,
+            TMemory: 0,
+            BMemory: 0
         }
         this.bacteriaKilled = 0;
         this.tissueCellsKilled = 0;
         this.helmintesKilled = 0;
         this.vaccinesBought = 0;
         this.antibioticsBought = 0;
+        this.artBought = 0;
         this.moneyEarned = 0;
     }
     
     makeReport(){
         this.moneyEarned = Math.round(this.cellsBought["NaturalKiller"]*NK_PRICE + this.cellsBought["TLymphocyte"]*T_LYMPHOCYTE_PRICE + this.cellsBought["BLymphocyte"]*B_LYMPHOCYTE_PRICE + this.cellsBought["Neutrophil"]*NEUTROPHIL_PRICE + this.cellsBought["Eosinophile"]*EOSINOPHILE_PRICE + this.cellsBought["Macrophage"]*MACROPHAGE_PRICE + this.antibioticsBought*ANTIBIOTIC_PRICE + this.vaccinesBought*VACCINE_PRICE + money);
-        var text = "Immune cells bought:\nNK cells: " + this.cellsBought["NaturalKiller"] + "\nT killers: " + this.cellsBought["TLymphocyte"] + "\nNeutrophils: " + this.cellsBought["Neutrophil"] + "\nB cells: " + this.cellsBought["BLymphocyte"] + "\nT helpers: " + this.cellsBought["THelper"] +  "\nEosinophils: " + this.cellsBought["Eosinophile"] + "\nMacrophages: " + this.cellsBought["Macrophage"] + "\n\nEnemies killed:\nBacteria: " + this.bacteriaKilled + "\nInfected Tissue Cells: " + this.tissueCellsKilled + "\nHelminthes: " + this.helmintesKilled + "\n\nBoosters bought:\nAntibiotics: " + this.antibioticsBought + "\nVaccines: " + this.vaccinesBought + "\n\n Money earned: " + this.moneyEarned + "\nCurrent wave: " + wave;
-        return text;
+        
+        var immuneCellsBought = "NK cells: " + this.cellsBought["NaturalKiller"] + "\nT killers: " + this.cellsBought["TLymphocyte"] + "\nMemory T cells: " + this.cellsBought["TMemory"] + "\nNeutrophils: " + this.cellsBought["Neutrophil"] + "\nB cells: " + this.cellsBought["BLymphocyte"] + "\nPlasmatic cells: " + this.cellsBought["Plasmatic"] + "\nMemory B cells: " + this.cellsBought["BMemory"] +  "\nT helpers: " + this.cellsBought["THelper"] +  "\nEosinophils: " + this.cellsBought["Eosinophile"] + "\nMacrophages: " + this.cellsBought["Macrophage"];
+        var enemiesKilled = "Bacteria: " + this.bacteriaKilled + "\nInfected Tissue Cells: " + this.tissueCellsKilled + "\nHelminthes: " + this.helmintesKilled;
+        var boostersBought = "Antibiotics: " + this.antibioticsBought + "\nVaccines: " + this.vaccinesBought + "\nA.R.T.: " + this.artBought;
+        var moneyEarned = this.moneyEarned;
+        var currentWave = wave;
+        return [immuneCellsBought, enemiesKilled, boostersBought, moneyEarned, currentWave];
     }
 }
 class ResetButton extends Button{
@@ -260,6 +269,7 @@ class ART extends Button{
             this.course = ART_DURATION;
             this.available = false;
             this.texture = ART_ACTIVE_IMAGE;
+            historyObject.artBought += 1;
         }   
     }
     

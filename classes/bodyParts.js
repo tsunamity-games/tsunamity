@@ -126,7 +126,6 @@ class SpleenSection{
         this.y = y + size/2;
         this.size = size*0.7; // width = height = size
         this.antigen = null;
-        this.texture = BONE_MARROW_IMAGE;
     }
     
     draw(){
