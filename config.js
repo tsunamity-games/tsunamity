@@ -46,6 +46,13 @@ const topMenuHeight = fieldHeight*0.075;
 
 const LIFES_IMAGE = new Image();
 LIFES_IMAGE.src = "./images/lifes.png";
+const LIFES_IMAGE_PALE = new Image();
+LIFES_IMAGE_PALE.src = "./images/lifes_pale.png";
+const lifeImages = {
+    bright: LIFES_IMAGE,
+    pale: LIFES_IMAGE_PALE
+}
+
 const lifesSize = topMenuHeight*0.6;
 
 const HOME_IMAGE = new Image();
@@ -79,7 +86,7 @@ const speedRectangleX = 0.456*fieldWidth;
 const speedRectangleY = wavesRectangleY;
 const speedRectangleWidth = wavesRectangleWidth;
 const speedRectangleHeight = wavesRectangleHeight;
-var BASE_GAME_SPEED = 1;
+var BASE_GAME_SPEED = 9;
 
 const PAUSE_IMAGE = new Image();
 PAUSE_IMAGE.src = "./images/pause.png";
@@ -135,25 +142,70 @@ var ART_DURATION = 20000;
 
 // Blood
 const BLOOD_IMAGE_1 = new Image();
-BLOOD_IMAGE_1.src = "./images/BloodVessel1.png";
+BLOOD_IMAGE_1.src = "./images/blood/BloodVessel1.png";
+const BLOOD_IMAGE_1_PALE = new Image();
+BLOOD_IMAGE_1_PALE.src = "./images/blood/BloodVessel1_pale.png";
+
 const BLOOD_IMAGE_2 = new Image();
-BLOOD_IMAGE_2.src = "./images/BloodVessel2.png";
+BLOOD_IMAGE_2.src = "./images/blood/BloodVessel2.png";
+const BLOOD_IMAGE_2_PALE = new Image();
+BLOOD_IMAGE_2_PALE.src = "./images/blood/BloodVessel2_pale.png";
+
 const BLOOD_IMAGE_3 = new Image();
-BLOOD_IMAGE_3.src = "./images/BloodVessel3.png";
+BLOOD_IMAGE_3.src = "./images/blood/BloodVessel3.png";
+const BLOOD_IMAGE_3_PALE = new Image();
+BLOOD_IMAGE_3_PALE.src = "./images/blood/BloodVessel3_pale.png";
+
 const BLOOD_IMAGE_4 = new Image();
-BLOOD_IMAGE_4.src = "./images/BloodVessel4.png";
+BLOOD_IMAGE_4.src = "./images/blood/BloodVessel4.png";
+const BLOOD_IMAGE_4_PALE = new Image();
+BLOOD_IMAGE_4_PALE.src = "./images/blood/BloodVessel4_pale.png";
+
 const BLOOD_IMAGE_5 = new Image();
-BLOOD_IMAGE_5.src = "./images/BloodVessel5.png";
+BLOOD_IMAGE_5.src = "./images/blood/BloodVessel5.png";
+const BLOOD_IMAGE_5_PALE = new Image();
+BLOOD_IMAGE_5_PALE.src = "./images/blood/BloodVessel5_pale.png";
+
 const BLOOD_IMAGE_6 = new Image();
-BLOOD_IMAGE_6.src = "./images/BloodVessel6.png";
+BLOOD_IMAGE_6.src = "./images/blood/BloodVessel6.png";
+const BLOOD_IMAGE_6_PALE = new Image();
+BLOOD_IMAGE_6_PALE.src = "./images/blood/BloodVessel6_pale.png";
+
 const BLOOD_IMAGE_7 = new Image();
-BLOOD_IMAGE_7.src = "./images/BloodVessel7.png";
+BLOOD_IMAGE_7.src = "./images/blood/BloodVessel7.png";
+const BLOOD_IMAGE_7_PALE = new Image();
+BLOOD_IMAGE_7_PALE.src = "./images/blood/BloodVessel7_pale.png";
 
+const BLOOD_IMAGE_8 = new Image();
+BLOOD_IMAGE_8.src = "./images/blood/BloodVessel8.png";
+const BLOOD_IMAGE_8_PALE = new Image();
+BLOOD_IMAGE_8_PALE.src = "./images/blood/BloodVessel8_pale.png";
 
+const blood = {
+    1: {bright: BLOOD_IMAGE_1,
+        pale: BLOOD_IMAGE_1_PALE}, 
+    2: {bright: BLOOD_IMAGE_2,
+        pale: BLOOD_IMAGE_2_PALE},
+    3: {bright: BLOOD_IMAGE_3,
+        pale: BLOOD_IMAGE_3_PALE},
+    4: {bright: BLOOD_IMAGE_4,
+        pale: BLOOD_IMAGE_4_PALE},
+    5: {bright: BLOOD_IMAGE_5,
+        pale: BLOOD_IMAGE_5_PALE},
+    6: {bright: BLOOD_IMAGE_6,
+        pale: BLOOD_IMAGE_6_PALE},
+    7: {bright: BLOOD_IMAGE_7,
+        pale: BLOOD_IMAGE_7_PALE},
+    8: {bright: BLOOD_IMAGE_8,
+        pale: BLOOD_IMAGE_8_PALE}
+}
 // Spleen
 const spleenTrunkX = 0.706*fieldWidth;
 const spleenTrunkWidth = 0.1743*fieldWidth;
-const bloodColor = "#CF0000";
+const bloodColor = {
+    bright: "#CF0000",
+    pale: "#E67E7C"
+}
 const spleenX = 0.734*fieldWidth;
 const spleenY = 0.1389*fieldHeight;
 const spleenSize = 0.11944*fieldWidth;
@@ -269,6 +321,8 @@ for (var i=0; i < DIGIT_IMAGES.length; i++){
 }
 const digitImageWidth = fieldWidth*(75/1400);
 const digitImageHeight = fieldHeight*(125/1070)
+const GAME_OVER_BLUR = new Image();
+GAME_OVER_BLUR.src = "./images/gameover_blur.png";
 
 
 // Host cell parameters

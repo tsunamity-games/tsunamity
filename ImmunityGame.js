@@ -1,24 +1,11 @@
 //-----DRAW THE FIELD------------
-function drawField(){
+function drawField(gameOver=false){
+    var brightness;
+    if (gameOver)
+        brightness = "pale";
+    else
+        brightness = "bright";
     ctx.clearRect(0, 0, fieldWidth, fieldHeight);
-    
-    
-    // Blood
-    ctx.drawImage(
-        BLOOD_IMAGE_6, 
-        (1243/1440)*fieldWidth, 
-        (299/1080)*fieldHeight, 
-        ((1440-1243)/1440)*fieldWidth, 
-        (118/1080)*fieldHeight);
-    
-    ctx.drawImage(
-        BLOOD_IMAGE_7, 
-        (1211/1440)*fieldWidth, 
-        (320/1080)*fieldHeight, 
-        (96/1440)*fieldWidth, 
-        (290/1080)*fieldHeight);
-    
-    
     // Bone marrow
     ctx.drawImage(
         BONE_MARROW_BACKGROUND_IMAGE, 
@@ -26,6 +13,36 @@ function drawField(){
         (240/1080)*fieldHeight, 
         (1085/1440)*fieldWidth, 
         (319/1080)*fieldHeight);
+    
+    
+    // Blood
+    ctx.drawImage(
+        blood["1"][brightness], 
+        (461/1440)*fieldWidth, 
+        (324/1080)*fieldHeight, 
+        (602.23/1440)*fieldWidth, 
+        (158.62/1080)*fieldHeight);
+    
+    ctx.drawImage(
+        blood["2"][brightness], 
+        (1242.99/1440)*fieldWidth, 
+        (300/1080)*fieldHeight, 
+        (238/1440)*fieldWidth, 
+        (74.45/1080)*fieldHeight);
+    
+    ctx.drawImage(
+        blood["5"][brightness], 
+        (1211.21/1440)*fieldWidth, 
+        (320/1080)*fieldHeight, 
+        (96/1440)*fieldWidth, 
+        (290/1080)*fieldHeight);
+    
+    ctx.drawImage(
+        blood["7"][brightness], 
+        (836.77/1440)*fieldWidth, 
+        (1008.04/1080)*fieldHeight, 
+        (279.78/1440)*fieldWidth, 
+        (45.78/1080)*fieldHeight);
     
     
     // Right Menu
@@ -106,21 +123,8 @@ function drawField(){
     }
     
     // Blood
-    ctx.fillStyle = bloodColor;
+    ctx.fillStyle = bloodColor[brightness];
     ctx.fillRect(spleenTrunkX, 0, spleenTrunkWidth, fieldHeight);
-    ctx.drawImage(
-        BLOOD_IMAGE_1, 
-        (16/1440)*fieldWidth, 
-        (333/1080)*fieldHeight, 
-        (166/1440)*fieldWidth, 
-        (176/1080)*fieldHeight);
-    ctx.drawImage(
-        BLOOD_IMAGE_4, 
-        (919/1440)*fieldWidth, 
-        (329/1080)*fieldHeight, 
-        (165/1440)*fieldWidth, 
-        (127/1080)*fieldHeight);
-    
     
     
     // Top menu
@@ -197,7 +201,7 @@ function drawField(){
     
     // Lifes
     ctx.drawImage(
-        LIFES_IMAGE,
+        lifeImages[brightness],
         fieldWidth*0.02,
         (topMenuHeight-lifesSize)/2, 
         lifesSize*1.1, 
@@ -207,7 +211,7 @@ function drawField(){
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
     ctx.font = "bold " + lifesSize*1.1*0.5 + "px Courier";
-    ctx.fillText(livesLeft, 
+    ctx.fillText(Math.max(0, livesLeft), 
                  fieldWidth*0.02+lifesSize*1.1/2, 
                  topMenuHeight/2);
     
@@ -254,6 +258,83 @@ function drawField(){
     pause.draw();
     speed_up.draw();
     speed_down.draw();
+    shops.forEach((shop) => {shop.pockets.forEach((pocket) => {pocket.draw();})})
+    
+    // Setting the font multiple times apparently hinders performance
+    ctx.font = "bold " + shopWidth/8 + "px Courier";
+    shops.forEach((shop) => {
+        shop.draw1();
+    });
+    ctx.font = "bold " + priceHeight*0.9 + "px Courier";
+    shops.forEach((shop) => {
+        shop.draw2();
+    }); 
+    
+    // Draw buttons
+    ctx.font = "bold " + buttonHeight * 0.8 + "px Courier";
+    buttons.forEach((button) => {button.draw()})    
+    
+    // Draw spleen
+    spleen.draw();
+    spleen.sections.forEach((section) => {if (section.antigen != null){section.antigen.draw();}})
+    
+    
+    // Draw tissue cells
+    tissueCells.forEach((cell) => {cell.draw();})
+    
+    // Draw objects on the field
+    garbagePiles.forEach((pile) => {pile.draw();})
+    helmintes.forEach((helmint) => {helmint.draw();})
+    bacteria.forEach((bacterium) => {bacterium.draw();})
+    immunityCells.forEach((cell) => {cell.draw();})
+    antibodies.forEach((antibody) => {antibody.draw();})
+    hiv_particles.forEach((hiv) => {hiv.draw();})
+    
+    // Draw blood vessels that should be over everything else
+//    ctx.drawImage(
+//        BLOOD_IMAGE_2, 
+//        (9/1440)*fieldWidth, 
+//        (420/1080)*fieldHeight, 
+//        (88/1440)*fieldWidth, 
+//        (70/1080)*fieldHeight);
+//    ctx.drawImage(
+//        BLOOD_IMAGE_3, 
+//        (481/1440)*fieldWidth, 
+//        (362/1080)*fieldHeight, 
+//        (561/1440)*fieldWidth, 
+//        (102/1080)*fieldHeight);
+//    ctx.drawImage(
+//        BLOOD_IMAGE_5, 
+//        (830/1440)*fieldWidth, 
+//        (930/1080)*fieldHeight, 
+//        (296/1440)*fieldWidth, 
+//        (147/1080)*fieldHeight);
+    ctx.drawImage(
+        blood["3"][brightness], 
+        (875.79/1440)*fieldWidth, 
+        (430/1080)*fieldHeight, 
+        (81.37/1440)*fieldWidth, 
+        (24.45/1080)*fieldHeight);
+    ctx.drawImage(
+        blood["4"][brightness], 
+        (1225.74/1440)*fieldWidth, 
+        (436/1080)*fieldHeight, 
+        (71.29/1440)*fieldWidth, 
+        (49.4/1080)*fieldHeight);
+    ctx.drawImage(
+        blood["6"][brightness], 
+        (887.91/1440)*fieldWidth, 
+        (995.36/1080)*fieldHeight, 
+        (77.33/1440)*fieldWidth, 
+        (49.4/1080)*fieldHeight);
+    ctx.drawImage(
+        blood["8"][brightness], 
+        (566.03/1440)*fieldWidth, 
+        (430/1080)*fieldHeight, 
+        (82/1440)*fieldWidth, 
+        (34/1080)*fieldHeight);
+    immunityCells.filter(cell => cell instanceof BLymphocyte || cell instanceof TLymphocyte).forEach(cell => cell.label.draw());
+
 }
 
 //-----GAME SETUP FUNCTIONS------
@@ -288,7 +369,10 @@ function stopGame(why){
         for (var i = 0; i < why.length; i++)
                 ctx.fillText(why[i], fieldWidth/2, fieldHeight/2 + ((i-3)*29));        
     } else {
-        if (why == "Game Over"){
+        if (why == "Game Over" && !gameOverScreenDrawn){
+            drawField(gameOver=true);   
+            ctx.drawImage(GAME_OVER_BLUR, 0, topMenuHeight, 
+                          rightMenuX, fieldHeight-topMenuHeight);
             ctx.drawImage(GAME_OVER_FLAG, 
                           gameOverFlagX, 
                           fieldHeight-gameOverFlagHeight + 0.016*gameOverFlagHeight, 
@@ -375,10 +459,10 @@ function stopGame(why){
                               (secondColumnX + statsFlagX + statsFlagWidth)/2 - statsFlagWidth*0.05 + decreasedDigitWidth*0.5, 
                               moneyEarnedY + fontsize*8,
                               decreasedDigitWidth, decreasedDigitHeight);
-                
             }
-       
-        } else if (!pauseScreenDrawn){
+        gameOverScreenDrawn = true;
+        
+        } else if (why == "Pause" && !pauseScreenDrawn){
             ctx.globalAlpha = 0.7;
             ctx.globalAlpha = 0.7;
             ctx.fillStyle = "#2C363E";
@@ -546,6 +630,7 @@ var wave;
 var gameOverTrue;
 var pauseTrue;
 var pauseScreenDrawn;
+var gameOverScreenDrawn = false;
 var pause;
 var historyObject;
 var reset;
@@ -858,7 +943,6 @@ function playGame(tutorial=false) {
         
     shops.forEach((shop) => {
         shop.reset();
-        
         if (shop.pockets.length > 0)
         shop.pockets = shop.pockets.filter(function hasMemoryCell(pocket){
             var colors = [];
@@ -866,18 +950,13 @@ function playGame(tutorial=false) {
             return colors.includes(pocket.color);
             
         });
-        shop.pockets.forEach((pocket) => pocket.draw());
+        // Set price with discount
+        shop.price = Math.round(shop.base_price * Math.pow(HELPER_DISCOUNT_RATE, shop.discount));
     })
-    ctx.font = "bold " + buttonHeight * 0.8 + "px Courier";
-    buttons.forEach((button) => {button.draw()})
-//    ctx.fillText("Price: 100", buttons[0].x - 60, buttons[0].y + buttons[0].height/2);
-    
-    spleen.draw();
     var nextTurnTissueCells = [];
 
     tissueCells.forEach((cell) => {
         if(cell.health > 0 && randomUniform(0, 1) > tissueCellDeathRate) {
-            cell.draw()
             nextTurnTissueCells.push(cell);
         } else {
             if (cell.health < 0){
@@ -894,12 +973,10 @@ function playGame(tutorial=false) {
     })
 
     tissueCells = nextTurnTissueCells;
-    garbagePiles.forEach((pile) => {pile.draw()})
     garbagePiles = garbagePiles.filter((pile) => pile.health > 0);
     var nextTurnHelmintes = [];
     helmintes.forEach((helmint) => {
         helmint.move();
-        helmint.draw();
         if (helmint.parts.length > 0){
             if ((helmint.parts[helmint.parts.length - 1].x < playableFieldX+playableFieldWidth)){
                 if (helmint.health <= 0) {
@@ -917,7 +994,6 @@ function playGame(tutorial=false) {
     bacteria.forEach((bacterium) => {
         bacterium.move();
         bacterium.changeDirection();
-        bacterium.draw();
         if ((bacterium.x < playableFieldX+playableFieldWidth)){
             if (bacterium.health <= 0) {
                 if (randomUniform(0, 1) < chanceToGetAntigen){
@@ -975,37 +1051,16 @@ function playGame(tutorial=false) {
     antibodies = antibodies.filter((antibody) => antibody.age < antibody.longevity && (antibody.attached == null || antibody.attached.health > 0));
     antibodies.forEach((antibody) => {
         antibody.move();
-        antibody.draw();
     })
         
-    // Setting the font multiple times apparently hinders performance
-    ctx.font = "bold " + shopWidth/8 + "px Courier";
-    shops.forEach((shop) => {
-        // Set price with discount
-        shop.price = Math.round(shop.base_price * Math.pow(HELPER_DISCOUNT_RATE, shop.discount));
-        shop.draw1();
-    });
-    ctx.font = "bold " + priceHeight*0.9 + "px Courier";
-    shops.forEach((shop) => {
-        shop.draw2();
-    }); 
-
     spleen.sections.forEach((section) => {
         if (section.antigen != null){
             section.antigen.move();
-            section.antigen.changeDirection();
-            section.antigen.draw();            
+            section.antigen.changeDirection();            
         }
     })
-   
-    immunityCells.forEach((cell) => {
-        cell.draw();
-    });
-
-    hiv_particles.forEach((hiv) => {
-        hiv.act();
-        hiv.draw();
-    });
+    
+    hiv_particles.forEach((hiv) => {hiv.act();});
     hiv_particles = hiv_particles.filter((particle) => particle.age < HIV_LONGEVITY);
     
     if(bacteria.length === 0) {
@@ -1022,26 +1077,6 @@ function playGame(tutorial=false) {
         fullWaveSize = bacteria.length;
         checkAntibiotics();
     }
-    // Draw blood vessels that should be over everything else
-    ctx.drawImage(
-        BLOOD_IMAGE_2, 
-        (9/1440)*fieldWidth, 
-        (420/1080)*fieldHeight, 
-        (88/1440)*fieldWidth, 
-        (70/1080)*fieldHeight);
-    ctx.drawImage(
-        BLOOD_IMAGE_3, 
-        (481/1440)*fieldWidth, 
-        (362/1080)*fieldHeight, 
-        (561/1440)*fieldWidth, 
-        (102/1080)*fieldHeight);
-    ctx.drawImage(
-        BLOOD_IMAGE_5, 
-        (830/1440)*fieldWidth, 
-        (930/1080)*fieldHeight, 
-        (296/1440)*fieldWidth, 
-        (147/1080)*fieldHeight);
-    immunityCells.filter(cell => cell instanceof BLymphocyte || cell instanceof TLymphocyte).forEach(cell => cell.label.draw());
     money += baseIncome * BASE_GAME_SPEED * tissueCells.filter((cell) => cell.virus == null).length/tissueCells.length;
         
     
