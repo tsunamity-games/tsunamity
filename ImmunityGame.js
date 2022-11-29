@@ -588,10 +588,21 @@ $("body").keydown(function(event){
 gameStart = true;
 
 presetTutorialState = function(tutorialState) {
+    console.log("Presetting state " + tutorialState);
     switch(tutorialState) {
         case 2:
             drawBlackScreen(BLACK_SCREEN_ALPHA, tissueCells[50].x, tissueCells[50].y,
-                 tissueCells[50].size, tissueCells[50].size);
+                 tissueCells[50].size, tissueCells[50].size, tissueCells[50].size / 5);
+            break;
+        case 3:
+            playGame(tutorial=true);
+            let lastShop = shops[shops.length-1];
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[0].x - 10, shops[0].y, 
+                lastShop.x + 2 * lastShop.width, lastShop.height, 10)
+            break;
+        case 4:
+            playGame(tutorial=true);
+            break;
         default:
             break;
     }
@@ -618,7 +629,26 @@ handleTutorialState = function(tutorialState) {
             text = ["Это клетка ткани.", "Они производят", "аминокислоты, которые", "нужны для производства", "иммунных клеток",
                     "", "", "Кликни в любое место", "чтобы продолжить"]
             stopGame(text);
+            waitingForClick = true;
             break;
+        case 3:  // Skipping step: remove black screen and draw the field, then go to the next state immediately
+            waitingForClick = false;
+            text = ["Это костный мозг.", "", "Здесь можно покупать", "иммунные клетки", "для защиты организма"];
+            stopGame(text);
+            waitingForClick = true;
+            break;
+        case 4:
+            waitingForClick = false;
+            text = ["Бактерии наступают!", "", "С ними помогают", "справиться нейтрофилы.", "Нажми на нейтрофил ",
+                    "в костном мозге,", "чтобы купить его"];
+            stopGame(text);
+            break;
+        case 5:
+            waitingForClick = false;
+            text = ["Step 5"];
+            stopGame(text);
+            break;
+
         
     }
 
