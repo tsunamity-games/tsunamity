@@ -459,7 +459,7 @@ function setupGame(tutorial=false){
     reset = new ResetButton("red", rightMenuX+rightMenuWidth/2 - 120, 10, 60, 60, "R");
     toMainMenu = new Button("white", rightMenuX+rightMenuWidth/2 - 30, 10, 60, 60, "Q");
     livesLeft = 10;
-    money = STARTING_MONEY;
+    money = tutorial ? 15 : STARTING_MONEY;
 }
 
 // Gameplay
