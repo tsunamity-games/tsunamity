@@ -639,17 +639,29 @@ handleTutorialState = function(tutorialState) {
             break;
         case 4:
             waitingForClick = false;
-            text = ["Бактерии наступают!", "", "С ними помогают", "справиться нейтрофилы.", "Нажми на нейтрофил ",
-                    "в костном мозге,", "чтобы купить его"];
+            text = ["Бактерии наступают!", "", "С ними помогают", "справиться нейтрофилы.",  "",
+                    "Нажми на нейтрофил ", "в костном мозге,", "чтобы купить его"];
             stopGame(text);
+            waitingForClick = true;
             break;
         case 5:
             waitingForClick = false;
-            text = ["Step 5"];
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[2].x, shops[2].y, 
+                shops[2].width, shops[2].height, 10)
+
+            let neutrophils = immunityCells.filter((cell) => cell instanceof Neutrophil);
+            if(neutrophils.length > 0) {
+                tutorialState += 1
+            };
+            break;
+        case 6:
+            playGame(tutorial=true);
+            break;
+        case 7:
+            text = ["Step 7"];
             stopGame(text);
             break;
-
-        
     }
 
     return tutorialState;
