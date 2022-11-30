@@ -259,6 +259,7 @@ const HIV_LONGEVITY = 10000;
 //      Lymphocytes
 const randomTargetNumber = 5;
 const TlymphocyteReproductionNumber = 5;
+var trainingProbability = 0.01;
 
 // Pathogen parameters
 //      Viruses
