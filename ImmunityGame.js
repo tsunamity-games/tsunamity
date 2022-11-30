@@ -616,6 +616,8 @@ presetTutorialState = function(tutorialState) {
         case 11:
             trainingProbability = 0.01; // Restore default
             break;
+        case 12:
+            break;
         default:
             break;
     }
@@ -713,6 +715,20 @@ handleTutorialState = function(tutorialState) {
             waitingForClick = true;
             break;
         case 11:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            if(bacteria.length < 5) {
+                immunityCells[0].age = immunityCells[0].longevity;  // Kill one of the cells
+                tutorialState += 1;
+            };
+            break;
+        case 12:
+            waitingForClick = false;
+            text = ["Отличная работа!", "","Но время жизни одной из", "иммунных клеток",
+                     "подошло к концу.", "", "Покупай макрофаги,",
+                    "чтобы убирать", "мёртвые клетки!"];
+            stopGame(text);
+            waitingForClick = true;
             break;
         default:
             playGame(tutorial=true);
