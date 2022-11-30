@@ -603,8 +603,18 @@ presetTutorialState = function(tutorialState) {
         case 4:
             playGame(tutorial=true);
             break;
-        case 7:
+        case 8:
+            playGame(tutorial=true);
             chanceToGetAntigen = 0.01;  // Return default
+            trainingProbability = 0.3;
+
+            // Make a wave a little bit easier (not kill player too quickly)
+            bacteria.forEach((bacterium) => {
+                bacterium.baseSpeed /= 2;
+            });
+            break;
+        case 11:
+            trainingProbability = 0.01; // Restore default
             break;
         default:
             break;
@@ -662,11 +672,6 @@ handleTutorialState = function(tutorialState) {
             playGame(tutorial=true);
 
             if(bacteria[0].health < 10) {
-                // Add a very strong bacterium to keep neutrophil in place and prevent a new wave
-                let superBacterium = new Bacterium(bacteria[0].color, bacteria[0].x, bacteria[0].y, bacteria[0].radius, 100000);
-                superBacterium.baseSpeed = 0;
-                bacteria.push(superBacterium);
-
                 chanceToGetAntigen = 1;
                 bacteria[0].health = 0;
 
@@ -682,6 +687,35 @@ handleTutorialState = function(tutorialState) {
             stopGame(text);
             waitingForClick = true;
             break;
+        case 8:
+            waitingForClick = false;
+            text = ["Наступает большая", "волна бактерий!", "Найми B-лимфоцит —", "более сильную клетку",
+                    "для борьбы", "с бактериями"];
+            stopGame(text);
+            waitingForClick = true;
+            break;
+        case 9:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[3].x, shops[3].y, shops[3].width, shops[3].height, 10);
+            
+            let bCells = immunityCells.filter((cell) => cell instanceof BLymphocyte);
+            if(bCells.length > 0) {
+                tutorialState += 1
+                playGame(tutorial=true);
+            };
+            break;
+        case 10:
+            waitingForClick = false;
+            text = ["B-лимфоцитам нужно", "время и антигены", "для тренировки.", "", "После этого они могут",
+                    "эффективно атаковать", "один вид бактерий"];
+            stopGame(text);
+            waitingForClick = true;
+            break;
+        case 11:
+            playGame(tutorial=true);
+
+        
     }
 
     return tutorialState;
