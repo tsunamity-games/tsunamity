@@ -33,11 +33,11 @@ class Button extends BodyPart {
                 if(this.isCircle) {
                     circle(this.x+this.width/2, this.y+this.height/2, this.width/2, false);
                     ctx.fillStyle = "black";
-                    ctx.font = this.height * 0.7 + "px Courier"
+                    ctx.font = this.height * 0.7 + "px Rubik One"
                 }
                 else {
                     ctx.fillStyle = "white";
-                    ctx.font = this.height * 0.4 + "px Courier"
+                    ctx.font = this.height * 0.4 + "px Rubik One"
                 }
 
                 ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
@@ -148,7 +148,6 @@ class Label extends BodyPart{
         this.y = this.labelledObject.y - this.labelledObject.radius*3;
     }
     draw(){
-        console.log(this.upgradeAvailable);
         this.upgradeAvailable = (this.labelledObject.active || this.labelledObject.killed || this.labelledObject.mode === "plasmatic");
         this.updatePosition();
         if (this.active && this.upgradeAvailable){
