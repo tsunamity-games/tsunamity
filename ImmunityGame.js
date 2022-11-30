@@ -603,6 +603,9 @@ presetTutorialState = function(tutorialState) {
         case 4:
             playGame(tutorial=true);
             break;
+        case 7:
+            chanceToGetAntigen = 0.01;  // Return default
+            break;
         default:
             break;
     }
@@ -657,10 +660,27 @@ handleTutorialState = function(tutorialState) {
             break;
         case 6:
             playGame(tutorial=true);
+
+            if(bacteria[0].health < 10) {
+                // Add a very strong bacterium to keep neutrophil in place and prevent a new wave
+                let superBacterium = new Bacterium(bacteria[0].color, bacteria[0].x, bacteria[0].y, bacteria[0].radius, 100000);
+                superBacterium.baseSpeed = 0;
+                bacteria.push(superBacterium);
+
+                chanceToGetAntigen = 1;
+                bacteria[0].health = 0;
+
+                drawBlackScreen(BLACK_SCREEN_ALPHA, spleen.x, spleen.y, spleen.width, spleen.height, 10);
+                tutorialState += 1;
+            }
+
             break;
         case 7:
-            text = ["Step 7"];
+            waitingForClick = false;
+            text = ["Это — селезёнка.", "Сюда после смерти", "бактерий иногда",  "попадают антигены",
+                    "Они нужны для тренировки", "B-лимфоцитов"];
             stopGame(text);
+            waitingForClick = true;
             break;
     }
 
