@@ -758,6 +758,24 @@ handleTutorialState = function(tutorialState) {
             stopGame(text);
             waitingForClick = true;
             break;
+        case 16:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[0].x, shops[0].y, shops[0].width, shops[0].height, 10);
+            
+            let naturalKillers = immunityCells.filter((cell) => cell instanceof NaturalKiller);
+            if(naturalKillers.length > 0) {
+                tutorialState += 1
+                playGame(tutorial=true);
+            };
+            break;
+        case 17:
+            waitingForClick = false;
+            text = ["Натуральные киллеры", "случайно двигаются", "между клетками ткани,", "проверяя их.", "",
+                    "Если натуральный киллер", "обнаружит, что клетка", "заражена вирусом,", "он её убьёт"]
+            stopGame(text);
+            waitingForClick = true;
+            break;
         default:
             playGame(tutorial=true);
             break;
