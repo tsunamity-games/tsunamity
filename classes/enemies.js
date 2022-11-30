@@ -288,7 +288,7 @@ class IntracellularPathogen extends MovingObject {
 
 class HIV extends IntracellularPathogen {
     constructor(texture, x, y) {
-        var radius = 3;
+        var radius = 5;
         super(texture, x, y, radius, [THelper]);
         this.age = 0;
     }
