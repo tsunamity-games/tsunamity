@@ -776,6 +776,33 @@ handleTutorialState = function(tutorialState) {
             stopGame(text);
             waitingForClick = true;
             break;
+        case 18:
+            waitingForClick = false;
+            text = ["С мощной", "вирусной инфекцией", "не справиться", "без Т-киллеров!", "",
+                    "Найми Т-киллера", "в костном мозге"];
+            stopGame(text);
+            waitingForClick = true;
+            break;
+        case 19:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[1].x, shops[1].y, shops[1].width, shops[1].height, 10);
+            
+            let tCells = immunityCells.filter((cell) => cell instanceof TLymphocyte);
+            if(tCells.length > 0) {
+                tutorialState += 1
+                playGame(tutorial=true);
+            };
+            break;
+        case 20:
+            waitingForClick = false;
+            text = ["Т-киллеры производят", "свои копии,", "когда встречают клетку", "с определённым", "антигеном", "",
+                    "Специфичность Т-киллера", "определяется случайно", "",
+                    "Покупай нужную вакцину,", "чтобы повысить вероятность", "появления нужного", "Т-киллера"
+                ];
+            stopGame(text);
+            waitingForClick = true;
+            break;
         default:
             playGame(tutorial=true);
             break;
