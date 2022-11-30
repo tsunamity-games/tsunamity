@@ -713,8 +713,10 @@ handleTutorialState = function(tutorialState) {
             waitingForClick = true;
             break;
         case 11:
+            break;
+        default:
             playGame(tutorial=true);
-
+            break;
         
     }
 
