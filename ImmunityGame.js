@@ -409,8 +409,8 @@ shops = [
     B_LYMPHOCYTE_SHOP,
     new Shop(xLeftOffset + 4 * shopWidth + 4 * spaceBetweenShops, 
              shopY, THelper, T_HELPER_PRICE, T_LYMPHOCYTES_IMAGE, true, true, "blue"),
-    new Shop(xLeftOffset + 6 * shopWidth + 6 * spaceBetweenShops, shopY, Macrophage, 300, MACROPHAGES_IMAGE, true, true, "blue"),
-    new Shop(xLeftOffset + 5 * shopWidth + 5 * spaceBetweenShops, shopY, Eosinophile, 50, EOSINOPHILES_IMAGE, true, true, "blue")
+    new Shop(xLeftOffset + 5 * shopWidth + 5 * spaceBetweenShops, shopY, Eosinophile, 50, EOSINOPHILES_IMAGE, true, true, "blue"),
+    new Shop(xLeftOffset + 6 * shopWidth + 6 * spaceBetweenShops, shopY, Macrophage, 300, MACROPHAGES_IMAGE, true, true, "blue")
     
 ];
       
@@ -729,6 +729,17 @@ handleTutorialState = function(tutorialState) {
                     "чтобы убирать", "мёртвые клетки!"];
             stopGame(text);
             waitingForClick = true;
+            break;
+        case 13:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[6].x, shops[6].y, shops[6].width, shops[6].height, 10);
+            
+            let macrophages = immunityCells.filter((cell) => cell instanceof Macrophage);
+            if(macrophages.length > 0) {
+                tutorialState += 1
+                playGame(tutorial=true);
+            };
             break;
         default:
             playGame(tutorial=true);
