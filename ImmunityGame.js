@@ -618,6 +618,8 @@ presetTutorialState = function(tutorialState) {
             break;
         case 12:
             break;
+        case 16:
+            break;
         default:
             break;
     }
@@ -740,6 +742,21 @@ handleTutorialState = function(tutorialState) {
                 tutorialState += 1
                 playGame(tutorial=true);
             };
+            break;
+        case 14:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            
+            if(garbagePiles.length == 0) {
+                tutorialState += 1
+            };
+            break;
+        case 15:
+            waitingForClick = false;
+            text = ["Клетки ткани", "заражены вирусом!", "", "Покупай",  "натуральных киллеров,",
+                    "чтобы бороться с ними!"]
+            stopGame(text);
+            waitingForClick = true;
             break;
         default:
             playGame(tutorial=true);
