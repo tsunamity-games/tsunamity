@@ -197,8 +197,14 @@ function drawField(gameOver=false){
     ctx.fillStyle = "Black";
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
-    ctx.fillText("Speed " + BASE_GAME_SPEED.toFixed(1), 
-                 speedRectangleX+speedRectangleWidth*0.5, speedRectangleY+speedRectangleHeight*0.5);
+    var text;
+    if (BASE_GAME_SPEED != 10){
+        text = "Speed " + BASE_GAME_SPEED.toFixed(1);
+    } else {
+        text = "Speed " + Math.round(BASE_GAME_SPEED);
+    }
+    ctx.fillText(text, 
+             speedRectangleX+speedRectangleWidth*0.5, speedRectangleY+speedRectangleHeight*0.5);
     
     // Lifes
     ctx.drawImage(
@@ -374,11 +380,8 @@ function stopGame(why){
         for (var i = 0; i < why.length; i++)
                 ctx.fillText(why[i], fieldWidth/2, fieldHeight/2 + ((i-3)*29));        
     } else {
-        console.log("why", why, "gameOverScreenDrawn", gameOverScreenDrawn);
         if (why == "Game Over" && !gameOverScreenDrawn){
-            console.log("drawing field with go=true");
             drawField(gameOver=true);   
-            console.log("drawing game over screen");
             ctx.drawImage(GAME_OVER_BLUR, 0, topMenuHeight, 
                           rightMenuX, fieldHeight-topMenuHeight);
             ctx.drawImage(GAME_OVER_FLAG, 
@@ -612,7 +615,7 @@ function chooseEnemy(bacList, virList, helList, hivList, coins, waveNumber){
         enemyPrice = HIV_PRICE;
         if (enemyPrice <= coins){
             hivList.push(new HIV(HIV_IMAGE, 
-                                 100, 
+                                 6, 
                                  randomUniform(playableFieldY + 15, playableFieldY+playableFieldHeight-15))
                         );
             coins -= enemyPrice;
@@ -651,6 +654,7 @@ var reset;
 var speed_up;
 var speed_down;
 var fullWaveSize;
+var artObj;
 var tutorialState = 0;
 var waitingForClick = false;
 var gameState = "menu";
@@ -700,8 +704,9 @@ function setupGame(tutorial=false){
                 buttonWidth, 
                 buttonHeight));
     }
+    artObj = new ART(antibioticsX, ARTY, buttonWidth, buttonHeight);
     buttons.push(
-        new ART(antibioticsX, ARTY, buttonWidth, buttonHeight)
+        artObj
     )
     spleen = new Spleen(spleenX, spleenY, spleenSize, spleenSize, 12);
     tissueCells = addTissueCells([]);
@@ -854,10 +859,10 @@ $("#field").click(function(event){
             }
             
             if(speed_up.isIntersected(x, y)) {
-                BASE_GAME_SPEED = Math.min(9.9, BASE_GAME_SPEED+0.1);
+                BASE_GAME_SPEED = Math.min(10, BASE_GAME_SPEED+0.5);
             }
             if(speed_down.isIntersected(x, y)) {
-                BASE_GAME_SPEED = Math.max(1, BASE_GAME_SPEED-0.1);
+                BASE_GAME_SPEED = Math.max(1, BASE_GAME_SPEED-0.5);
             }
             
             if(gameState == "tutorial" && waitingForClick) {
@@ -906,7 +911,7 @@ $("body").keydown(function(event){
             pauseTrue = !pauseTrue;
             pauseScreenDrawn = false;
         } else if (action == "upgrade"){
-            immunityCells.filter((cell) => cell.label != undefined && cell.label.active && cell.label.upgradeAvailable).forEach((cell) => {
+            immunityCells.filter((cell) => cell.label != undefined && cell.label.active && cell.label.upgradeAvailable && cell.upgradePrice >= money).forEach((cell) => {
                 money -= cell.upgradePrice;
                 cell.upgrade();
             })
@@ -954,7 +959,6 @@ function playGame(tutorial=false) {
     else if (pauseTrue){
         stopGame("Pause");
     } else {
-    console.log("started, not game over, not paused");
     drawField();
         
     shops.forEach((shop) => {
@@ -1174,7 +1178,6 @@ function drawAbout(){
 var game = setInterval(function(){
     switch(gameState) {
         case "game":
-            console.log("got", gameOverTrue);
             playGame();
             break;
         case "menu":

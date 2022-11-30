@@ -476,7 +476,7 @@ class THelper extends ImmuneCell {
         this.placeReached = false;
         this.cooldown = HELPER_BUYING_COOLDOWN;
         this.timeFromTheLastPurchase = 0;
-        this.longevity = BASE_IMMUNITY_CELL_LONGEVITY*2;
+        this.longevity = BASE_IMMUNITY_CELL_LONGEVITY*3.1;
     }
 
     choosePlace() {
@@ -490,7 +490,7 @@ class THelper extends ImmuneCell {
         const row = Math.floor(randomUniform(0, ROWS));
 
         var place = [playableFieldX + col * gridCellWidth + randomUniform(-10, 10), 
-                     playableFieldY + playableFieldHeight + row * gridCellHeight + randomUniform(-10, 10)];
+                     playableFieldY + row * gridCellHeight + randomUniform(-10, 10)];
         place[0] = clip(place[0], playableFieldX + this.radius, playableFieldX+playableFieldWidth - this.radius);
         place[1] = clip(place[1], playableFieldY + this.radius, playableFieldY + playableFieldHeight - this.radius);
 

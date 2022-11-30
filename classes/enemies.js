@@ -240,17 +240,18 @@ class IntracellularPathogen extends MovingObject {
         super(texture, x, y, radius);
         this.possibleHostTypes = possibleHostTypes;
         this.target = undefined;
-        this.baseSpeed = 10;
+        this.baseSpeed = 2;
         this.doublingProbability = HIV_DOUBLING_PROBABILITY;
     }
 
     changeDirection() {
         if(this.target == undefined) {
             var coef;
-            if (ART.available){
+            if (artObj.available){
                 coef = 1;
+                console.log(artObj.available);
             } else {coef = ART_SLOWING_COEFFICIENT};
-            this.xSpeed = randomUniform(-this.baseSpeed*BASE_GAME_SPEED*coef, this.baseSpeed*BASE_GAME_SPEED*coef);
+            this.xSpeed = randomUniform(-this.baseSpeed*BASE_GAME_SPEED*coef, (this.baseSpeed*BASE_GAME_SPEED+0.05)*coef);
             this.ySpeed = randomUniform(-this.baseSpeed*BASE_GAME_SPEED*coef, this.baseSpeed*BASE_GAME_SPEED*coef);
         }
     }
@@ -259,7 +260,6 @@ class IntracellularPathogen extends MovingObject {
         if(this.target == null) {
             // Mess around
             super.move();
-
             // If pathogen intersects any of its possible hosts, it goes inside
             immunityCells.forEach((cell) => {
                 this.possibleHostTypes.forEach((host) => {
@@ -288,14 +288,14 @@ class IntracellularPathogen extends MovingObject {
 
 class HIV extends IntracellularPathogen {
     constructor(texture, x, y) {
-        var radius = 5;
+        var radius = 6;
         super(texture, x, y, radius, [THelper]);
         this.age = 0;
     }
 
     act() {
         super.act();
-
+        
         if(this.target != null) {
             // Kill host slowly
             this.target.age += HIV_DAMAGE;

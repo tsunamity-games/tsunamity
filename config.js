@@ -137,7 +137,7 @@ const ART_ACTIVE_IMAGE = new Image();
 ART_ACTIVE_IMAGE.src = "./images/ART_active.png";
 const ARTY = 0.82*fieldHeight;
 const ART_PRICE = 30;
-const ART_SLOWING_COEFFICIENT = 0;
+const ART_SLOWING_COEFFICIENT = 0.2;
 var ART_DURATION = 20000;
 
 // Blood
