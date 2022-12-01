@@ -496,7 +496,7 @@ class TLymphocyte extends ImmuneCell {
 
 class THelper extends ImmuneCell {
     constructor(x, y) {
-        super(T_LYMPHOCYTES_IMAGE, x, y, 20, TLYMPHOCYTE_SPEED, 0);
+        super(T_HELPER_IMAGE, x, y, 20, TLYMPHOCYTE_SPEED, 0);
 
         this.place = this.choosePlace();
         this.placeReached = false;
@@ -589,11 +589,11 @@ class THelper extends ImmuneCell {
 
         // Draw the progress of buying a lymphocyte
         if(this.placeReached) {
-            ctx.lineWidth = 1;
+            ctx.lineWidth = 2;
             ctx.strokeStyle = "black";
             
             ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius + 2, 0, Math.PI*2 * this.timeFromTheLastPurchase / this.cooldown);
+            ctx.arc(this.x, this.y, this.radius + 5, 0, Math.PI*2 * this.timeFromTheLastPurchase / this.cooldown);
             ctx.stroke();
         }
     }

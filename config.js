@@ -440,6 +440,9 @@ const EOSINOPHILES_IMAGE = new Image();
 EOSINOPHILES_IMAGE.src = "./images/eosinophiles.png";
 const NK_IMAGE = new Image();
 NK_IMAGE.src = "./images/NK_cells.png";
+const T_HELPER_IMAGE = new Image();
+T_HELPER_IMAGE.src = "./images/Thelper.png";
+
 
 var BASE_IMMUNITY_CELL_LONGEVITY = 40000;
 

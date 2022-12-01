@@ -691,7 +691,7 @@ shops = [
     new Shop(xLeftOffset + 2 * shopWidth + 2 * spaceBetweenShops, shopY, Neutrophil, NEUTROPHIL_PRICE, NEUTROPHILS_IMAGE, true, true, "green"),
     B_LYMPHOCYTE_SHOP,
     new Shop(xLeftOffset + 4 * shopWidth + 4 * spaceBetweenShops, 
-             shopY, THelper, T_HELPER_PRICE, T_LYMPHOCYTES_IMAGE, true, true, "blue"),
+             shopY, THelper, T_HELPER_PRICE, T_HELPER_IMAGE, true, true, "blue"),
     new Shop(xLeftOffset + 5 * shopWidth + 5 * spaceBetweenShops, shopY, Eosinophile, EOSINOPHILE_PRICE, EOSINOPHILES_IMAGE, true, true, "blue"),
     new Shop(xLeftOffset + 6 * shopWidth + 6 * spaceBetweenShops, shopY, Macrophage, MACROPHAGE_PRICE, MACROPHAGES_IMAGE, true, true, "blue")
 
@@ -945,6 +945,9 @@ $("body").keydown(function(event){
         } else if (action == "pause"){
             if (pauseTrue){pause.texture = PAUSE_IMAGE;} 
             else {pause.texture = RESUME_IMAGE;}
+            ctx.fillStyle = topMenuColor;
+            ctx.globalAlpha = 1;
+            ctx.fillRect(pause.x, pause.y, pause.width, pause.height);
             pause.draw();
             pauseTrue = !pauseTrue;
             pauseScreenDrawn = false;
