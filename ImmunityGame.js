@@ -268,17 +268,10 @@ function drawField(gameOver=false){
     shops.forEach((shop) => {shop.pockets.forEach((pocket) => {pocket.draw();})})
     
     // Setting the font multiple times apparently hinders performance
-    ctx.font = "bold " + shopWidth/8 + "px Rubik One";
-    ctx.textBaseline = "top";
-    ctx.textAlign = "center";        
+/       
     shops.forEach((shop) => {
         shop.draw1();
     });
-    ctx.font = "bold " + priceHeight*0.9 + "px Rubik One";
-    shops.forEach((shop) => {
-        shop.draw2();
-    }); 
-    
     // Draw buttons
     ctx.font = "bold " + buttonHeight * 0.8 + "px Rubik One";
     buttons.forEach((button) => {button.draw()})    
@@ -682,18 +675,18 @@ const MENU_BUTTONS = [
     
 ]
 
-const T_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + shopWidth + spaceBetweenShops, shopY, TLymphocyte, T_LYMPHOCYTE_PRICE, T_LYMPHOCYTES_IMAGE, false, true, "yellow");
-const B_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + 3 * shopWidth + 3 * spaceBetweenShops, shopY, BLymphocyte, B_LYMPHOCYTE_PRICE, LYMPHOCYTES_DEFAULT_IMAGE, true, true, "green");
+const T_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + shopWidth + spaceBetweenShops, shopY, TLymphocyte, T_LYMPHOCYTE_PRICE, TKILLER_SHOP_IMAGE, false, true, "yellow");
+const B_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + 3 * shopWidth + 3 * spaceBetweenShops, shopY, BLymphocyte, B_LYMPHOCYTE_PRICE, BLYMPHOCYTE_SHOP_IMAGE, true, true, "green");
 
 shops = [
-    new Shop(xLeftOffset, shopY, NaturalKiller, NK_PRICE, NK_IMAGE, true, true, "yellow"),
+    new Shop(xLeftOffset, shopY, NaturalKiller, NK_PRICE, NK_SHOP, true, true, "yellow"),
     T_LYMPHOCYTE_SHOP,
-    new Shop(xLeftOffset + 2 * shopWidth + 2 * spaceBetweenShops, shopY, Neutrophil, NEUTROPHIL_PRICE, NEUTROPHILS_IMAGE, true, true, "green"),
+    new Shop(xLeftOffset + 2 * shopWidth + 2 * spaceBetweenShops, shopY, Neutrophil, NEUTROPHIL_PRICE, NEUTROPHIL_SHOP, true, true, "green"),
     B_LYMPHOCYTE_SHOP,
     new Shop(xLeftOffset + 4 * shopWidth + 4 * spaceBetweenShops, 
-             shopY, THelper, T_HELPER_PRICE, T_HELPER_IMAGE, true, true, "blue"),
-    new Shop(xLeftOffset + 5 * shopWidth + 5 * spaceBetweenShops, shopY, Eosinophile, EOSINOPHILE_PRICE, EOSINOPHILES_IMAGE, true, true, "blue"),
-    new Shop(xLeftOffset + 6 * shopWidth + 6 * spaceBetweenShops, shopY, Macrophage, MACROPHAGE_PRICE, MACROPHAGES_IMAGE, true, true, "blue")
+             shopY, THelper, T_HELPER_PRICE, THELPER_SHOP, true, true, "blue"),
+    new Shop(xLeftOffset + 5 * shopWidth + 5 * spaceBetweenShops, shopY, Eosinophile, EOSINOPHILE_PRICE, EOSINOPHIL_SHOP, true, true, "blue"),
+    new Shop(xLeftOffset + 6 * shopWidth + 6 * spaceBetweenShops, shopY, Macrophage, MACROPHAGE_PRICE, MACROPHAGE_SHOP, true, true, "blue")
 
     
 ];
@@ -850,7 +843,6 @@ $("#field").click(function(event){
             })
             
             // If any of the buttons are clicked, do their thing
-            console.log(gameState);
             buttons.forEach((button)=>{
                 if (button.isIntersected(x, y)){
                     button.activate();

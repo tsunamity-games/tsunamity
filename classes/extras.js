@@ -178,7 +178,7 @@ class Label extends BodyPart{
 }
 class Pocket extends Shop{
     constructor(shopObj, x, y, color){
-        super(x, y, shopObj.cellType, shopObj.price, shopObj.cellTexture, true, true, color)
+        super(x, y, shopObj.cellType, shopObj.price, shopObj.texture, true, true, color)
         this.color = color;
         this.shopObj = shopObj;
         this.width = (shopObj.width*0.9028)/BACTERIA_COLORS.length;

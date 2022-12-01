@@ -21,14 +21,8 @@ class BodyPart {
     }
 }
 class Shop extends BodyPart {  
-    constructor(x, y, cellType, price, cellTexture, isEnemyAnimated, isCellAnimated, color) {
-        var texture;
-        if (['blue', 'green', 'yellow'].includes(color)){
-            texture = ShopColors[color]["scrollImage"]
-        } else {
-            texture = ShopColors["blue"]["scrollImage"]
-        }
-        super(texture, 
+    constructor(x, y, cellType, price, shopTexture, isEnemyAnimated, isCellAnimated, color) {
+        super(shopTexture, 
               x, y, 
               shopWidth, 
               shopHeight);
@@ -37,7 +31,6 @@ class Shop extends BodyPart {
         this.price = price;
         this.base_price = price;
         
-        this.cellTexture = cellTexture;
         this.isEnemyAnimated = isEnemyAnimated;
         this.isCellAnimated = isCellAnimated;
         this.pockets = [];
@@ -68,52 +61,7 @@ class Shop extends BodyPart {
     }
     
     draw1() {
-        super.draw();
-        // Name of the cell type sold
-        ctx.fillStyle =  ShopColors[this.color]["colorCode"];
-        var name = texts["cellNames"][this.cellType.name][language];
-        for (let i = 0; i < name.length; i++) {
-            ctx.fillText(
-                name[i], 
-                this.x + this.width / 5, 
-                this.y + this.height/9 + this.height/12*i);
-        }
-        ctx.drawImage(
-            this.cellTexture, 0, 0,
-            ANIMATED_IMAGE_WIDTH,
-            ANIMATED_IMAGE_HEIGHT,
-            this.x + this.width/2 - 6*this.width/10/2 + this.width/12,
-            this.y + this.height/2 - 4.5/2*this.height/10 - this.height/12,
-            6*this.width/10,
-            9/2*this.height/10)
-        }
-    
-    draw2(){
-        // Draw coloured rectangle for price
-        ctx.fillStyle = ShopColors[this.color]["colorCode"];
-        var priceX = this.x + this.width*(53/123), priceY = this.y + this.height*(1-0.125), priceWidth = this.width*(1-53/123);
-        roundRect(ctx, 
-              priceX, priceY, priceWidth, priceHeight, 
-              8, 0, true, false, 0);
-        
-        // Write price
-        ctx.fillStyle = "#F9EAC4";
-        ctx.textAlign = "left";
-        ctx.textBaseline = "middle";
-        
-        ctx.fillText(this.price, 
-                     priceX + priceWidth/2, 
-                     priceY + priceHeight/2);
-        
-    
-        // Render price image
-        ctx.drawImage(MINIMONEY, 
-                      priceX + priceWidth*0.1,
-                      priceY + priceHeight*0.05,
-                      priceHeight*0.9*1.282,
-                      priceHeight*0.9
-                     );
-    }
+        super.draw();}
     
 }
 class SpleenSection{

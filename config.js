@@ -258,12 +258,25 @@ const spleenColor = "#E78080"
 
 
 // Shops
-const GREEN_SCROLL = new Image();
-GREEN_SCROLL.src = "./images/greenScroll.png";
-const YELLOW_SCROLL = new Image();
-YELLOW_SCROLL.src = "./images/yellowScroll.png";
-const BLUE_SCROLL = new Image();
-BLUE_SCROLL.src = "./images/blueScroll.png";
+
+
+const THELPER_SHOP = new Image();
+THELPER_SHOP.src = "./images/Thelper_shop.png";
+const MACROPHAGE_SHOP = new Image();
+MACROPHAGE_SHOP.src = "./images/Macrophage_shop.png";
+const EOSINOPHIL_SHOP = new Image();
+EOSINOPHIL_SHOP.src = "./images/Eosinophil_shop.png";
+const TKILLER_SHOP_IMAGE = new Image();
+TKILLER_SHOP_IMAGE.src = "./images/TKiller_shop.png";
+const NK_SHOP = new Image();
+NK_SHOP.src = "./images/NK_shop.png";
+const BLYMPHOCYTE_SHOP_IMAGE = new Image();
+BLYMPHOCYTE_SHOP_IMAGE .src = "./images/BLymphocyte_shop.png";
+const NEUTROPHIL_SHOP = new Image();
+NEUTROPHIL_SHOP.src = "./images/Neutrophil_shop.png";
+
+
+
 const MINIMONEY = new Image();
 const FIRST_POCKET_V = new Image();
 FIRST_POCKET_V.src = "./images/pocket_one_v.png";
@@ -292,23 +305,19 @@ const xLeftOffset = playableFieldX;
 const priceHeight = shopHeight*0.125
  var ShopColors = {
     blue:{
-        scrollImage: BLUE_SCROLL,
         pocketImageV: FIRST_POCKET_V,        
         colorCode: "#005FA4",
     },
     green:{
-        scrollImage: GREEN_SCROLL,
         pocketImageV: SECOND_POCKET_V,        
         colorCode: "#006956",
     },
     yellow:{
-        scrollImage: YELLOW_SCROLL,
         pocketImageV: THIRD_POCKET_V,        
         colorCode: "#DC9E00",
     },
     // This one is not displayed, but prevents error when creating orange pocket
     orange:{
-        scrollImage: YELLOW_SCROLL,
         pocketImageV: FOURTH_POCKET_V,                
         colorCode: "#DC9E00",
     },
