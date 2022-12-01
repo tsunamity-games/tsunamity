@@ -620,6 +620,7 @@ presetTutorialState = function(tutorialState) {
             break;
         case 16:
             break;
+        case 21:
         default:
             break;
     }
@@ -627,6 +628,12 @@ presetTutorialState = function(tutorialState) {
 
 handleTutorialState = function(tutorialState) {
     console.log("Handling state " + tutorialState);
+    if(tutorialState >= 12) {
+        VIRUSES_CLASSIFICATION["blue"].price = 1;  // Increase probability of virus appearing 
+    } else {
+        VIRUSES_CLASSIFICATION["blue"].price = 50;  // default
+    }
+
     switch(tutorialState) {
         case 0:
             for(var i=0; i < 5; i++) {
@@ -802,6 +809,34 @@ handleTutorialState = function(tutorialState) {
                 ];
             stopGame(text);
             waitingForClick = true;
+            break;
+        case 21:
+            waitingForClick = false;
+            text = ["После встречи Т-киллера", "с вирусом или вакциной", "его можно улучшить", "до клетки памяти", "",
+                    "После этого можно", "будет сразу покупать", "Т-киллеров против", "конкретных вирусов", "в костном мозге"
+                ];
+            stopGame(text);
+            waitingForClick = true;
+            break;
+        case 22:
+            waitingForClick = false;
+
+            let unupgradedBcells = immunityCells.filter((cell) => cell instanceof BLymphocyte);
+
+            if(unupgradedBcells.length > 0) {
+                bCell = unupgradedBcells[0];
+                drawBlackScreen(BLACK_SCREEN_ALPHA, bCell.x - bCell.radius, bCell.y - bCell.radius,
+                                2 * bCell.radius, 2 * bCell.radius, 5);
+            }
+
+            let plasmaticCells = immunityCells.filter(cell => {
+                return (cell instanceof BLymphocyte) && (cell.mode == "plasmatic")
+            })
+            if(plasmaticCells.length > 0) {
+                tutorialState += 1
+            };
+
+            playGame(tutorial=true);
             break;
         default:
             playGame(tutorial=true);
