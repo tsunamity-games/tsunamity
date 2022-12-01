@@ -251,7 +251,7 @@ class IntracellularPathogen extends MovingObject {
                 coef = 1;
                 console.log(artObj.available);
             } else {coef = ART_SLOWING_COEFFICIENT};
-            this.xSpeed = randomUniform(-this.baseSpeed*BASE_GAME_SPEED*coef, (this.baseSpeed*BASE_GAME_SPEED+0.05)*coef);
+            this.xSpeed = randomUniform(-this.baseSpeed*BASE_GAME_SPEED*coef, (this.baseSpeed*BASE_GAME_SPEED+0.08)*coef);
             this.ySpeed = randomUniform(-this.baseSpeed*BASE_GAME_SPEED*coef, this.baseSpeed*BASE_GAME_SPEED*coef);
         }
     }
