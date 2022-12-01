@@ -41,7 +41,7 @@ class Button extends BodyPart {
                 }
                 else {
                     ctx.fillStyle = "#E8D9B4";
-                    ctx.font = "bold " + this.height * 0.4 + "px Rubik One"
+                    ctx.font = this.height * 0.3 + "px Rubik One"
                 }
 
                 ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);

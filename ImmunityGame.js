@@ -87,7 +87,7 @@ function drawField(gameOver=false){
         moneyRectangleHeight*0.6*0.8*1.23, 
         moneyRectangleHeight*0.6*0.8);
     
-    ctx.font = "bold " + wavesRectangleHeight*0.6 + "px Rubik One";
+    ctx.font = wavesRectangleHeight*0.4 + "px Rubik One";
     ctx.fillStyle = "#D9D9D9";
     ctx.textAlign = "left";    
     ctx.fillText(ANTIBIOTIC_PRICE, 
@@ -154,7 +154,7 @@ function drawField(gameOver=false){
     ctx.fillStyle = "Black";
     ctx.textBaseline = "middle";
     ctx.textAlign = "right";
-    ctx.font = "bold " + wavesRectangleHeight*0.6 + "px Rubik One";
+    ctx.font = wavesRectangleHeight*0.45 + "px Rubik One";
     ctx.fillText(wave, wavesRectangleX+wavesRectangleWidth*0.9, wavesRectangleY+wavesRectangleHeight/2);
     ctx.drawImage(
         WAVE_IMAGE, 
@@ -217,7 +217,7 @@ function drawField(gameOver=false){
     ctx.fillStyle = "Black";
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
-    ctx.font = "bold " + lifesSize*1.1*0.5 + "px Rubik One";
+    ctx.font = lifesSize*1.1*0.35 + "px Rubik One";
     ctx.fillText(Math.max(0, livesLeft), 
                  fieldWidth*0.02+lifesSize*1.1/2, 
                  topMenuHeight/2);
@@ -239,7 +239,7 @@ function drawField(gameOver=false){
     ctx.moveTo((37/1440)*fieldWidth, linesY);
     ctx.lineTo(((37+258)/1440)*fieldWidth, linesY);
     ctx.stroke();
-    ctx.font = "bold " + (37/1080)*fieldHeight + "px Rubik One";
+    ctx.font = (37/1080)*fieldHeight + "px Rubik One";
     ctx.fillStyle = ShopColors.yellow.colorCode;  
     ctx.fillText(texts["game"]["viruses"][language], (37/1440)*fieldWidth, (120/1080)*fieldHeight);
 
@@ -273,7 +273,7 @@ function drawField(gameOver=false){
         shop.draw1();
     });
     // Draw buttons
-    ctx.font = "bold " + buttonHeight * 0.8 + "px Rubik One";
+    ctx.font = buttonHeight * 0.8 + "px Rubik One";
     buttons.forEach((button) => {button.draw()})    
     
     // Draw spleen
@@ -390,15 +390,16 @@ function stopGame(why){
             var immuneCellsBought; var enemiesKilled; var boostersBought; var moneyEarned; var currentWave;
             [immuneCellsBought, enemiesKilled, boostersBought, moneyEarned, currentWave] = historyObject.makeReport(); 
             
-            var fontsize = statsFlagWidth*0.04;
+            var fontsize = statsFlagWidth*0.03;
+            var spaceBetweenLines = fontsize*1.9;
             ctx.fillStyle = "#BE983E";
             ctx.textAlign = "left";
-            ctx.font = "950 " + fontsize + "px Rubik One";
+            ctx.font = fontsize + "px Rubik One";
             var firstColumnX = statsFlagX + statsFlagWidth*0.15;
             var firstHeaderY = fieldHeight - statsFlagHeight + 0.135*statsFlagHeight;
             var secondColumnX = statsFlagX + statsFlagWidth*0.6;
-            var enemiesKilledHeaderY = firstHeaderY + (immuneCellsBought.split("\n").length)*fontsize*1.6 + fontsize*3;
-            var moneyEarnedY = firstHeaderY + (boostersBought.split("\n").length)*fontsize*1.6 + fontsize*5;
+            var enemiesKilledHeaderY = firstHeaderY + (immuneCellsBought.split("\n").length)*spaceBetweenLines + fontsize*6;
+            var moneyEarnedY = firstHeaderY + (boostersBought.split("\n").length)*spaceBetweenLines + fontsize*5;
             ctx.fillText(texts["gameOverScreen"]["immuneCellsBought"][language], 
                          firstColumnX,
                          firstHeaderY);
@@ -414,21 +415,21 @@ function stopGame(why){
             
             ctx.fillStyle = "#FDFBF7";
             for (var i = 0; i < immuneCellsBought.split("\n").length; i++)
-                ctx.fillText(immuneCellsBought.split("\n")[i], firstColumnX, firstHeaderY + fontsize*2 + (i*fontsize*1.6));
+                ctx.fillText(immuneCellsBought.split("\n")[i], firstColumnX, firstHeaderY + fontsize*2 + (i*spaceBetweenLines));
             for (var i = 0; i < boostersBought.split("\n").length; i++)
-                ctx.fillText(boostersBought.split("\n")[i], secondColumnX, firstHeaderY + fontsize*2 + (i*fontsize*1.6));
+                ctx.fillText(boostersBought.split("\n")[i], secondColumnX, firstHeaderY + fontsize*2 + (i*spaceBetweenLines));
             for (var i = 0; i < enemiesKilled.split("\n").length; i++)
-                ctx.fillText(enemiesKilled.split("\n")[i], firstColumnX, enemiesKilledHeaderY + fontsize*2 + (i*fontsize*1.6));
+                ctx.fillText(enemiesKilled.split("\n")[i], firstColumnX, enemiesKilledHeaderY + fontsize*2 + (i*spaceBetweenLines));
             
-            ctx.font = "950 " + fontsize*1.2 + "px Rubik One";
+            ctx.font = fontsize*1.2 + "px Rubik One";
             ctx.fillStyle = "#BE983E";
             
-            ctx.fillText(texts["gameOverScreen"]["currentWave"][language] + ":", secondColumnX, moneyEarnedY + fontsize*4);
+            ctx.fillText(texts["gameOverScreen"]["currentWave"][language] + ":", secondColumnX, moneyEarnedY + fontsize*5);
             
             if (("" + currentWave).length === 1){
                 ctx.drawImage(DIGIT_IMAGES[currentWave], 
                               (secondColumnX + statsFlagX + statsFlagWidth)/2 - digitImageWidth/2 - statsFlagWidth*0.05, 
-                              moneyEarnedY + fontsize*6,
+                              moneyEarnedY + fontsize*8,
                               digitImageWidth, digitImageHeight
                              );
             } else if (("" + currentWave).length === 2){
@@ -438,11 +439,11 @@ function stopGame(why){
                 var decreasedDigitHeight = digitImageHeight*0.7;
                 ctx.drawImage(DIGIT_IMAGES[firstDigit], 
                               (secondColumnX + statsFlagX + statsFlagWidth)/2 - decreasedDigitWidth - statsFlagWidth*0.05, 
-                              moneyEarnedY + fontsize*7,                             decreasedDigitWidth, decreasedDigitHeight
+                              moneyEarnedY + fontsize*9,                             decreasedDigitWidth, decreasedDigitHeight
                              );
                 ctx.drawImage(DIGIT_IMAGES[secondDigit], 
                               (secondColumnX + statsFlagX + statsFlagWidth)/2  - statsFlagWidth*0.05, 
-                              moneyEarnedY + fontsize*7,
+                              moneyEarnedY + fontsize*9,
                               decreasedDigitWidth, decreasedDigitHeight);
             } else if (("" + currentWave).length === 3){
                 var firstDigit = Math.floor(currentWave/100);
@@ -453,15 +454,15 @@ function stopGame(why){
                 
                 ctx.drawImage(DIGIT_IMAGES[firstDigit], 
                               (secondColumnX + statsFlagX + statsFlagWidth)/2 - statsFlagWidth*0.05 - decreasedDigitWidth*1.5 , 
-                              moneyEarnedY + fontsize*8,                             decreasedDigitWidth, decreasedDigitHeight
+                              moneyEarnedY + fontsize*10,                             decreasedDigitWidth, decreasedDigitHeight
                              );
                 ctx.drawImage(DIGIT_IMAGES[secondDigit], 
                               (secondColumnX + statsFlagX + statsFlagWidth)/2 - statsFlagWidth*0.05 - decreasedDigitWidth/2 , 
-                              moneyEarnedY + fontsize*8,
+                              moneyEarnedY + fontsize*10,
                               decreasedDigitWidth, decreasedDigitHeight);
                 ctx.drawImage(DIGIT_IMAGES[thirdDigit], 
                               (secondColumnX + statsFlagX + statsFlagWidth)/2 - statsFlagWidth*0.05 + decreasedDigitWidth*0.5, 
-                              moneyEarnedY + fontsize*8,
+                              moneyEarnedY + fontsize*10,
                               decreasedDigitWidth, decreasedDigitHeight);
             }
         gameOverScreenDrawn = true;
@@ -1202,12 +1203,13 @@ function drawAbout(){
     MENU_BUTTONS[0].textLanguageLabel = "back";
     MENU_BUTTONS[0].draw();
 
-    ctx.fillStyle = "#E8D9B4";
-    ctx.font = "bold" +  0.024*fieldHeight + "px Rubik One";
+    ctx.fillStyle = "#BE983E"
+    ctx.font = 0.024*fieldHeight + "px Rubik One";
     ctx.textAlign = "left";
     ctx.textBaseline = "left";
     ctx.fillText(texts["menu"]["testerTeam"][language] + ":", fieldWidth*0.7, fieldHeight*0.36);
-    ctx.font = 0.024*fieldHeight + "px Rubik One";
+    ctx.font = 0.019*fieldHeight + "px Rubik One";
+    ctx.fillStyle = "#E8D9B4";
     
     for (let i=0; i < texts["menu"]["testerList"][language].length; i++){
         ctx.fillText(texts["menu"]["testerList"][language][i], fieldWidth*0.7, fieldHeight*0.40 + i * fieldHeight*0.04);
