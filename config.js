@@ -278,7 +278,7 @@ const priceHeight = shopHeight*0.125
 // Animation parameters
 const N_ANIMATION_FRAMES = 5;
 const ANIMATED_IMAGE_WIDTH = 100;
-const ANIMATED_IMAGE_HEIGHT = 80;
+const ANIMATED_IMAGE_HEIGHT = 100;
 const STATIC_IMAGE_WIDTH = 200;
 const STATIC_IMAGE_HEIGHT = 200;
 const SCROLL_IMAGE = new Image();
@@ -341,23 +341,62 @@ const tissueCellDeathRate = 0.000001;
 
 // Immune cells
 const LYMPHOCYTES_DEFAULT_IMAGE = new Image();
-LYMPHOCYTES_DEFAULT_IMAGE.src = "./images/lymphocytes_dark.png";
+LYMPHOCYTES_DEFAULT_IMAGE.src = "./images/lymphocyte_test.png";
 const FIRST_LYMPHOCYTE = new Image();
-FIRST_LYMPHOCYTE.src = "./images/lymphocytes_dark.png";
+FIRST_LYMPHOCYTE.src = "./images/Blymphocytes_first.png";
 const SECOND_LYMPHOCYTE = new Image();
-SECOND_LYMPHOCYTE.src = "./images/lymphocytes_dark.png";
+SECOND_LYMPHOCYTE.src = "./images/Blymphocytes_second.png";
 const THIRD_LYMPHOCYTE = new Image();
-THIRD_LYMPHOCYTE.src = "./images/lymphocytes_dark.png";
+THIRD_LYMPHOCYTE.src = "./images/Blymphocytes_third.png";
 const FOURTH_LYMPHOCYTE = new Image();
-FOURTH_LYMPHOCYTE.src = "./images/lymphocytes_dark.png";
+FOURTH_LYMPHOCYTE.src = "./images/Blymphocytes_fourth.png";
+const FIRST_PLASMATIC = new Image();
+FIRST_PLASMATIC.src = "./images/Plasmatic_first.png";
+const SECOND_PLASMATIC = new Image();
+SECOND_PLASMATIC.src = "./images/Plasmatic_second.png";
+const THIRD_PLASMATIC = new Image();
+THIRD_PLASMATIC.src = "./images/Plasmatic_third.png";
+const FOURTH_PLASMATIC = new Image();
+FOURTH_PLASMATIC.src = "./images/Plasmatic_fourth.png";
+const FIRST_BMEMORY = new Image();
+FIRST_BMEMORY.src = "./images/BMemory_first.png";
+const SECOND_BMEMORY = new Image();
+SECOND_BMEMORY.src = "./images/BMemory_second.png";
+const THIRD_BMEMORY = new Image();
+THIRD_BMEMORY.src = "./images/BMemory_third.png";
+const FOURTH_BMEMORY = new Image();
+FOURTH_BMEMORY.src = "./images/BMemory_fourth.png";
+
 const T_LYMPHOCYTES_IMAGE = new Image();
-T_LYMPHOCYTES_IMAGE.src = "./images/lymphocytes.png";
+T_LYMPHOCYTES_IMAGE.src = "./images/Tlymphocyte_image.png";
+const FIRST_TLYMPHOCYTE = new Image();
+FIRST_TLYMPHOCYTE.src = "./images/Tlymphocytes_first.png";
+const SECOND_TLYMPHOCYTE = new Image();
+SECOND_TLYMPHOCYTE.src = "./images/Tlymphocytes_second.png";
+const THIRD_TLYMPHOCYTE = new Image();
+THIRD_TLYMPHOCYTE.src = "./images/Tlymphocytes_third.png";
+const FOURTH_TLYMPHOCYTE = new Image();
+FOURTH_TLYMPHOCYTE.src = "./images/Tlymphocytes_fourth.png";
+const FIRST_TMEMORY = new Image();
+FIRST_TMEMORY.src = "./images/TMemory_first.png";
+const SECOND_TMEMORY = new Image();
+SECOND_TMEMORY.src = "./images/TMemory_second.png";
+const THIRD_TMEMORY = new Image();
+THIRD_TMEMORY.src = "./images/TMemory_third.png";
+const FOURTH_TMEMORY = new Image();
+FOURTH_TMEMORY.src = "./images/TMemory_fourth.png";
+
+
+
 const MACROPHAGES_IMAGE = new Image();
 MACROPHAGES_IMAGE.src = "./images/macrophages.png";
 const NEUTROPHILS_IMAGE = new Image();
 NEUTROPHILS_IMAGE.src = "./images/neutrophils.png";
 const EOSINOPHILES_IMAGE = new Image();
 EOSINOPHILES_IMAGE.src = "./images/eosinophiles.png";
+const NK_IMAGE = new Image();
+NK_IMAGE.src = "./images/NK_cells.png";
+
 cell_names = {
     Neutrophil: "Neutrophil",
     Macrophage: "Margophage",
@@ -453,7 +492,9 @@ var bacteriaColors = {
             active: FIRST_ANTIBIOTIC_ACTIVE,
             inactive: FIRST_ANTIBIOTIC_INACTIVE
         },
-        lymphocyteImage: FIRST_LYMPHOCYTE
+        lymphocyteImage: FIRST_LYMPHOCYTE,
+        plasmaticImage: FIRST_PLASMATIC,
+        memoryImage: FIRST_BMEMORY
     },
     second:{
         colorCode: "#DF1B1B",
@@ -463,7 +504,9 @@ var bacteriaColors = {
             active: SECOND_ANTIBIOTIC_ACTIVE,
             inactive: SECOND_ANTIBIOTIC_INACTIVE
         },
-        lymphocyteImage: SECOND_LYMPHOCYTE
+        lymphocyteImage: SECOND_LYMPHOCYTE,
+        plasmaticImage: SECOND_PLASMATIC,
+        memoryImage: SECOND_BMEMORY
     },
     third:{
         colorCode: "#FF5900",
@@ -473,7 +516,9 @@ var bacteriaColors = {
             active: THIRD_ANTIBIOTIC_ACTIVE,
             inactive: THIRD_ANTIBIOTIC_INACTIVE
         },
-        lymphocyteImage: THIRD_LYMPHOCYTE
+        lymphocyteImage: THIRD_LYMPHOCYTE,
+        plasmaticImage: THIRD_PLASMATIC,
+        memoryImage: THIRD_BMEMORY
 },
     fourth:{
         colorCode: "#FFA800",
@@ -483,7 +528,9 @@ var bacteriaColors = {
             active: FOURTH_ANTIBIOTIC_ACTIVE,
             inactive: FOURTH_ANTIBIOTIC_INACTIVE
         },
-        lymphocyteImage: FOURTH_LYMPHOCYTE
+        lymphocyteImage: FOURTH_LYMPHOCYTE,
+        plasmaticImage: FOURTH_PLASMATIC,
+        memoryImage: FOURTH_BMEMORY
     }
 }
 
@@ -496,25 +543,33 @@ var VIRUSES_CLASSIFICATION = {
         doublingTime: VIRUS_DOUBLING_TIME,
         price: 50,
         pocketImage: FIRST_POCKET_V,
-        colorCode: "#35B1F6"
+        colorCode: "#35B1F6",
+        TLymphocyteImage: FIRST_TLYMPHOCYTE,
+        MemoryImage: FIRST_TMEMORY
     },
     second:{
         doublingTime: VIRUS_DOUBLING_TIME*0.9,
         price: 55,
         pocketImage: SECOND_POCKET_V,
-        colorCode: "#1B68D2"
+        colorCode: "#1B68D2",
+        TLymphocyteImage: SECOND_TLYMPHOCYTE,
+        MemoryImage: SECOND_TMEMORY
     },
     third:{
         doublingTime: VIRUS_DOUBLING_TIME*0.75, 
         price: 66,
         pocketImage: THIRD_POCKET_V,
-        colorCode: "#5C43E7"
+        colorCode: "#5C43E7",
+        TLymphocyteImage: THIRD_TLYMPHOCYTE,
+        MemoryImage: THIRD_TMEMORY
     },
     fourth:{
         doublingTime: VIRUS_DOUBLING_TIME*0.5,
         price: 100,
         pocketImage: FOURTH_POCKET_V,
-        colorCode: "#A441DE"
+        colorCode: "#A441DE",
+        TLymphocyteImage: FOURTH_TLYMPHOCYTE,
+        MemoryImage: FOURTH_TMEMORY
     }
 }
 

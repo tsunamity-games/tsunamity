@@ -320,12 +320,12 @@ function drawField(gameOver=false){
 //        (930/1080)*fieldHeight, 
 //        (296/1440)*fieldWidth, 
 //        (147/1080)*fieldHeight);
-    ctx.drawImage(
-        blood["3"][brightness], 
-        (875.79/1440)*fieldWidth, 
-        (430/1080)*fieldHeight, 
-        (81.37/1440)*fieldWidth, 
-        (24.45/1080)*fieldHeight);
+//    ctx.drawImage(
+//        blood["3"][brightness], 
+//        (875.79/1440)*fieldWidth, 
+//        (430/1080)*fieldHeight, 
+//        (81.37/1440)*fieldWidth, 
+//        (24.45/1080)*fieldHeight);
     ctx.drawImage(
         blood["4"][brightness], 
         (1225.74/1440)*fieldWidth, 
@@ -669,10 +669,10 @@ const MENU_BUTTONS = [
 ]
 
 const T_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + shopWidth + spaceBetweenShops, shopY, TLymphocyte, T_LYMPHOCYTE_PRICE, T_LYMPHOCYTES_IMAGE, false, true, "yellow");
-const B_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + 3 * shopWidth + 3 * spaceBetweenShops, shopY, BLymphocyte, B_LYMPHOCYTE_PRICE, T_LYMPHOCYTES_IMAGE, true, true, "green");
+const B_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + 3 * shopWidth + 3 * spaceBetweenShops, shopY, BLymphocyte, B_LYMPHOCYTE_PRICE, LYMPHOCYTES_DEFAULT_IMAGE, true, true, "green");
 
 shops = [
-    new Shop(xLeftOffset, shopY, NaturalKiller, NK_PRICE, T_LYMPHOCYTES_IMAGE, true, true, "yellow"),
+    new Shop(xLeftOffset, shopY, NaturalKiller, NK_PRICE, NK_IMAGE, true, true, "yellow"),
     T_LYMPHOCYTE_SHOP,
     new Shop(xLeftOffset + 2 * shopWidth + 2 * spaceBetweenShops, shopY, Neutrophil, NEUTROPHIL_PRICE, NEUTROPHILS_IMAGE, true, true, "green"),
     B_LYMPHOCYTE_SHOP,
@@ -911,9 +911,11 @@ $("body").keydown(function(event){
             pauseTrue = !pauseTrue;
             pauseScreenDrawn = false;
         } else if (action == "upgrade"){
-            immunityCells.filter((cell) => cell.label != undefined && cell.label.active && cell.label.upgradeAvailable && cell.upgradePrice >= money).forEach((cell) => {
-                money -= cell.upgradePrice;
-                cell.upgrade();
+            immunityCells.filter((cell) => cell.label != undefined && cell.label.active && cell.label.upgradeAvailable).forEach((cell) => {
+                if (cell.upgradePrice <= money){
+                    money -= cell.upgradePrice;
+                    cell.upgrade();                    
+                }
             })
     }       
     }      
