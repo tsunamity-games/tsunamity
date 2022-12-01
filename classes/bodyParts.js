@@ -71,7 +71,7 @@ class Shop extends BodyPart {
         super.draw();
         // Name of the cell type sold
         ctx.fillStyle =  ShopColors[this.color]["colorCode"];
-        var name = cell_names[this.cellType.name];
+        var name = texts["cellNames"][this.cellType.name][language];
         for (let i = 0; i < name.length; i++) {
             ctx.fillText(
                 name[i], 

@@ -1,3 +1,51 @@
+// Game texts
+var language = "eng";
+
+var texts = {
+    menu: {
+        startGame: {eng: "Start game", rus: "Начать игру"},
+        tutorial: {eng: "Tutorial", rus: "Обучение"},
+        about: {eng: "About", rus: "Об игре"},
+        back: {eng: "Back", rus: "Назад"},
+        testerTeam: {eng: "Tester team", rus: "Тестировщики"},
+        testerList: {eng: ["Andrey Biba", "Olesya Biba", "Roman Soldatov"], rus: ["Андрей Биба", "Олеся Биба", "Роман Солдатов"]},
+        authorInfo: {eng: ["Dmitry Biba & Vladimir Shitov", "Design by Anastasia Troshina", "BioMolText 2022"], 
+                     rus: ["Дмитрий Биба & Владимир Шитов", "Дизайн от Анастасии Трошиной", "Био/Мол/Текст-2022"]},
+        
+    },
+    game:{
+        speed: {eng: "Speed", rus: "Скорость"},
+        antibiotics: {eng: "Antibiotics", rus: "Антибиотики"},
+        vaccines: {eng: "Vaccines", rus: "Вакцины"},
+        art: {eng: "A.R.T.", rus: "А.Р.Т."},
+        viruses: {eng: "Viruses", rus: "Вирусы"},
+        bacteria: {eng: "Bacteria", rus: "Бактерии"},
+        other: {eng: "Other", rus: "Все остальное"},
+        infectedTissueCells: {eng: "Infected tissue cells", rus: "Зараженные вирусом клетки"},
+        helminthes: {eng: "Helminthes", rus: "Гельминты"}
+    },
+    gameOverScreen: {
+        immuneCellsBought: {eng: "Immune cells bought", rus: "Куплено имм. клеток"},
+        boostersBought: {eng: "Boosters bought", rus: "Куплено бустеров"},
+        enemiesBought: {eng: "Pathogens killed", rus: "Убито патогенов"},
+        sugar: {eng: "Sugar", rus: "Сахар"},
+        currentWave: {eng: "Current wave", rus: "Текущая волна"},
+    },
+    cellNames: {
+        Neutrophil: {eng:"Neutrophil", rus: "Нейтрофил"},
+        Macrophage: {eng:"Margophage", rus: "Макрофаг"},
+        Eosinophile: {eng:"Eosinophil", rus: "Эозинофил"},
+        NaturalKiller: {eng:"NK cell", rus: "НК клетка"},
+        BLymphocyte: {eng:"B cell", rus: "Б клетка"},
+        PlasmaticCell: {eng:"Plasmatic cell", rus: "Плазматич. клетка"},
+        BMemory: {eng: "Memory B cell", rus: "Б клетка памяти"},
+        TLymphocyte: {eng:"T Killer", rus: "Т киллер"},
+        TMemory: {eng: "Memory T cell", rus: "Т клетка памяти"},
+        THelper: {eng:"T Helper", rus: "Т хелпер"}
+    }
+
+}    
+
 // Game parameters
 var livesLeft = 10;
 var STARTING_MONEY = 0;
@@ -16,20 +64,13 @@ const fieldHeight = field.height;
 
 
 // Main menu
-const MAIN_MENU_RIGHT_PANEL_COLOR = "#828282";
-const MAIN_MENU_LEFT_PANEL_COLOR = "#434343";
+const MAIN_MENU_RIGHT_PANEL_COLOR = "#2C363E";
+const MAIN_MENU_LEFT_PANEL_COLOR = "#FAF6ED";
 const MAIN_MENU_BUTTONS_X =  1012 / 1440 * fieldWidth;
 const MAIN_MENU_BUTTONS_Y =  0.172 * fieldHeight;
 const MAIN_MENU_BUTTONS_WIDTH = 300 / 1440 * fieldWidth;
 const MAIN_MENU_BUTTONS_HEIGHT = 100 / 1068 * fieldHeight;
 const SPACE_BETWEEN_MAIN_MENU_BUTTONS = 50 / 1068 * fieldHeight;
-
-const AUTHORS_INFO = ["Dmitry Biba & Vladimir Shitov",
-                      "Design by Anastasia Troshina",
-                      "BioMolText 2022"];
-
-const TESTERS = ["Andrey Biba", "Olesya Biba", "Roman Soldatov"];
-
 
 // Playable field
 const playableFieldX = 0.0208*fieldWidth;
@@ -84,7 +125,7 @@ SPEED_DOWN_IMAGE.src = "./images/speed_down.png";
 const speedRectangleColor = "#E8D9B4";
 const speedRectangleX = 0.456*fieldWidth;
 const speedRectangleY = wavesRectangleY;
-const speedRectangleWidth = wavesRectangleWidth;
+let speedRectangleWidth = wavesRectangleWidth;
 const speedRectangleHeight = wavesRectangleHeight;
 var BASE_GAME_SPEED = 1;
 
@@ -396,16 +437,6 @@ const EOSINOPHILES_IMAGE = new Image();
 EOSINOPHILES_IMAGE.src = "./images/eosinophiles.png";
 const NK_IMAGE = new Image();
 NK_IMAGE.src = "./images/NK_cells.png";
-
-cell_names = {
-    Neutrophil: "Neutrophil",
-    Macrophage: "Margophage",
-    Eosinophile: "Eosinophil",
-    NaturalKiller: "NK cell",
-    BLymphocyte: "B cell",
-    TLymphocyte: "T Killer",
-    THelper:"T Helper"
-}
 
 var BASE_IMMUNITY_CELL_LONGEVITY = 40000;
 

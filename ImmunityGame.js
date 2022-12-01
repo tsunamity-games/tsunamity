@@ -101,21 +101,21 @@ function drawField(gameOver=false){
                  ARTY-0.018*fieldHeight - moneyRectangleHeight*0.6*0.8/2);
     ctx.textBaseline = "top";
     ctx.textAlign = "center";    
-    var name = "Antibiotics";
+    var name = texts["game"]["antibiotics"][language];
     for (let i = 0; i < name.length; i++) {
         ctx.fillText(
             name[i], 
             rightMenuX + rightMenuWidth / 5, 
             topAntibioticY + fieldHeight/50*i);
     }
-    var name = "Vaccines";
+    var name = texts["game"]["vaccines"][language];
     for (let i = 0; i < name.length; i++) {
         ctx.fillText(
             name[i], 
             rightMenuX + rightMenuWidth / 5, 
             topVaccineY + fieldHeight/55    *i);
     }
-    var name = "A.R.T.";
+    var name = texts["game"]["art"][language];
     for (let i = 0; i < name.length; i+=2) {
         ctx.fillText(
             name[i] + name[i+1], 
@@ -199,9 +199,9 @@ function drawField(gameOver=false){
     ctx.textAlign = "center";
     var text;
     if (BASE_GAME_SPEED != 10){
-        text = "Speed " + BASE_GAME_SPEED.toFixed(1);
+        text = texts["game"]["speed"][language] + " " + BASE_GAME_SPEED.toFixed(1);
     } else {
-        text = "Speed " + Math.round(BASE_GAME_SPEED);
+        text = texts["game"]["speed"][language] + " " + Math.round(BASE_GAME_SPEED);
     }
     ctx.fillText(text, 
              speedRectangleX+speedRectangleWidth*0.5, speedRectangleY+speedRectangleHeight*0.5);
@@ -241,7 +241,7 @@ function drawField(gameOver=false){
     ctx.stroke();
     ctx.font = "bold " + (37/1080)*fieldHeight + "px Rubik One";
     ctx.fillStyle = ShopColors.yellow.colorCode;  
-    ctx.fillText("Viruses", (37/1440)*fieldWidth, (120/1080)*fieldHeight);
+    ctx.fillText(texts["game"]["viruses"][language], (37/1440)*fieldWidth, (120/1080)*fieldHeight);
 
     
     ctx.strokeStyle = ShopColors.green.colorCode;
@@ -250,7 +250,7 @@ function drawField(gameOver=false){
     ctx.lineTo(((312+258)/1440)*fieldWidth, linesY)
     ctx.stroke();
     ctx.fillStyle = ShopColors.green.colorCode;  
-    ctx.fillText("Bacteria", (312/1440)*fieldWidth, (120/1080)*fieldHeight);
+    ctx.fillText(texts["game"]["bacteria"][language], (312/1440)*fieldWidth, (120/1080)*fieldHeight);
     
     ctx.strokeStyle = ShopColors.blue.colorCode;
     ctx.beginPath();
@@ -258,7 +258,7 @@ function drawField(gameOver=false){
     ctx.lineTo(((595+391)/1440)*fieldWidth, linesY);
     ctx.stroke();
     ctx.fillStyle = ShopColors.blue.colorCode;  
-    ctx.fillText("Other", (595/1440)*fieldWidth, (120/1080)*fieldHeight)
+    ctx.fillText(texts["game"]["other"][language], (595/1440)*fieldWidth, (120/1080)*fieldHeight)
     
 //    reset.draw();
     toMainMenu.draw();  
@@ -406,16 +406,16 @@ function stopGame(why){
             var secondColumnX = statsFlagX + statsFlagWidth*0.6;
             var enemiesKilledHeaderY = firstHeaderY + (immuneCellsBought.split("\n").length)*fontsize*1.6 + fontsize*3;
             var moneyEarnedY = firstHeaderY + (boostersBought.split("\n").length)*fontsize*1.6 + fontsize*5;
-            ctx.fillText("Immune cells bought", 
+            ctx.fillText(texts["gameOverScreen"]["immuneCellsBought"][language], 
                          firstColumnX,
                          firstHeaderY);
-            ctx.fillText("Boosters bought", 
+            ctx.fillText(texts["gameOverScreen"]["boostersBought"][language], 
                          secondColumnX, 
                          firstHeaderY);
-            ctx.fillText("Enemies killed", 
+            ctx.fillText(texts["gameOverScreen"]["enemiesBought"][language], 
                          firstColumnX, 
                          enemiesKilledHeaderY);
-            ctx.fillText("Sugar: " + moneyEarned, 
+            ctx.fillText(texts["gameOverScreen"]["sugar"][language] + ": " + moneyEarned, 
                          secondColumnX, 
                          moneyEarnedY);
             
@@ -430,7 +430,7 @@ function stopGame(why){
             ctx.font = "950 " + fontsize*1.2 + "px Rubik One";
             ctx.fillStyle = "#BE983E";
             
-            ctx.fillText("Current wave:", secondColumnX, moneyEarnedY + fontsize*4);
+            ctx.fillText(texts["gameOverScreen"]["currentWave"][language] + ":", secondColumnX, moneyEarnedY + fontsize*4);
             
             if (("" + currentWave).length === 1){
                 ctx.drawImage(DIGIT_IMAGES[currentWave], 
@@ -661,11 +661,25 @@ var gameState = "menu";
 
 const MENU_BUTTONS = [
     new Button(MAIN_MENU_RIGHT_PANEL_COLOR, MAIN_MENU_BUTTONS_X, MAIN_MENU_BUTTONS_Y,
-           MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, "Start game", isCircle=false),
+           MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, texts["menu"]["startGame"][language], false, "", "startGame"),
     new Button(MAIN_MENU_RIGHT_PANEL_COLOR, MAIN_MENU_BUTTONS_X, MAIN_MENU_BUTTONS_Y + MAIN_MENU_BUTTONS_HEIGHT + SPACE_BETWEEN_MAIN_MENU_BUTTONS,
-           MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, "Tutorial", isCircle=false),
+           MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, texts["menu"]["tutorial"][language], false, "", "tutorial"),
     new Button(MAIN_MENU_RIGHT_PANEL_COLOR, MAIN_MENU_BUTTONS_X, MAIN_MENU_BUTTONS_Y + 2 * (MAIN_MENU_BUTTONS_HEIGHT + SPACE_BETWEEN_MAIN_MENU_BUTTONS),
-           MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, "About", isCircle=false),
+           MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, texts["menu"]["about"][language], false, "", "about"),
+    new LangButton( 
+        (1012/1440)*fieldWidth, 
+        (683.5/1080)*fieldHeight,
+        (140/1440)*fieldWidth, 
+        (100/1080)*fieldHeight, 
+        "Рус", active = false),
+    new LangButton( 
+        (1172/1440)*fieldWidth, 
+        (683.5/1080)*fieldHeight,
+        (140/1440)*fieldWidth, 
+        (100/1080)*fieldHeight, 
+        "Eng", active = true),
+    
+    
 ]
 
 const T_LYMPHOCYTE_SHOP = new Shop(xLeftOffset + shopWidth + spaceBetweenShops, shopY, TLymphocyte, T_LYMPHOCYTE_PRICE, T_LYMPHOCYTES_IMAGE, false, true, "yellow");
@@ -685,6 +699,11 @@ shops = [
 ];
       
 function setupGame(tutorial=false){
+    if (language == "eng"){
+        speedRectangleWidth = wavesRectangleWidth;
+    } else {
+        speedRectangleWidth = wavesRectangleWidth * 1.1;
+    }
     immunityCells = [];
     antibodies = [];
     buttons = [];
@@ -695,14 +714,14 @@ function setupGame(tutorial=false){
                 antibioticsX,
                 topAntibioticY + (buttonHeight+spaceBetweenAntibioticButtons)*i,
                 buttonWidth, 
-                buttonHeight));
+                buttonHeight, isCircle=false));
         buttons.push(
             new Vaccine(
                 BACTERIA_COLORS[i], 
                 antibioticsX,
                 topVaccineY + (buttonHeight+spaceBetweenAntibioticButtons)*i, 
                 buttonWidth, 
-                buttonHeight));
+                buttonHeight, isCircle=false));
     }
     artObj = new ART(antibioticsX, ARTY, buttonWidth, buttonHeight);
     buttons.push(
@@ -747,18 +766,18 @@ function setupGame(tutorial=false){
                        topMenuHeight*0.5,
                        "Q", false, 
                        PAUSE_IMAGE);
-    
+    console.log(speedRectangleWidth, wavesRectangleWidth);  
     speed_up = new Button("white",
-                       speedRectangleX+speedRectangleWidth + fieldWidth*0.0042,
+                       speedRectangleX + speedRectangleWidth + fieldWidth*0.0042,
                        speedRectangleY + speedRectangleHeight/2 - speedRectangleHeight*0.625/2,
-                       speedRectangleWidth*0.14,
+                       wavesRectangleWidth*0.14,
                        speedRectangleHeight*0.625,
                        "", false, 
                        SPEED_UP_IMAGE);
     speed_down = new Button("white",
-                       speedRectangleX - fieldWidth*0.0042 - speedRectangleWidth*0.14,
+                       speedRectangleX - fieldWidth*0.0042 - wavesRectangleWidth*0.14,
                        speedRectangleY + speedRectangleHeight/2 - speedRectangleHeight*0.625/2,
-                       speedRectangleWidth*0.14,
+                       wavesRectangleWidth*0.14,
                        speedRectangleHeight*0.625,
                        "", false, 
                        SPEED_DOWN_IMAGE);
@@ -793,12 +812,27 @@ $("#field").click(function(event){
                 gameStart = false;
                 gameState = "about";
             }
+            if(MENU_BUTTONS[3].isIntersected(x, y)) {
+                gameStart = false;
+                language = "rus";
+                MENU_BUTTONS[3].active = true;
+                MENU_BUTTONS[4].active = false;
+                
+            }
+            if(MENU_BUTTONS[4].isIntersected(x, y)) {
+                gameStart = false;
+                language = "eng";
+                MENU_BUTTONS[3].active = false;
+                MENU_BUTTONS[4].active = true;
+            }
+            
             break;
         case "about":
             if(MENU_BUTTONS[0].isIntersected(x, y)) {
                 gameState = "menu";
-                MENU_BUTTONS[0].text = "Start game";
+                MENU_BUTTONS[0].text = texts["menu"]["startGame"][language];
             }
+            break;
         default:  // game and tutorial
             // If any of the shops clicked, try to buy cell;
             shops.forEach((shop) => {
@@ -813,6 +847,7 @@ $("#field").click(function(event){
             })
             
             // If any of the buttons are clicked, do their thing
+            console.log(gameState);
             buttons.forEach((button)=>{
                 if (button.isIntersected(x, y)){
                     button.activate();
@@ -1126,19 +1161,26 @@ function drawMenu() {
                  topMenuHeight, 
                  fieldWidth - 0.61*fieldWidth, 
                  fieldHeight - topMenuHeight);
-
-    ctx.fillStyle = "white";
+    
+    ctx.fillStyle = "#E8D9B4";
     ctx.font = 0.0187*fieldHeight + "px Rubik One";
     ctx.textAlign = "left";
     ctx.textBaseline = "left";
 
-    for (var i = 0; i < AUTHORS_INFO.length; i++){
-        ctx.fillText(AUTHORS_INFO[i], 0.61*fieldWidth + 0.0857*fieldWidth,  0.9*fieldHeight + (i * 0.028*fieldHeight));
+    for (var i = 0; i < texts["menu"]["authorInfo"][language].length; i++){
+        ctx.fillText(texts["menu"]["authorInfo"][language][i], 0.61*fieldWidth + 0.0857*fieldWidth,  0.9*fieldHeight + (i * 0.028*fieldHeight));
     }
 
     MENU_BUTTONS.forEach((button) => {
         button.draw();
     })
+    
+    ctx.beginPath();
+    ctx.moveTo((1012/1440)*fieldWidth, 
+               (668.5/1080)*fieldHeight);
+    ctx.lineTo((1312/1440)*fieldWidth, 
+               (668.5/1080)*fieldHeight);
+    ctx.stroke();
 
 }
 
@@ -1158,22 +1200,22 @@ function drawAbout(){
                  fieldWidth - 0.61*fieldWidth, 
                  fieldHeight - topMenuHeight);
 
-    MENU_BUTTONS[0].text = "Back";
+    MENU_BUTTONS[0].text = texts["menu"]["back"][language];
     MENU_BUTTONS[0].draw();
 
-    ctx.fillStyle = "white";
+    ctx.fillStyle = "#E8D9B4";
     ctx.font = "bold" +  0.024*fieldHeight + "px Rubik One";
     ctx.textAlign = "left";
     ctx.textBaseline = "left";
-    ctx.fillText("Tester team:", fieldWidth*0.7, fieldHeight*0.36);
+    ctx.fillText(texts["menu"]["testerTeam"][language] + ":", fieldWidth*0.7, fieldHeight*0.36);
     ctx.font = 0.024*fieldHeight + "px Rubik One";
     
-    for (let i=0; i < TESTERS.length; i++){
-        ctx.fillText(TESTERS[i], fieldWidth*0.7, fieldHeight*0.40 + i * fieldHeight*0.04);
+    for (let i=0; i < texts["menu"]["testerList"][language].length; i++){
+        ctx.fillText(texts["menu"]["testerList"][language][i], fieldWidth*0.7, fieldHeight*0.40 + i * fieldHeight*0.04);
     }
     ctx.font = 0.0187*fieldHeight + "px Rubik One";
-    for (var i = 0; i < AUTHORS_INFO.length; i++){
-        ctx.fillText(AUTHORS_INFO[i], 0.61*fieldWidth + 0.0857*fieldWidth,  0.9*fieldHeight + (i * 0.028*fieldHeight));
+    for (var i = 0; i < texts["menu"]["authorInfo"][language].length; i++){
+        ctx.fillText(texts["menu"]["authorInfo"][language][i], 0.61*fieldWidth + 0.0857*fieldWidth,  0.9*fieldHeight + (i * 0.028*fieldHeight));
     }
 }
 

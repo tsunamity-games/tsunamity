@@ -1,12 +1,16 @@
 class Button extends BodyPart {
-    constructor(color, x, y, width, height, text, isCircle=true, texture="") {
+    constructor(color, x, y, width, height, text, isCircle=true, texture="", textLanguageLabel="") {
         super(texture, x, y, width, height);
         this.color = color;
         this.text = text;
         this.isCircle = isCircle;
+        this.textLanguageLabel = textLanguageLabel;
     }
     
     draw(){
+        if (this.textLanguageLabel){
+            this.text = texts["menu"][this.textLanguageLabel][language];
+        }
         if (this.texture != ""){
             super.draw();
         }
@@ -20,7 +24,7 @@ class Button extends BodyPart {
             }
             else {
                 ctx.fillRect(this.x, this.y, this.width, this.height);   
-                ctx.strokeStyle = "white";
+                ctx.strokeStyle = "#E8D9B4";
                 ctx.lineWidth = 1;
                 ctx.globalAlpha = 1;
                 ctx.strokeRect(this.x, this.y, this.width, this.height)
@@ -36,8 +40,8 @@ class Button extends BodyPart {
                     ctx.font = this.height * 0.7 + "px Rubik One"
                 }
                 else {
-                    ctx.fillStyle = "white";
-                    ctx.font = this.height * 0.4 + "px Rubik One"
+                    ctx.fillStyle = "#E8D9B4";
+                    ctx.font = "bold " + this.height * 0.4 + "px Rubik One"
                 }
 
                 ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
@@ -236,9 +240,11 @@ class GameHistory {
     makeReport(){
         this.moneyEarned = Math.round(this.cellsBought["NaturalKiller"]*NK_PRICE + this.cellsBought["TLymphocyte"]*T_LYMPHOCYTE_PRICE + this.cellsBought["BLymphocyte"]*B_LYMPHOCYTE_PRICE + this.cellsBought["Neutrophil"]*NEUTROPHIL_PRICE + this.cellsBought["Eosinophile"]*EOSINOPHILE_PRICE + this.cellsBought["Macrophage"]*MACROPHAGE_PRICE + this.antibioticsBought*ANTIBIOTIC_PRICE + this.vaccinesBought*VACCINE_PRICE + money);
         
-        var immuneCellsBought = "NK cells: " + this.cellsBought["NaturalKiller"] + "\nT killers: " + this.cellsBought["TLymphocyte"] + "\nMemory T cells: " + this.cellsBought["TMemory"] + "\nNeutrophils: " + this.cellsBought["Neutrophil"] + "\nB cells: " + this.cellsBought["BLymphocyte"] + "\nPlasmatic cells: " + this.cellsBought["Plasmatic"] + "\nMemory B cells: " + this.cellsBought["BMemory"] +  "\nT helpers: " + this.cellsBought["THelper"] +  "\nEosinophils: " + this.cellsBought["Eosinophile"] + "\nMacrophages: " + this.cellsBought["Macrophage"];
-        var enemiesKilled = "Bacteria: " + this.bacteriaKilled + "\nInfected Tissue Cells: " + this.tissueCellsKilled + "\nHelminthes: " + this.helmintesKilled;
-        var boostersBought = "Antibiotics: " + this.antibioticsBought + "\nVaccines: " + this.vaccinesBought + "\nA.R.T.: " + this.artBought;
+        
+        
+        var immuneCellsBought = texts["cellNames"]["NaturalKiller"][language] + ": " + this.cellsBought["NaturalKiller"] + "\n" + texts["cellNames"]["TLymphocyte"][language] +": " + this.cellsBought["TLymphocyte"] + "\n" + texts["cellNames"]["TMemory"][language] + ": " + this.cellsBought["TMemory"] + "\n" + texts["cellNames"]["Neutrophil"][language] + ": " + this.cellsBought["Neutrophil"] + "\n"+ texts["cellNames"]["BLymphocyte"][language] +": " + this.cellsBought["BLymphocyte"] + "\n" + texts["cellNames"]["PlasmaticCell"][language] + ": " + this.cellsBought["Plasmatic"] + "\n"+ texts["cellNames"]["BMemory"][language] +": " + this.cellsBought["BMemory"] +  "\n" + texts["cellNames"]["THelper"][language] + ": " + this.cellsBought["THelper"] +  "\n" + texts["cellNames"]["Eosinophile"][language] + ": " + this.cellsBought["Eosinophile"] + "\n" + texts["cellNames"]["Macrophage"][language] + ": " + this.cellsBought["Macrophage"];
+        var enemiesKilled = texts["game"]["bacteria"][language] + ": " + this.bacteriaKilled + "\n" + texts["game"]["infectedTissueCells"][language] + ": " + this.tissueCellsKilled + "\n" + texts["game"]["helminthes"][language] + ": " + this.helmintesKilled;
+        var boostersBought = texts["game"]["antibiotics"][language] + ": " + this.antibioticsBought + "\n" + texts["game"]["vaccines"][language] + ": " + this.vaccinesBought + "\n" + texts["game"]["art"][language] + ": " + this.artBought;
         var moneyEarned = this.moneyEarned;
         var currentWave = wave;
         return [immuneCellsBought, enemiesKilled, boostersBought, moneyEarned, currentWave];
@@ -296,4 +302,31 @@ class ART extends Button{
         ctx.lineTo(this.x + this.width + distanceBetweenAntibioticButtonAndBar + antibioticBarWidth, this.y + this.height - filledHeight);
         ctx.stroke();
     }
+}
+
+class LangButton extends Button{
+    constructor(x, y, width, height, text, active) {
+        super("black", x, y, width, height, text);
+        this.active = active;
+    }
+    
+    draw(){
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";    
+        ctx.fillStyle = "#E8D9B4";
+        ctx.strokeStyle = "#E8D9B4";
+        if (this.active){
+            roundRect(ctx, this.x, this.y, this.width, this.height,
+                      10, 10, true,false)
+            
+            ctx.fillStyle = "black";
+            ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
+        } else {
+            roundRect(ctx, this.x, this.y, this.width, this.height,
+                      10, 10,false,true)
+            ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
+        }
+        
+    }
+    
 }
