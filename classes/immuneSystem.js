@@ -272,7 +272,12 @@ class NaturalKiller extends ImmuneCell {
 }
 class BLymphocyte extends ImmuneCell {
     constructor(x, y, mode="naive", color="#FFFFFF") {
+        if (color == "#FFFFFF"){
         super(LYMPHOCYTES_DEFAULT_IMAGE, x, y, 20, BLYMPHOCYTE_SPEED, BLYMPHOCYTE_DAMAGE);
+        } else {
+        super(bacteriaColors[color]["lymphocyteImage"], x, y, 20, BLYMPHOCYTE_SPEED, BLYMPHOCYTE_DAMAGE);
+            
+        }
         this.mode = mode;
         this.shootingRadius = 40;
 //        this.iteration = 0;
