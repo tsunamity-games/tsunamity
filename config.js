@@ -485,7 +485,7 @@ const HELPER_DAMAGE_INCREASE = 1.1;
 // Upgrade
 const UPGRADE_FIRST = new Image();
 UPGRADE_FIRST.src = "./images/upgrade_first.png";
-const UPGRADE_FIRST_SIZE = 0.027*fieldHeight;
+const UPGRADE_FIRST_SIZE = 0.022*fieldHeight;
 
 const UPGRADE_PLASMATIC = new Image();
 UPGRADE_PLASMATIC.src = "./images/upgrade_plasmatic.png";
@@ -633,5 +633,7 @@ var HELMINT_WIDTH_LENGTH_MULTIPLIER = 6;
 var HELMINT_HEALTH_LENGTH_WIDTH_MULTIPLIER = 5;
 var HELMINT_DELAY_HEALTH_MULTIPLIER= 0.2;
 var HELMINT_DELAY_NOISE = 10;
-var PROB_TO_ADD_NEW_COLOR = 0.12;
+var PROB_TO_ADD_NEW_COLOR_BACTERIA = 0.12;
+var PROB_TO_ADD_NEW_COLOR_VIRUS = 0.08;
+
 var MAX_COLOR_PROB_VAL = 10;

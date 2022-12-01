@@ -514,13 +514,13 @@ function formNewWave(waveNumber, oldBac, oldVir, oldHel, oldHIV){
     } else {
         coins = Math.round(25*waveNumber + 0.025*waveNumber**2);
     }
-    if (waveNumber > 3 && randomUniform(0, 1) < PROB_TO_ADD_NEW_COLOR){
+    if (waveNumber > 3 && randomUniform(0, 1) < PROB_TO_ADD_NEW_COLOR_BACTERIA){
         var newIndex = (inplayBacteriaColorsIndices[inplayBacteriaColorsIndices.length-1] + 1) % BACTERIA_COLORS.length;
         if (!inplayBacteriaColorsIndices.includes(newIndex)){
             inplayBacteriaColorsIndices.push(newIndex);   
             bacterialColorProbs.push(1);}
     }
-    if (waveNumber > 3 && randomUniform(0, 1) < PROB_TO_ADD_NEW_COLOR){
+    if (waveNumber > 3 && randomUniform(0, 1) < PROB_TO_ADD_NEW_COLOR_VIRUS){
         var newIndex = (inplayVirusesColorsIndices[inplayVirusesColorsIndices.length-1] + 1) % BACTERIA_COLORS.length;
     
         if (!inplayVirusesColorsIndices.includes(newIndex)){

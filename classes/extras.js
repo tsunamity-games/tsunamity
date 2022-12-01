@@ -148,8 +148,8 @@ class Label extends BodyPart{
         this.upgradeAvailable = false;
     }
     updatePosition(){
-        this.x = this.labelledObject.x - this.labelledObject.radius*3;
-        this.y = this.labelledObject.y - this.labelledObject.radius*3;
+        this.x = this.labelledObject.x + this.labelledObject.radius*0.1;
+        this.y = this.labelledObject.y + this.labelledObject.radius*0.1;
     }
     draw(){
         this.upgradeAvailable = (this.labelledObject.active || this.labelledObject.killed || this.labelledObject.mode === "plasmatic");
@@ -169,9 +169,9 @@ class Label extends BodyPart{
         }
         if (!this.active && this.upgradeAvailable) {
             ctx.drawImage(UPGRADE_FIRST, 
-                          this.labelledObject.x - UPGRADE_FIRST_SIZE/2, 
-                          this.labelledObject.y - this.labelledObject.radius - UPGRADE_FIRST_SIZE, 
-                          UPGRADE_FIRST_SIZE, 
+                          this.x, 
+                          this.y, 
+                          UPGRADE_FIRST_SIZE*0.75, 
                           UPGRADE_FIRST_SIZE);
         }
     }
