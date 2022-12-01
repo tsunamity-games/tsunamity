@@ -616,7 +616,9 @@ presetTutorialState = function(tutorialState) {
         case 11:
             trainingProbability = 0.01; // Restore default
             break;
-        case 12:
+        case 26:
+            drawBlackScreen(BLACK_SCREEN_ALPHA / 2, antibioticsX - 5, topAntibioticY - 10, buttonWidth + 10, 
+                            (buttonHeight + spaceBetweenAntibioticButtons)*BACTERIA_COLORS.length, 10);
             break;
         case 16:
             break;
@@ -837,6 +839,43 @@ handleTutorialState = function(tutorialState) {
             };
 
             playGame(tutorial=true);
+            break;
+        case 23:
+            waitingForClick = false;
+            text = ["Плазматическая клетка", "производит антитела.", "Они замедляют бактерий.", "",
+                    "Плазматическую клетку", "можно улучшить", "до клетки памяти", "чтобы сразу нанимать", "нужные B-лимфоциты", "",
+                    "Улучши плазматическую", "клетку!"
+                ];
+            stopGame(text);
+            waitingForClick = true;
+            break;
+        case 24:
+            waitingForClick = false;
+
+            let memoryBCells = immunityCells.filter(cell => {
+                return (cell instanceof BLymphocyte) && (cell.mode == "memory")
+            })
+            if(memoryBCells.length > 0) {
+                tutorialState += 1
+            };
+            playGame(tutorial=true);
+            break;
+        case 25:
+            waitingForClick = false;
+            text = ["Теперь в костном мозге", "можно в любой момент", "купить B-лимфоцит", "цвета клетки памяти!"
+                ];
+            stopGame(text);
+            waitingForClick = true;
+            break;
+        case 26:
+            waitingForClick = false;
+            text = ["Впереди огромная", "волна бактерий!", "Справиться с ней", "помогут антибиотики",
+                    "Покупай антибиотик", "против нужной инфекции"
+                ];
+            stopGame(text);
+            waitingForClick = true;
+            break;
+        case 27:
             break;
         default:
             playGame(tutorial=true);
