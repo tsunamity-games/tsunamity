@@ -854,7 +854,6 @@ $("#field").click(function(event){
             // If B or T-lymphocyte is clicked, suggest upgrade
             try{immunityCells.forEach((cell) => {
                 if ((cell instanceof BLymphocyte || cell instanceof TLymphocyte) && cell.mode != "memory"){
-                    console.log(cell.label.active, cell.label.isIntersected(x, y), money >= cell.upgradePrice);
                     if (cell.label.active && cell.label.isIntersected(x, y) && money >= cell.upgradePrice){
                         money -= cell.upgradePrice;
                         cell.upgrade();
@@ -1163,15 +1162,7 @@ function drawMenu() {
                  fieldHeight - topMenuHeight);
     
     ctx.fillStyle = "#E8D9B4";
-    ctx.font = 0.0187*fieldHeight + "px gillsansmt";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "left";
-
-    for (var i = 0; i < texts["menu"]["authorInfo"][language].length; i++){
-        ctx.fillText(texts["menu"]["authorInfo"][language][i], 
-                     MENU_BUTTONS[0].x,  
-                     0.9*fieldHeight + (i * 0.028*fieldHeight));
-    }
+    writeAuthorInfo();
 
     MENU_BUTTONS.forEach((button) => {
         button.draw();
@@ -1184,6 +1175,17 @@ function drawMenu() {
                (668.5/1080)*fieldHeight);
     ctx.stroke();
 
+}
+
+function writeAuthorInfo(){
+    ctx.textAlign = "left";
+    ctx.font = 0.0187*fieldHeight + "px gillsansmt";
+    var text = [texts["menu"]["dmitryBiba"][language] + " & " + texts["menu"]["vladimirShitov"][language], texts["menu"]["authorInfo"][language][0] + texts["menu"]["anastasiaTroshina"][language], texts["menu"]["authorInfo"][language][1]];
+    for (var i = 0; i < text.length; i++){
+        ctx.fillText(text[i], 
+                     MAIN_MENU_BUTTONS_X,  
+                     0.9*fieldHeight + (i * 0.028*fieldHeight));
+    }
 }
 
 function drawAbout(){
@@ -1204,21 +1206,26 @@ function drawAbout(){
     MENU_BUTTONS[0].textLanguageLabel = "back";
     MENU_BUTTONS[0].draw();
 
+    var authors = ["dmitryBiba", "vladimirShitov", "anastasiaTroshina"];
     ctx.fillStyle = "#BE983E"
     ctx.font = 0.024*fieldHeight + "px Rubik One";
     ctx.textAlign = "left";
     ctx.textBaseline = "left";
-    ctx.fillText(texts["menu"]["testerTeam"][language] + ":", fieldWidth*0.7, fieldHeight*0.36);
-    ctx.font = 0.019*fieldHeight + "px Rubik One";
+    ctx.fillText(texts["menu"]["contacts"][language] + ":", fieldWidth*0.7, fieldHeight*0.36);
+    ctx.fillText(texts["menu"]["testerTeam"][language] + ":", fieldWidth*0.7, fieldHeight*0.4 + fieldHeight*0.04*authors.length + fieldHeight*0.08);
+    
+    ctx.font = 0.014*fieldHeight + "px Rubik One";
     ctx.fillStyle = "#E8D9B4";
     
+    for (i = 0; i < authors.length; i++){
+        ctx.fillText(texts["menu"][authors[i]][language] + ": " + contacts[authors[i]], fieldWidth*0.7, fieldHeight*0.4 + fieldHeight*0.04*i);
+    }
+    
+    
     for (let i=0; i < texts["menu"]["testerList"][language].length; i++){
-        ctx.fillText(texts["menu"]["testerList"][language][i], fieldWidth*0.7, fieldHeight*0.40 + i * fieldHeight*0.04);
+        ctx.fillText(texts["menu"]["testerList"][language][i], fieldWidth*0.7, fieldHeight*0.4 + fieldHeight*0.04*authors.length + fieldHeight*0.12 + i * fieldHeight*0.04);
     }
-    ctx.font = 0.0187*fieldHeight + "px gillsansmt";
-    for (var i = 0; i < texts["menu"]["authorInfo"][language].length; i++){
-        ctx.fillText(texts["menu"]["authorInfo"][language][i], MAIN_MENU_BUTTONS_X,  0.9*fieldHeight + (i * 0.028*fieldHeight));
-    }
+    writeAuthorInfo();
 }
 
 var game = setInterval(function(){

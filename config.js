@@ -1,6 +1,10 @@
 // Game texts
 var language = "eng";
-
+var contacts = {
+    dmitryBiba: "dmitriy.biba@gmail.com",
+    vladimirShitov: "vladimirshitov98@gmail.com",
+    anastasiaTroshina: "buccinum@gmail.com"
+}
 var texts = {
     menu: {
         startGame: {eng: "Start game", rus: "Начать игру"},
@@ -9,8 +13,12 @@ var texts = {
         back: {eng: "Back", rus: "Назад"},
         testerTeam: {eng: "Tester team", rus: "Тестировщики"},
         testerList: {eng: ["Andrey Biba", "Olesya Biba", "Roman Soldatov"], rus: ["Андрей Биба", "Олеся Биба", "Роман Солдатов"]},
-        authorInfo: {eng: ["Dmitry Biba & Vladimir Shitov", "Design by Anastasia Troshina", "BioMolText 2022"], 
-                     rus: ["Дмитрий Биба & Владимир Шитов", "Дизайн от Анастасии Трошиной", "Био/Мол/Текст-2022"]},
+        authorInfo: {eng: ["Design by", "BioMolText 2022"], 
+                     rus: ["Дизайн от", "Био/Мол/Текст-2022"]},
+        contacts: {eng: "Contacts", rus:"Контакты"},
+        dmitryBiba: {eng: "Dmitry Biba", rus: "Дмитрий Биба"},
+        vladimirShitov: {eng: "Vladimir Shitov", rus: "Владимир Шитов"},
+        anastasiaTroshina: {eng: "Anastasia Troshina", rus: "Анастасия Трошина"}
         
     },
     game:{
