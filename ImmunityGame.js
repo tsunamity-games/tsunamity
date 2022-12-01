@@ -268,7 +268,7 @@ function drawField(gameOver=false){
     shops.forEach((shop) => {shop.pockets.forEach((pocket) => {pocket.draw();})})
     
     // Setting the font multiple times apparently hinders performance
-/       
+       
     shops.forEach((shop) => {
         shop.draw1();
     });
@@ -852,6 +852,7 @@ $("#field").click(function(event){
             // If B or T-lymphocyte is clicked, suggest upgrade
             try{immunityCells.forEach((cell) => {
                 if ((cell instanceof BLymphocyte || cell instanceof TLymphocyte) && cell.mode != "memory"){
+                    console.log(cell.label.active, cell.label.isIntersected(x, y), money >= cell.upgradePrice);
                     if (cell.label.active && cell.label.isIntersected(x, y) && money >= cell.upgradePrice){
                         money -= cell.upgradePrice;
                         cell.upgrade();

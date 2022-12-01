@@ -334,8 +334,6 @@ const ANIMATED_IMAGE_WIDTH = 100;
 const ANIMATED_IMAGE_HEIGHT = 100;
 const STATIC_IMAGE_WIDTH = 200;
 const STATIC_IMAGE_HEIGHT = 200;
-const SCROLL_IMAGE = new Image();
-SCROLL_IMAGE.src = "./images/scroll.png";
 
 const GARBAGE_IMAGE_1 = new Image();
 GARBAGE_IMAGE_1.src = "./images/garbage_1.png";
