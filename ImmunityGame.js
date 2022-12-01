@@ -1216,7 +1216,7 @@ function drawAbout(){
     for (let i=0; i < texts["menu"]["testerList"][language].length; i++){
         ctx.fillText(texts["menu"]["testerList"][language][i], fieldWidth*0.7, fieldHeight*0.40 + i * fieldHeight*0.04);
     }
-    ctx.font = 0.0187*fieldHeight + "px Rubik One";
+    ctx.font = 0.0187*fieldHeight + "px gillsansmt";
     for (var i = 0; i < texts["menu"]["authorInfo"][language].length; i++){
         ctx.fillText(texts["menu"]["authorInfo"][language][i], 0.61*fieldWidth + 0.0857*fieldWidth,  0.9*fieldHeight + (i * 0.028*fieldHeight));
     }
