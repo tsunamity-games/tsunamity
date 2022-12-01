@@ -1192,9 +1192,8 @@ function drawAbout(){
     ctx.fillRect(0, 0, fieldWidth, topMenuHeight);
 
     // Left panel
-    ctx.fillStyle = MAIN_MENU_LEFT_PANEL_COLOR;
-    ctx.fillRect(0, topMenuHeight, 0.61*fieldWidth, fieldHeight - topMenuHeight);
-
+    ctx.drawImage(COVER_IMAGE, 0, topMenuHeight, 0.61*fieldWidth, fieldHeight - topMenuHeight);
+    
     // Right panel
     ctx.fillStyle = MAIN_MENU_RIGHT_PANEL_COLOR;
     ctx.fillRect(0.61*fieldWidth, 
@@ -1218,7 +1217,7 @@ function drawAbout(){
     }
     ctx.font = 0.0187*fieldHeight + "px gillsansmt";
     for (var i = 0; i < texts["menu"]["authorInfo"][language].length; i++){
-        ctx.fillText(texts["menu"]["authorInfo"][language][i], 0.61*fieldWidth + 0.0857*fieldWidth,  0.9*fieldHeight + (i * 0.028*fieldHeight));
+        ctx.fillText(texts["menu"]["authorInfo"][language][i], MAIN_MENU_BUTTONS_X,  0.9*fieldHeight + (i * 0.028*fieldHeight));
     }
 }
 
