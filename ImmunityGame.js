@@ -151,11 +151,12 @@ function drawField(gameOver=false){
               leftRadius = 8, rightRadius = 0, fill = true);
 
     }
-    ctx.fillStyle = "Black";
-    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#142029";
+    ctx.textBaseline = "bottom";
     ctx.textAlign = "right";
-    ctx.font = wavesRectangleHeight*0.45 + "px Rubik One";
-    ctx.fillText(wave, wavesRectangleX+wavesRectangleWidth*0.9, wavesRectangleY+wavesRectangleHeight/2);
+    ctx.font = wavesRectangleHeight*0.5 + "px Rubik One";
+    ctx.fillText(wave, wavesRectangleX+wavesRectangleWidth*0.9, 
+                 wavesRectangleY + wavesRectangleHeight*0.8);
     ctx.drawImage(
         WAVE_IMAGE, 
         wavesRectangleX + wavesRectangleWidth*0.1, 
@@ -171,11 +172,11 @@ function drawField(gameOver=false){
               moneyRectangleWidth, 
               moneyRectangleHeight, 
               leftRadius = 8, rightRadius = 8, fill = true, stroke = true);
-    ctx.fillStyle = "Black";
-    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#142029";
+    ctx.textBaseline = "bottom";
     ctx.textAlign = "right";
     ctx.fillText(Math.round(money), 
-                 moneyRectangleX+moneyRectangleWidth*0.9, moneyRectangleY+moneyRectangleHeight/2);
+                 moneyRectangleX+moneyRectangleWidth*0.9, moneyRectangleY + moneyRectangleHeight*0.8);
 
 
     ctx.drawImage(
@@ -194,8 +195,8 @@ function drawField(gameOver=false){
               speedRectangleWidth, 
               speedRectangleHeight, 
               leftRadius = 8, rightRadius = 8, fill = true, stroke = true);
-    ctx.fillStyle = "Black";
-    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#142029";
+    ctx.textBaseline = "bottom";
     ctx.textAlign = "center";
     var text;
     if (BASE_GAME_SPEED != 10){
@@ -204,7 +205,7 @@ function drawField(gameOver=false){
         text = texts["game"]["speed"][language] + " " + Math.round(BASE_GAME_SPEED);
     }
     ctx.fillText(text, 
-             speedRectangleX+speedRectangleWidth*0.5, speedRectangleY+speedRectangleHeight*0.5);
+             speedRectangleX+speedRectangleWidth*0.5, speedRectangleY+speedRectangleHeight*0.8);
     
     // Lifes
     ctx.drawImage(
@@ -214,7 +215,7 @@ function drawField(gameOver=false){
         lifesSize*1.1, 
         lifesSize);
     
-    ctx.fillStyle = "Black";
+    ctx.fillStyle = "#142029";
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
     ctx.font = lifesSize*1.1*0.35 + "px Rubik One";
@@ -1152,9 +1153,8 @@ function drawMenu() {
     ctx.fillRect(0, 0, fieldWidth, topMenuHeight);
 
     // Left panel
-    ctx.fillStyle = MAIN_MENU_LEFT_PANEL_COLOR;
-    ctx.fillRect(0, topMenuHeight, 0.61*fieldWidth, fieldHeight - topMenuHeight);
-
+    ctx.drawImage(COVER_IMAGE, 0, topMenuHeight, 0.61*fieldWidth, fieldHeight - topMenuHeight);
+    
     // Right panel
     ctx.fillStyle = MAIN_MENU_RIGHT_PANEL_COLOR;
     ctx.fillRect(0.61*fieldWidth, 
@@ -1163,12 +1163,14 @@ function drawMenu() {
                  fieldHeight - topMenuHeight);
     
     ctx.fillStyle = "#E8D9B4";
-    ctx.font = 0.0187*fieldHeight + "px Rubik One";
+    ctx.font = 0.0187*fieldHeight + "px gillsansmt";
     ctx.textAlign = "left";
     ctx.textBaseline = "left";
 
     for (var i = 0; i < texts["menu"]["authorInfo"][language].length; i++){
-        ctx.fillText(texts["menu"]["authorInfo"][language][i], 0.61*fieldWidth + 0.0857*fieldWidth,  0.9*fieldHeight + (i * 0.028*fieldHeight));
+        ctx.fillText(texts["menu"]["authorInfo"][language][i], 
+                     MENU_BUTTONS[0].x,  
+                     0.9*fieldHeight + (i * 0.028*fieldHeight));
     }
 
     MENU_BUTTONS.forEach((button) => {

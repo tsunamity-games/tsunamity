@@ -71,7 +71,8 @@ const MAIN_MENU_BUTTONS_Y =  0.172 * fieldHeight;
 const MAIN_MENU_BUTTONS_WIDTH = 300 / 1440 * fieldWidth;
 const MAIN_MENU_BUTTONS_HEIGHT = 100 / 1068 * fieldHeight;
 const SPACE_BETWEEN_MAIN_MENU_BUTTONS = 50 / 1068 * fieldHeight;
-
+const COVER_IMAGE = new Image();
+COVER_IMAGE.src = "./images/coverImage.png";
 // Playable field
 const playableFieldX = 0.0208*fieldWidth;
 const playableFieldY = 0.4*fieldHeight;

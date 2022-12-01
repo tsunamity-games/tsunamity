@@ -23,11 +23,13 @@ class Button extends BodyPart {
                 circle(this.x+this.width/2, this.y+this.height/2, this.width/2, true);
             }
             else {
-                ctx.fillRect(this.x, this.y, this.width, this.height);   
+//                ctx.fillRect(this.x, this.y, this.width, this.height);   
                 ctx.strokeStyle = "#E8D9B4";
                 ctx.lineWidth = 1;
                 ctx.globalAlpha = 1;
-                ctx.strokeRect(this.x, this.y, this.width, this.height)
+//                ctx.strokeRect(this.x, this.y, this.width, this.height);
+                roundRect(ctx, this.x, this.y, this.width, this.height, 5, 5, false, true);
+
             }
 
             ctx.globalAlpha = 1;
@@ -130,7 +132,7 @@ class Vaccine extends Button{
         ctx.fillStyle = VIRUSES_CLASSIFICATION[this.color]["colorCode"];
         roundRect(ctx,
                   this.x, this.y, this.width, this.height,
-                  leftRadius = 3, rightRadius = 3, fill = true, stroke = false);
+                  leftRadius = 5, rightRadius = 5, fill = true, stroke = false);
         ctx.fillStyle = "black";
         ctx.globalAlpha = 0.2;
         ctx.textBaseline = "middle";
