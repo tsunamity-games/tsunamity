@@ -390,6 +390,7 @@ var tutorialState = 0;
 var waitingForClick = false;
 var gameState = "menu";
 var currentAntibioticsBought;
+var currentVaccinesBought;
 
 const MENU_BUTTONS = [
     new Button(MAIN_MENU_RIGHT_PANEL_COLOR, MAIN_MENU_BUTTONS_X, MAIN_MENU_BUTTONS_Y,
@@ -620,9 +621,9 @@ presetTutorialState = function(tutorialState) {
         case 20:
             currentAntibioticsBought = historyObject.antibioticsBought;
             break;
-        case 16:
+        case 29:
+            currentVaccinesBought = historyObject.vaccinesBought;
             break;
-        case 21:
         default:
             break;
     }
@@ -900,6 +901,15 @@ handleTutorialState = function(tutorialState) {
             waitingForClick = true;
             break;
         case 30:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA / 2, antibioticsX - 5, topVaccineY - 10, buttonWidth + 10, 
+                            (buttonHeight + spaceBetweenAntibioticButtons)*BACTERIA_COLORS.length, 10);
+            if(historyObject.vaccinesBought > currentVaccinesBought) {
+                tutorialState += 1;
+            }
+            break;
+        case 31:
             waitingForClick = false;
             text = ["После встречи Т-киллера", "с вирусом или вакциной", "его можно улучшить", "до клетки памяти", "",
                     "После этого можно", "будет сразу покупать", "Т-киллеров против", "конкретных вирусов", "в костном мозге"
