@@ -260,7 +260,7 @@ function drawField(gameOver=false){
     ctx.fillStyle = ShopColors.blue.colorCode;  
     ctx.fillText(texts["game"]["other"][language], (595/1440)*fieldWidth, (120/1080)*fieldHeight)
     
-//    reset.draw();
+    reset.draw();
     toMainMenu.draw();  
     pause.draw();
     speed_up.draw();
@@ -702,7 +702,7 @@ function setupGame(tutorial=false){
     if (language == "eng"){
         speedRectangleWidth = wavesRectangleWidth;
     } else {
-        speedRectangleWidth = wavesRectangleWidth * 1.1;
+        speedRectangleWidth = wavesRectangleWidth * 1.2;
     }
     immunityCells = [];
     antibodies = [];
@@ -752,21 +752,24 @@ function setupGame(tutorial=false){
     pauseTrue = false;
     gameOverScreenDrawn = false;
     historyObject = new GameHistory();
-    reset = new ResetButton("red", rightMenuX+rightMenuWidth/2 - 120, 10, 60, 60, "R");
+    reset = new ResetButton("red", 
+                            fieldWidth*(1321.26/1440), 
+                            (topMenuHeight-homeHeight)/2, 
+                            topMenuHeight*0.5, 
+                            topMenuHeight*0.5, "R", false, RESET_IMAGE);
     toMainMenu = new Button("white", 
-                            fieldWidth*0.95, 
+                            fieldWidth*(1370.03/1440), 
                             (topMenuHeight-homeHeight)/2,
                             topMenuHeight*0.5,
                             topMenuHeight*0.5, 
                             "Q", false, HOME_IMAGE);
     pause = new Button("white",
-                       fieldWidth*0.9,
+                       fieldWidth*(1269.03/1440),
                        (topMenuHeight-topMenuHeight*0.5)/2,
                        topMenuHeight*0.5,
                        topMenuHeight*0.5,
                        "Q", false, 
                        PAUSE_IMAGE);
-    console.log(speedRectangleWidth, wavesRectangleWidth);  
     speed_up = new Button("white",
                        speedRectangleX + speedRectangleWidth + fieldWidth*0.0042,
                        speedRectangleY + speedRectangleHeight/2 - speedRectangleHeight*0.625/2,

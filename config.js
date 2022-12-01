@@ -99,6 +99,9 @@ const lifesSize = topMenuHeight*0.6;
 const HOME_IMAGE = new Image();
 HOME_IMAGE.src = "./images/home.png";
 const homeHeight = topMenuHeight*0.5;
+const RESET_IMAGE = new Image();
+RESET_IMAGE.src = "./images/restart.png";
+
 
 const WAVE_IMAGE = new Image();
 WAVE_IMAGE.src = "./images/wave.png";
