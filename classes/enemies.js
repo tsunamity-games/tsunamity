@@ -270,8 +270,8 @@ class IntracellularPathogen extends MovingObject {
             });
         }
         else {
-            this.x = this.target.x + randomUniform(-3, 3);
-            this.y = this.target.y + randomUniform(-3, 3);
+            this.x = this.target.x + randomUniform(-7, 7);
+            this.y = this.target.y + randomUniform(-7, 7);
         }
         
         this.x = clip(this.x, this.radius, playableFieldX + playableFieldWidth - this.radius)

@@ -268,7 +268,7 @@ class ART extends Button{
     
     activate(){
         if (this.available && money >= this.price){
-            this.money -= this.price;
+            money -= this.price;
             this.course = ART_DURATION;
             this.available = false;
             this.texture = ART_ACTIVE_IMAGE;
