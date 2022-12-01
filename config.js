@@ -28,7 +28,7 @@ var texts = {
         immuneCellsBought: {eng: "Immune cells bought", rus: "Куплено имм. клеток"},
         boostersBought: {eng: "Boosters bought", rus: "Куплено бустеров"},
         enemiesBought: {eng: "Pathogens killed", rus: "Убито патогенов"},
-        sugar: {eng: "Sugar", rus: "Сахар"},
+        sugar: {eng: "Glucose", rus: "Глюкоза"},
         currentWave: {eng: "Current wave", rus: "Текущая волна"},
     },
     cellNames: {
