@@ -99,9 +99,7 @@ class ImmuneCell extends MovingObject {
             // Get away from shop
             this.xSpeed = randomUniform(-0.5, 0.5);
             this.ySpeed = this.baseSpeed * 3;
-            this.movingout = true;
         } else {
-            this.movingout = false;
             if (targetsList.length > 0) {
                 // Move to the random bacterium
                 if (this.target == null || this.target.health <= 0 || this.target.x > playableFieldX+playableFieldWidth)  
@@ -131,6 +129,9 @@ class ImmuneCell extends MovingObject {
     }
 
     move() {
+        if (this.y > playableFieldY + this.radius){
+            this.movingout = false;
+        }
         if (garbagePiles.some((pile) => doCirclesIntersect(this.x, this.y, this.radius, pile.x, pile.y, pile.radius))){
             this.x += this.xSpeed*garbagePileSlowingCoefficient;
             this.y += this.ySpeed*garbagePileSlowingCoefficient;
@@ -344,7 +345,8 @@ class BLymphocyte extends ImmuneCell {
             this.ySpeed = 0;
         } else{
             super.changeDirection()
-        }}
+        }
+    }
     
     changeDirection(targetsList, nCandidates=randomTargetNumber){
         if (this.mode === "naive"){
@@ -367,13 +369,22 @@ class BLymphocyte extends ImmuneCell {
                 }
             }
         } else if (this.mode === "mature") {
-            super.changeDirection(targetsList.filter((target) => target.color === this.color), nCandidates);   
+            var targets = targetsList.filter((target) => target.color === this.color);
+            if (this.movingout)
+                {
+                    this.xSpeed = 0;
+                    this.ySpeed = this.baseSpeed * 3;
+                }   
+            else {
+                super.changeDirection(targets, nCandidates);
+            }
         } else if (this.mode === "plasmatic"){
             super.changeDirection(targetsList, 1000);
             if(this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size / 2)){
                 this.target = null;
             }
         }
+        
     }
     
     draw() {

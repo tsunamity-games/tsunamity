@@ -830,7 +830,7 @@ $("#field").click(function(event){
         case "about":
             if(MENU_BUTTONS[0].isIntersected(x, y)) {
                 gameState = "menu";
-                MENU_BUTTONS[0].text = texts["menu"]["startGame"][language];
+                MENU_BUTTONS[0].textLanguageLabel = "startGame";
             }
             break;
         default:  // game and tutorial
@@ -1200,7 +1200,7 @@ function drawAbout(){
                  fieldWidth - 0.61*fieldWidth, 
                  fieldHeight - topMenuHeight);
 
-    MENU_BUTTONS[0].text = texts["menu"]["back"][language];
+    MENU_BUTTONS[0].textLanguageLabel = "back";
     MENU_BUTTONS[0].draw();
 
     ctx.fillStyle = "#E8D9B4";
