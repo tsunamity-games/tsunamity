@@ -621,7 +621,7 @@ presetTutorialState = function(tutorialState) {
         case 20:
             currentAntibioticsBought = historyObject.antibioticsBought;
             break;
-        case 29:
+        case 30:
             currentVaccinesBought = historyObject.vaccinesBought;
             break;
         default:
