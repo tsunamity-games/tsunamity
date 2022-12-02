@@ -271,7 +271,7 @@ function drawField(gameOver=false){
     // Setting the font multiple times apparently hinders performance
        
     shops.forEach((shop) => {
-        shop.draw1();
+        shop.draw();
     });
     // Draw buttons
     ctx.font = buttonHeight * 0.8 + "px Rubik One";
@@ -296,30 +296,6 @@ function drawField(gameOver=false){
     hiv_particles.forEach((hiv) => {hiv.draw();})
     
     // Draw blood vessels that should be over everything else
-//    ctx.drawImage(
-//        BLOOD_IMAGE_2, 
-//        (9/1440)*fieldWidth, 
-//        (420/1080)*fieldHeight, 
-//        (88/1440)*fieldWidth, 
-//        (70/1080)*fieldHeight);
-//    ctx.drawImage(
-//        BLOOD_IMAGE_3, 
-//        (481/1440)*fieldWidth, 
-//        (362/1080)*fieldHeight, 
-//        (561/1440)*fieldWidth, 
-//        (102/1080)*fieldHeight);
-//    ctx.drawImage(
-//        BLOOD_IMAGE_5, 
-//        (830/1440)*fieldWidth, 
-//        (930/1080)*fieldHeight, 
-//        (296/1440)*fieldWidth, 
-//        (147/1080)*fieldHeight);
-//    ctx.drawImage(
-//        blood["3"][brightness], 
-//        (875.79/1440)*fieldWidth, 
-//        (430/1080)*fieldHeight, 
-//        (81.37/1440)*fieldWidth, 
-//        (24.45/1080)*fieldHeight);
     ctx.drawImage(
         blood["4"][brightness], 
         (1225.74/1440)*fieldWidth, 
@@ -469,7 +445,6 @@ function stopGame(why){
         gameOverScreenDrawn = true;
         
         } else if (why == "Pause" && !pauseScreenDrawn){
-            ctx.globalAlpha = 0.7;
             ctx.globalAlpha = 0.7;
             ctx.fillStyle = "#2C363E";
             ctx.fillRect(0, 0, fieldWidth, fieldHeight);

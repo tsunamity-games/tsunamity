@@ -59,10 +59,7 @@ class Shop extends BodyPart {
         this.price = this.base_price;
         this.discount = 0;
     }
-    
-    draw1() {
-        super.draw();}
-    
+        
 }
 class SpleenSection{
     constructor(x, y, size){
