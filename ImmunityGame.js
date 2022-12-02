@@ -629,6 +629,13 @@ presetTutorialState = function(tutorialState) {
         case 30:
             currentVaccinesBought = historyObject.vaccinesBought;
             break;
+        case 38:
+            let length = randomInteger(MIN_HELMINT_LENGTH, MAX_HELMINT_LENGTH);
+            let width = randomInteger(MIN_HELMINT_LENGTH*HELMINT_WIDTH_MIN_LENGTH_MULTIPLIER, length*HELMINT_WIDTH_LENGTH_MULTIPLIER);
+            let health = length*width*HELMINT_HEALTH_LENGTH_WIDTH_MULTIPLIER;
+            let delay = Math.round(health*HELMINT_DELAY_HEALTH_MULTIPLIER + randomUniform(-HELMINT_DELAY_NOISE, HELMINT_DELAY_NOISE));
+            helmintes.push(new Helmint(-100, randomUniform(playableFieldY + 15, playableFieldHeight - 15), health, health, delay, width, length));
+            break;
         default:
             break;
     }
@@ -969,10 +976,22 @@ handleTutorialState = function(tutorialState) {
         case 37:
             waitingForClick = false;
             text = ["Организм под надёжной защитой!", "Но впереди новые угрозы", "",
-                    "Покупай эозинофилы", "чтобы бороться", "с гельминтами"
+                    "Покупай эозинофилы", "чтобы бороться", "с гельминтами", "",
+                    "Подсказка: лучше сразу", "купить побольше"
                 ];
             stopGame(text);
             waitingForClick = true;
+            break;
+        case 38:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[5].x, shops[5].y, shops[5].width, shops[5].height, 10);
+            
+            let eosinophiles = immunityCells.filter((cell) => cell instanceof Eosinophile);
+            if(eosinophiles.length > 0) {
+                tutorialState += 1
+                playGame(tutorial=true);
+            };
             break;
         default:
             playGame(tutorial=true);
