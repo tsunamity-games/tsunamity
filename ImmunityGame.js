@@ -930,10 +930,32 @@ handleTutorialState = function(tutorialState) {
         case 33:
             waitingForClick = false;
             text = ["После встречи Т-киллера", "с вирусом или вакциной", "его можно улучшить", "до клетки памяти", "",
-                    "После этого можно", "будет сразу покупать", "Т-киллеров против", "конкретных вирусов", "в костном мозге"
+                    "После этого можно", "будет сразу покупать", "Т-киллеров против", "конкретных вирусов", "в костном мозге.",
+                    "", "Улучши Т-киллера", "до Т-клетки памяти!", "Для этого кликни", "на Т-киллера,", "встретившегося с врагом",
+                    "и кликни на табличку", "или на кнопку U"
                 ];
             stopGame(text);
             waitingForClick = true;
+            break;
+        case 34:
+            let tMemoryCells = immunityCells.filter((cell) => {
+                return (cell instanceof TLymphocyte) && (cell.mode == "memory")
+            });
+            if(tMemoryCells.length > 0) {
+                tutorialState += 1
+                playGame(tutorial=true);
+            };
+            break;
+        case 35:
+            waitingForClick = false;
+            text = ["Прекрасно сыграно!", "Теперь в костном мозге", "можно сразу покупать", "Т-киллеры против этого вируса",
+                    "", "Т-хелперы помогут защищать", "организм, иногда покупая", "B-лимфоциты или Т-киллеры",
+                    "Покупай Т-хелпера", "в костном мозге!"
+                ];
+            stopGame(text);
+            waitingForClick = true;
+            break;
+        case 36:
             break;
         default:
             playGame(tutorial=true);
