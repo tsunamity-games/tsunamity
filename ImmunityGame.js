@@ -991,6 +991,14 @@ handleTutorialState = function(tutorialState) {
                 playGame(tutorial=true);
             };
             break;
+        case 39:
+            waitingForClick = false;
+            text = ["Это было великолепно!", "На этом обучение закончено", "дальше начинается", "настоящая игра",
+                    "", "Продолжай защищать организм", "у тебя отлично получается!"
+        ];
+            stopGame(text);
+            waitingForClick = true;
+            break;
         default:
             playGame(tutorial=true);
             break;
