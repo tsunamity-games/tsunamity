@@ -956,6 +956,23 @@ handleTutorialState = function(tutorialState) {
             waitingForClick = true;
             break;
         case 36:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[4].x, shops[4].y, shops[4].width, shops[4].height, 10);
+            
+            let helpers = immunityCells.filter((cell) => cell instanceof THelper);
+            if(helpers.length > 0) {
+                tutorialState += 1
+                playGame(tutorial=true);
+            };
+            break;
+        case 37:
+            waitingForClick = false;
+            text = ["Организм под надёжной защитой!", "Но впереди новые угрозы", "",
+                    "Покупай эозинофилы", "чтобы бороться", "с гельминтами"
+                ];
+            stopGame(text);
+            waitingForClick = true;
             break;
         default:
             playGame(tutorial=true);
