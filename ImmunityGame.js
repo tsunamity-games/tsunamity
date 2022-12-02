@@ -945,10 +945,8 @@ handleTutorialState = function(tutorialState) {
             waitingForClick = true;
             break;
         case 34:
-            let tMemoryCells = immunityCells.filter((cell) => {
-                return (cell instanceof TLymphocyte) && (cell.mode == "memory")
-            });
-            if(tMemoryCells.length > 0) {
+            waitingForClick = false;
+            if(T_LYMPHOCYTE_SHOP.pockets.length > 0) {
                 tutorialState += 1
                 playGame(tutorial=true);
             };
