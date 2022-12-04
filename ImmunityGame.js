@@ -613,7 +613,7 @@ presetTutorialState = function(tutorialState) {
             playGame(tutorial=true);
             drawBlackScreen(BLACK_SCREEN_ALPHA, fieldWidth*0.02, (topMenuHeight-lifesSize)/2, lifesSize*1.1, lifesSize, 10);
             break;
-        case 8:
+        case 10:
             playGame(tutorial=true);
             chanceToGetAntigen = 0.01;  // Return default
             trainingProbability = 0.3;
@@ -623,22 +623,22 @@ presetTutorialState = function(tutorialState) {
                 bacterium.baseSpeed /= 2;
             });
             break;
-        case 11:
+        case 13:
             trainingProbability = 0.01; // Restore default
             break;
-        case 18:
-            currentWave = wave;
         case 20:
+            currentWave = wave;
+        case 24:
             currentAntibioticsBought = historyObject.antibioticsBought;
             break;
         case 29:
             viruses.push(new Virus("blue", VIRUSES_CLASSIFICATION["blue"].doublingTime, null));
             viruses.push(new Virus("green", VIRUSES_CLASSIFICATION["green"].doublingTime, null));
             break;
-        case 30:
+        case 34:
             currentVaccinesBought = historyObject.vaccinesBought;
             break;
-        case 38:
+        case 40:
             let length = randomInteger(MIN_HELMINT_LENGTH, MAX_HELMINT_LENGTH);
             let width = randomInteger(MIN_HELMINT_LENGTH*HELMINT_WIDTH_MIN_LENGTH_MULTIPLIER, length*HELMINT_WIDTH_LENGTH_MULTIPLIER);
             let health = length*width*HELMINT_HEALTH_LENGTH_WIDTH_MULTIPLIER;
@@ -968,6 +968,7 @@ handleTutorialState = function(tutorialState) {
             break;
         case 36:
             waitingForClick = false;
+            playGame(tutorial=true);
             if(T_LYMPHOCYTE_SHOP.pockets.length > 0) {
                 tutorialState += 1
                 playGame(tutorial=true);
