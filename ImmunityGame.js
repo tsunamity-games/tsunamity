@@ -607,6 +607,11 @@ presetTutorialState = function(tutorialState) {
             break;
         case 4:
             playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, moneyRectangleX, moneyRectangleY, moneyRectangleWidth, moneyRectangleHeight, 10)
+            break;
+        case 5:
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, fieldWidth*0.02, (topMenuHeight-lifesSize)/2, lifesSize*1.1, lifesSize, 10);
             break;
         case 8:
             playGame(tutorial=true);
