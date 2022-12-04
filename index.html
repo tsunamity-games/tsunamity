@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tsunamity</title>
+        <link rel="icon" type="image/x-icon" href="images/flavicon.png">
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <style>
+            #field {
+                height: 98vh;
+                display: block;
+                margin: 0 auto;
+            }
+            @font-face {
+                font-family: 'Rubik One';
+                font-style: normal;
+                font-weight: normal;
+                src: local('Rubik One Regular'), 
+                    url('RubikOne-Regular.woff') format('woff');
+                }
+            @font-face {
+                font-family: '33535gillsansmt';
+                font-style: normal;
+                font-weight: normal;
+                src: local('33535gillsansmt'), url('./33535gillsansmt.woff') format('woff'), url('./33535gillsansmt.ttf') format('truetype');
+            }
+        </style>
+    </head>
+    <body style="background-color:#F1EDE2;">
+        <div class="container" style="width: 100%">
+            <canvas id="field" width=1440px height=1068px style="background-color:#ffffff;"></canvas>
+            <script src="https://code.jquery.com/jquery-2.1.0.js"></script>
+            <script src="config.js"></script>
+            <script src="utils.js"></script>
+            <script src="classes/bodyParts.js"></script>
+            <script src="classes/immuneSystem.js"></script>
+            <script src="classes/enemies.js"></script>
+            <script src="classes/extras.js"></script>
+            <script src="ImmunityGame.js"></script>
+                        
+        </div>
+    </body>
+</html>
