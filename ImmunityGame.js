@@ -463,8 +463,8 @@ function setupGame(tutorial=false){
     historyObject = new GameHistory();
     reset = new ResetButton("red", rightMenuX+rightMenuWidth/2 - 120, 10, 60, 60, "R");
     toMainMenu = new Button("white", rightMenuX+rightMenuWidth/2 - 30, 10, 60, 60, "Q");
-    livesLeft = 10;
-    money = tutorial ? 15 : STARTING_MONEY;
+    livesLeft = tutorial ? 99 : 10;
+    money = tutorial ? 5 : STARTING_MONEY;
 }
 
 // Gameplay
@@ -603,7 +603,7 @@ presetTutorialState = function(tutorialState) {
             playGame(tutorial=true);
             let lastShop = shops[shops.length-1];
             drawBlackScreen(BLACK_SCREEN_ALPHA, shops[0].x - 10, shops[0].y, 
-                lastShop.x + 2 * lastShop.width, lastShop.height, 10)
+                lastShop.x + lastShop.width, lastShop.height, 10)
             break;
         case 4:
             playGame(tutorial=true);
@@ -612,6 +612,9 @@ presetTutorialState = function(tutorialState) {
         case 5:
             playGame(tutorial=true);
             drawBlackScreen(BLACK_SCREEN_ALPHA, fieldWidth*0.02, (topMenuHeight-lifesSize)/2, lifesSize*1.1, lifesSize, 10);
+            break;
+        case 6:
+            playGame(tutorial=true);
             break;
         case 10:
             playGame(tutorial=true);
@@ -635,10 +638,13 @@ presetTutorialState = function(tutorialState) {
             viruses.push(new Virus("blue", VIRUSES_CLASSIFICATION["blue"].doublingTime, null));
             viruses.push(new Virus("green", VIRUSES_CLASSIFICATION["green"].doublingTime, null));
             break;
-        case 34:
+        case 31:
+            currentWave = wave;
+            break;
+        case 35:
             currentVaccinesBought = historyObject.vaccinesBought;
             break;
-        case 40:
+        case 41:
             let length = randomInteger(MIN_HELMINT_LENGTH, MAX_HELMINT_LENGTH);
             let width = randomInteger(MIN_HELMINT_LENGTH*HELMINT_WIDTH_MIN_LENGTH_MULTIPLIER, length*HELMINT_WIDTH_LENGTH_MULTIPLIER);
             let health = length*width*HELMINT_HEALTH_LENGTH_WIDTH_MULTIPLIER;
@@ -858,7 +864,7 @@ handleTutorialState = function(tutorialState) {
             break;
         case 23:
             waitingForClick = false;
-            text = ["Теперь в костном мозге", "можно в любой момент", "купить B-лимфоцит", "цвета клетки памяти!"];
+            text = ["Теперь в костном мозге", "можно в любой момент", "купить B-лимфоцит", "против конкретного вида бактерий!"];
             stopGame(text);
             waitingForClick = true;
             break;
@@ -922,12 +928,19 @@ handleTutorialState = function(tutorialState) {
             break;
         case 31:
             waitingForClick = false;
+            if(wave - currentWave > 1) {
+                tutorialState += 1;
+            }
+            playGame(tutorial=true);
+            break;
+        case 32:
+            waitingForClick = false;
             text = ["С мощной", "вирусной инфекцией", "не справиться", "без Т-киллеров!", "",
                     "Найми Т-киллера", "в костном мозге"];
             stopGame(text);
             waitingForClick = true;
             break;
-        case 32:
+        case 33:
             waitingForClick = false;
             playGame(tutorial=true);
             drawBlackScreen(BLACK_SCREEN_ALPHA, shops[1].x, shops[1].y, shops[1].width, shops[1].height, 10);
@@ -938,7 +951,7 @@ handleTutorialState = function(tutorialState) {
                 playGame(tutorial=true);
             };
             break;
-        case 33:
+        case 34:
             waitingForClick = false;
             text = ["Т-киллеры производят", "свои копии,", "когда встречают клетку", "с определённым", "антигеном", "",
                     "Специфичность Т-киллера", "определяется случайно", "",
@@ -947,7 +960,7 @@ handleTutorialState = function(tutorialState) {
             stopGame(text);
             waitingForClick = true;
             break;
-        case 34:
+        case 35:
             waitingForClick = false;
             playGame(tutorial=true);
             drawBlackScreen(BLACK_SCREEN_ALPHA / 2, antibioticsX - 5, topVaccineY - 10, buttonWidth + 10, 
@@ -956,7 +969,7 @@ handleTutorialState = function(tutorialState) {
                 tutorialState += 1;
             }
             break;
-        case 35:
+        case 36:
             waitingForClick = false;
             text = ["После встречи Т-киллера", "с вирусом или вакциной", "его можно улучшить", "до клетки памяти", "",
                     "После этого можно", "будет сразу покупать", "Т-киллеров против", "конкретных вирусов", "в костном мозге.",
@@ -966,7 +979,7 @@ handleTutorialState = function(tutorialState) {
             stopGame(text);
             waitingForClick = true;
             break;
-        case 36:
+        case 37:
             waitingForClick = false;
             playGame(tutorial=true);
             if(T_LYMPHOCYTE_SHOP.pockets.length > 0) {
@@ -974,7 +987,7 @@ handleTutorialState = function(tutorialState) {
                 playGame(tutorial=true);
             };
             break;
-        case 37:
+        case 38:
             waitingForClick = false;
             text = ["Прекрасно сыграно!", "Теперь в костном мозге", "можно сразу покупать", "Т-киллеры против этого вируса",
                     "", "Т-хелперы помогут защищать", "организм, иногда покупая", "B-лимфоциты или Т-киллеры",
@@ -983,7 +996,7 @@ handleTutorialState = function(tutorialState) {
             stopGame(text);
             waitingForClick = true;
             break;
-        case 38:
+        case 39:
             waitingForClick = false;
             playGame(tutorial=true);
             drawBlackScreen(BLACK_SCREEN_ALPHA, shops[4].x, shops[4].y, shops[4].width, shops[4].height, 10);
@@ -994,7 +1007,7 @@ handleTutorialState = function(tutorialState) {
                 playGame(tutorial=true);
             };
             break;
-        case 39:
+        case 40:
             waitingForClick = false;
             text = ["Организм под надёжной защитой!", "Но впереди новые угрозы", "",
                     "Покупай эозинофилы", "чтобы бороться", "с гельминтами", "",
@@ -1003,7 +1016,7 @@ handleTutorialState = function(tutorialState) {
             stopGame(text);
             waitingForClick = true;
             break;
-        case 40:
+        case 41:
             waitingForClick = false;
             playGame(tutorial=true);
             drawBlackScreen(BLACK_SCREEN_ALPHA, shops[5].x, shops[5].y, shops[5].width, shops[5].height, 10);
@@ -1014,7 +1027,7 @@ handleTutorialState = function(tutorialState) {
                 playGame(tutorial=true);
             };
             break;
-        case 41:
+        case 42:
             waitingForClick = false;
             text = ["Это было великолепно!", "На этом обучение закончено", "дальше начинается", "настоящая игра",
                     "", "Продолжай защищать организм", "у тебя отлично получается!"
