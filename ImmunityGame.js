@@ -305,7 +305,7 @@ function formNewWave(waveNumber, oldBac, oldVir, oldHel, oldHIV){
 
 function chooseEnemy(bacList, virList, helList, hivList, coins, waveNumber){
     var candidates = [Bacterium];
-    if (waveNumber > 3){
+    if (((waveNumber > 3) && (gameState == "game")) || ((waveNumber > 8) && (gameState == "tutorial"))){
         candidates.push(Virus);
     }
     if (waveNumber > 10){
@@ -625,6 +625,10 @@ presetTutorialState = function(tutorialState) {
             currentWave = wave;
         case 20:
             currentAntibioticsBought = historyObject.antibioticsBought;
+            break;
+        case 29:
+            viruses.push(new Virus("blue", VIRUSES_CLASSIFICATION["blue"].doublingTime, null));
+            viruses.push(new Virus("green", VIRUSES_CLASSIFICATION["green"].doublingTime, null));
             break;
         case 30:
             currentVaccinesBought = historyObject.vaccinesBought;
