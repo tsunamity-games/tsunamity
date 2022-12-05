@@ -881,7 +881,10 @@ $("#field").click(function(event){
                 } else {pause.texture = RESUME_IMAGE;}
                 pauseTrue = !pauseTrue;
                 pauseScreenDrawn = false;
-                 
+                ctx.fillStyle = topMenuColor;
+                ctx.fillRect(pause.x, pause.y, pause.width, pause.height);
+                pause.draw();
+                
             }
             
             if(speed_up.isIntersected(x, y)) {
