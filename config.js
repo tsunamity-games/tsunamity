@@ -90,6 +90,17 @@ const playableFieldBorderColor = "#422D0D"
 const tissueCellsLeftOffset = 0.007263922*playableFieldWidth;
 const tissueCellsUpOffset = 0.017452*playableFieldHeight;
 
+const TUTORIAL_WINDOW_WIDTH = 500 / 1440 * fieldWidth;
+const TUTORIAL_WINDOW_HEIGHT = 250 / 1068 * fieldHeight;
+const TUTORIAL_WINDOW_Y_OFFSET = 100 / 1068 * fieldHeight;
+const TUTORIAL_WINDOW_TEXT_OFFSET = 30 / 1440 * fieldWidth;
+const TUTORIAL_WINDOW_LINE_HEIGHT = 25 / 1068 * fieldHeight;
+const TUTORIAL_WINDOW_OK_X_OFFSET = 60 / 1440 * fieldWidth;
+const TUTORIAL_WINDOW_OK_Y_OFFSET = 47 / 1068 * fieldHeight;
+const TUTORIAL_WINDOW_BUTTON_X_OFFSET = 70 / 1440 * fieldWidth;
+const TUTORIAL_WINDOW_BUTTON_Y_OFFSET = 70 / 1068 * fieldHeight;
+
+
 // Top menu
 const topMenuColor = "#142029";
 const topMenuHeight = fieldHeight*0.075;

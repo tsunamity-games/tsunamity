@@ -332,23 +332,35 @@ function addTissueCells(tissueCellsList){
     return tissueCellsList;
 }
 
-function stopGame(why){
+function stopGame(why, tutorialParams = undefined){
     if(why instanceof Array) {  // Tutorial's text is a list of strings
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        ctx.textAlign = "left";
 
-        ctx.drawImage(
-            SCROLL_IMAGE, 
-            fieldWidth*0.35, 
-            fieldHeight*0.3, 
-            fieldWidth*0.3, 
-            fieldHeight*0.63);
+        ctx.fillStyle = topMenuColor;
+        ctx.fillRect(tutorialParams.x, tutorialParams.y, TUTORIAL_WINDOW_WIDTH, TUTORIAL_WINDOW_HEIGHT);
 
-        ctx.fillStyle = "white";
-
-        ctx.font = "22px Rubik One";
+        ctx.fillStyle = wavesBackColor;
+        ctx.font = "18px Rubik One";
         for (var i = 0; i < why.length; i++)
-                ctx.fillText(why[i], fieldWidth/2, fieldHeight/2 + ((i-3)*29));        
+                ctx.fillText(
+                    why[i],
+                    tutorialParams.x + TUTORIAL_WINDOW_TEXT_OFFSET, 
+                    tutorialParams.y + TUTORIAL_WINDOW_TEXT_OFFSET + (i * TUTORIAL_WINDOW_LINE_HEIGHT));
+
+        // draw OK button
+        ctx.fillText("OK",
+                     tutorialParams.x + TUTORIAL_WINDOW_WIDTH - TUTORIAL_WINDOW_OK_X_OFFSET,
+                     tutorialParams.y + TUTORIAL_WINDOW_HEIGHT - TUTORIAL_WINDOW_OK_Y_OFFSET);
+
+        ctx.strokeStyle = wavesBackColor;
+        roundRect(ctx,
+                  tutorialParams.x + TUTORIAL_WINDOW_WIDTH - TUTORIAL_WINDOW_BUTTON_X_OFFSET,
+                  tutorialParams.y + TUTORIAL_WINDOW_HEIGHT - TUTORIAL_WINDOW_BUTTON_Y_OFFSET,
+                  48,
+                  45,
+                  6, 6, false, true, 6, 6)
+        // ctx.strokeRect(tutorialParams.x + TUTORIAL_WINDOW_WIDTH - 2 * TUTORIAL_WINDOW_TEXT_OFFSET,
+        //                tutorialParams.y + TUTORIAL_WINDOW_HEIGHT - TUTORIAL_WINDOW_TEXT_OFFSET, 50, 50);
     } else {
         if (why == "Game Over" && !gameOverScreenDrawn){
             drawField(gameOver=true);   
@@ -1007,6 +1019,8 @@ presetTutorialState = function(tutorialState) {
     }
 };
 
+const TUTORIAL_WINDOW_PARAMS = {x: (fieldWidth - TUTORIAL_WINDOW_WIDTH) / 2, y: (fieldHeight - TUTORIAL_WINDOW_HEIGHT) / 2 + TUTORIAL_WINDOW_Y_OFFSET};
+
 handleTutorialState = function(tutorialState) {
     console.log("Handling state " + tutorialState);
 
@@ -1018,43 +1032,41 @@ handleTutorialState = function(tutorialState) {
             tutorialState += 1;
             break;
         case 1:
-            text = ["Почувствуй себя", "в роли иммунной системы!", "Защищай организм", "от болезней",
-                    "", "", "Кликни в любое место", "чтобы продолжить"];
-            stopGame(text);
+            text = ["Почувствуй себя", "в роли иммунной системы!", "Защищай организм", "от болезней"];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
 
         case 2:
             waitingForClick = false;
-            text = ["Это одна из клеток ткани.", "Они производят", "глюкозу, которая", "нужны для покупки", "иммунных клеток",
-                    "", "", "Кликни в любое место", "чтобы продолжить"]
-            stopGame(text);
+            text = ["Это одна из клеток ткани.", "Они производят", "глюкозу, которая", "нужны для покупки", "иммунных клеток"]
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 3:  // Skipping step: remove black screen and draw the field, then go to the next state immediately
             waitingForClick = false;
             text = ["Это костный мозг.", "", "Здесь можно покупать", "иммунные клетки", "для защиты организма"];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 4:
             waitingForClick = false;
             text = ["Для покупки иммунных клеток", "нужно иметь достаточно глюкозы.",
                     "Цена каждой клетки", "написана в костном мозге"];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 5:
             waitingForClick = false;
             text = ["Следи за здоровьем!", "Враги отнимают его,", "когда доходят", "до правого конца экрана"];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 6:
             waitingForClick = false;
             text = ["Бактерии наступают!", "", "С ними помогают", "справиться нейтрофилы.",  "",
                     "Нажми на нейтрофил ", "в костном мозге,", "чтобы купить его"];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 7:
@@ -1084,14 +1096,14 @@ handleTutorialState = function(tutorialState) {
             waitingForClick = false;
             text = ["Это — селезёнка.", "Сюда после смерти", "бактерий иногда",  "попадают антигены",
                     "Они нужны для тренировки", "B-лимфоцитов"];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 10:
             waitingForClick = false;
             text = ["Наступает большая", "волна бактерий!", "Найми B-лимфоцит —", "более сильную клетку",
                     "для борьбы", "с бактериями"];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 11:
@@ -1109,7 +1121,7 @@ handleTutorialState = function(tutorialState) {
             waitingForClick = false;
             text = ["B-лимфоцитам нужно", "время и антигены", "для тренировки.", "", "После этого они могут",
                     "эффективно атаковать", "один вид бактерий"];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 13:
@@ -1125,7 +1137,7 @@ handleTutorialState = function(tutorialState) {
             text = ["Отличная работа!", "","Но время жизни одной из", "иммунных клеток",
                      "подошло к концу.", "", "Остатки мешают двигаться", "другим иммунным клеткам", "",
                      "Покупай макрофаги,", "чтобы убирать", "мёртвые клетки!"];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 15:
@@ -1152,7 +1164,7 @@ handleTutorialState = function(tutorialState) {
             text = ["Великолепно сыграно!", "", "Как только B-лимфоциты", "встретятся с врагом", "их можно улучшить",
                     "до плазматической клетки", "", "Нажми на B-лимфоцит,", "а затем на окно улучшения",
                     "или на клавишу U,", "чтобы получить", "плазматическую клетку"];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 18:
@@ -1180,13 +1192,13 @@ handleTutorialState = function(tutorialState) {
             text = ["Плазматическая клетка", "производит антитела.", "Они замедляют бактерий.", "",
                     "Продолжай сражаться", "с бактериями!", "Не стесняйся покупать", "больше клеток"
                 ];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 20:
             waitingForClick = false;
             text = ["Скорость игры", "всегда можно изменить", "на панели сверху"];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 21:
@@ -1200,7 +1212,7 @@ handleTutorialState = function(tutorialState) {
             waitingForClick = false;
             text = ["Плазматическую клетку", "можно улучшить", "до клетки памяти,", "чтобы сразу нанимать", "нужные B-лимфоциты", "",
                     "Улучши плазматическую", "клетку!"]
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 23:
@@ -1217,7 +1229,7 @@ handleTutorialState = function(tutorialState) {
         case 24:
             waitingForClick = false;
             text = ["Теперь в костном мозге", "можно в любой момент", "купить B-лимфоцит", "против конкретного вида бактерий!"];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 25:
@@ -1225,7 +1237,7 @@ handleTutorialState = function(tutorialState) {
             text = ["Впереди огромная", "волна бактерий!", "Справиться с ней", "помогут антибиотики", "",
                     "Покупай антибиотик", "против нужной инфекции", "в панели справа"
                 ];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 26:
@@ -1243,7 +1255,7 @@ handleTutorialState = function(tutorialState) {
                     "При использовании антибиотика", "обязательно пропей курс", "до конца!", "Иначе он может",
                     "стать бесполезным.", "", "Используй антибиотик", "3 следующих волны подряд"
                 ];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 28:
@@ -1257,7 +1269,7 @@ handleTutorialState = function(tutorialState) {
             waitingForClick = false;
             text = ["Клетки ткани", "заражены вирусом!", "", "Покупай",  "натуральных киллеров,",
                     "чтобы бороться с ними!"]
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 30:
@@ -1275,7 +1287,7 @@ handleTutorialState = function(tutorialState) {
             waitingForClick = false;
             text = ["Натуральные киллеры", "случайно двигаются", "между клетками ткани,", "проверяя их.", "",
                     "Если натуральный киллер", "обнаружит, что клетка", "заражена вирусом,", "он её убьёт"]
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 32:
@@ -1289,7 +1301,7 @@ handleTutorialState = function(tutorialState) {
             waitingForClick = false;
             text = ["С мощной", "вирусной инфекцией", "не справиться", "без Т-киллеров!", "",
                     "Найми Т-киллера", "в костном мозге"];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 34:
@@ -1309,7 +1321,7 @@ handleTutorialState = function(tutorialState) {
                     "Специфичность Т-киллера", "определяется случайно", "",
                     "Покупай нужную вакцину,", "чтобы повысить вероятность", "появления нужного", "Т-киллера"
                 ];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 36:
@@ -1328,7 +1340,7 @@ handleTutorialState = function(tutorialState) {
                     "", "Улучши Т-киллера", "до Т-клетки памяти!", "Для этого кликни", "на Т-киллера,", "встретившегося с врагом",
                     "и кликни на табличку", "или на кнопку U"
                 ];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 38:
@@ -1345,7 +1357,7 @@ handleTutorialState = function(tutorialState) {
                     "", "Т-хелперы помогут защищать", "организм, иногда покупая", "B-лимфоциты или Т-киллеры",
                     "Покупай Т-хелпера", "в костном мозге!"
                 ];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 40:
@@ -1365,7 +1377,7 @@ handleTutorialState = function(tutorialState) {
                     "Покупай эозинофилы", "чтобы бороться", "с гельминтами", "",
                     "Подсказка: лучше сразу", "купить побольше"
                 ];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 42:
@@ -1384,7 +1396,7 @@ handleTutorialState = function(tutorialState) {
             text = ["На этом обучение закончено.", "Дальше начинается", "настоящая игра",
                     "", "Продолжай защищать организм.", "у тебя отлично получается!"
         ];
-            stopGame(text);
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
         case 44:
