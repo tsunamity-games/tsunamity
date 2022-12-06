@@ -89,8 +89,21 @@ class Bacterium extends MovingObject {
             this.xSpeed = randomUniform(-1+this.baseSpeed, 1+this.baseSpeed); 
             this.ySpeed = randomUniform(-1, 1);            
         } else if (this.mode === "antigen"){
-            [this.xSpeed, this.ySpeed] = moveTo(this.x, this.y, this.spleenSection.x, this.spleenSection.y, 1*BASE_GAME_SPEED);
-            if (doCirclesIntersect(this.x, this.y, 0.1, this.spleenSection.x, this.spleenSection.y, 2));
+            if (doCirclesIntersect(this.x, this.y, 0.1, this.spleenSection.x, this.spleenSection.y, 1*BASE_GAME_SPEED)){
+                this.ySpeed /= 10;
+                this.xSpeed /= 10;
+            } else if (doCirclesIntersect(this.x, this.y, 0.1, this.spleenSection.x, this.spleenSection.y, 1)) {
+                this.xSpeed = 0; 
+                this.ySpeed = 0;
+            } else {
+                [this.xSpeed, this.ySpeed] = moveTo(this.x, this.y, this.spleenSection.x, this.spleenSection.y, 1*BASE_GAME_SPEED);
+            }
+            
+//            if (Math.sqrt(Math.pow(this.x - this.spleenSection.x, 2) + Math.pow(this.y-this.spleenSection.y, 2)) < 1*BASE_GAME_SPEED && this.ySpeed > 0){
+//                let ratio = this.xSpeed/this.ySpeed;
+//                this.ySpeed = 0.1;
+//                this.xSpeed = this.ySpeed * ratio;
+//            }
         }
     }
 
