@@ -1554,7 +1554,7 @@ function playGame(tutorial=false) {
             immunityCells = immunityCells.filter((cell)=>cell.age < cell.longevity);
         })
     }
-    antibodies = antibodies.filter((antibody) => antibody.age < antibody.longevity && (antibody.attached == null || antibody.attached.health > 0));
+    antibodies = antibodies.filter((antibody) => antibody.age < antibody.longevity && (antibody.attached == null));
     antibodies.forEach((antibody) => {
         antibody.move();
     })

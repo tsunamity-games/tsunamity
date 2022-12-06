@@ -66,6 +66,7 @@ class Bacterium extends MovingObject {
         this.realBaseSpeed = BACTERIUM_BASE_SPEED;
         this.baseSpeed = BACTERIUM_BASE_SPEED*BASE_GAME_SPEED;
         this.angle = randomUniform(0, 2*Math.PI);
+        this.nAntibodies = 0;
     }
 
 
@@ -84,7 +85,7 @@ class Bacterium extends MovingObject {
     }
 
     changeDirection() {
-        this.baseSpeed = BACTERIUM_BASE_SPEED*BASE_GAME_SPEED;
+        this.baseSpeed = BACTERIUM_BASE_SPEED*BASE_GAME_SPEED*Math.pow(ANTIBODY_SLOWING_COEFFICIENT, this.nAntibodies);
         if (this.mode === "enemy"){
             this.xSpeed = randomUniform(-1+this.baseSpeed, 1+this.baseSpeed); 
             this.ySpeed = randomUniform(-1, 1);            
@@ -269,6 +270,7 @@ class IntracellularPathogen extends MovingObject {
     }
 
     move() {
+        
         if(this.target == null) {
             // Mess around
             super.move();

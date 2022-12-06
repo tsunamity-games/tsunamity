@@ -61,14 +61,11 @@ class Antibody {
             this.y = clip(this.y, playableFieldY, playableFieldY+playableFieldHeight);
             bacteria.forEach((bacterium) =>{
                 if (bacterium.color === this.color && doCirclesIntersect(bacterium.x, bacterium.y, bacterium.radius, this.x, this.y, 5)){
-                    this.attached = bacterium;
-                    this.attached.baseSpeed *=ANTIBODY_SLOWING_COEFFICIENT;
+                    bacterium.nAntibodies++;
+                    this.attached = true;
                 } 
-        });
-        } else {
-            this.x = this.attached.x + randomUniform(-this.attached.radius, this.attached.radius);
-            this.y = Math.sqrt(Math.pow(this.attached.radius, 2) - Math.pow(this.x, 2))*randomChoice([1, -1]);
-        }
+            })
+        } 
     }
     
 }
@@ -85,7 +82,6 @@ class ImmuneCell extends MovingObject {
         this.age = 0;
         this.longevity = longevity;
         this.movingout = true;
-//        this.iteration = 0;
     }
     
     isIntersected(x, y) {
@@ -280,7 +276,6 @@ class BLymphocyte extends ImmuneCell {
         }
         this.mode = mode;
         this.shootingRadius = 40;
-//        this.iteration = 0;
         this.color = color;
         this.label = new Label(this);
         this.killed = false;
@@ -414,6 +409,10 @@ class BLymphocyte extends ImmuneCell {
             ctx.globalAlpha = 1;
             super.draw();
         }
+    }
+    
+    isIntersected(x, y) {
+        return Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2) < Math.pow(this.shootingRadius, 2);
     }
 }
 class TLymphocyte extends ImmuneCell {
