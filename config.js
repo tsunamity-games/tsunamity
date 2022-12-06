@@ -1,3 +1,6 @@
+// Donate
+const bitcoinAddress = "17CfQMZd5zz1fYX4SqFwMdgqpYnAAv9owj";
+
 // Game texts
 var language = "eng";
 var contacts = {
@@ -18,7 +21,11 @@ var texts = {
         contacts: {eng: "Contacts", rus:"Контакты"},
         dmitryBiba: {eng: "Dmitry Biba", rus: "Дмитрий Биба"},
         vladimirShitov: {eng: "Vladimir Shitov", rus: "Владимир Шитов"},
-        anastasiaTroshina: {eng: "Anastasia Troshina", rus: "Анастасия Трошина"}
+        anastasiaTroshina: {eng: "Anastasia Troshina", rus: "Анастасия Трошина"},
+        donate: {eng: "Donate", rus: "Задонатить"},
+        bitcoinWallet: {eng: "Bitcoin Wallet", rus: "Биткоин"},
+        copied: {eng: "Text copied to clipboard", rus: "Скопировано в буфер обмена"},
+        errorCopied: {eng: "Error in copying text", rus: "Ошибка при копировании"}
         
     },
     game:{
@@ -56,7 +63,7 @@ var texts = {
 
 // Game parameters
 var livesLeft = 10;
-var STARTING_MONEY = 1000000;
+var STARTING_MONEY = 0;
 var chanceToGetAntigen = 0.02;
 var baseIncome = 0.01;
 
@@ -78,6 +85,7 @@ const MAIN_MENU_BUTTONS_X =  1012 / 1440 * fieldWidth;
 const MAIN_MENU_BUTTONS_Y =  0.172 * fieldHeight;
 const MAIN_MENU_BUTTONS_WIDTH = 300 / 1440 * fieldWidth;
 const MAIN_MENU_BUTTONS_HEIGHT = 100 / 1068 * fieldHeight;
+
 const SPACE_BETWEEN_MAIN_MENU_BUTTONS = 50 / 1068 * fieldHeight;
 const COVER_IMAGE = new Image();
 COVER_IMAGE.src = "./images/coverImage.png";
@@ -676,7 +684,7 @@ const mutationProbability = 0.1;
 var BACTERIUM_PRICE = 1; 
 var VIRUS_PRICE = 25;
 var HELMINT_PRICE = 50;
-var HIV_PRICE = 30;
+var HIV_PRICE = 60;
 var ENEMY_PROB_DIST = [1/BACTERIUM_PRICE, 1/VIRUS_PRICE, 1/HELMINT_PRICE, 1/HIV_PRICE];
 var MIN_HELMINT_LENGTH = 4;
 var MAX_HELMINT_LENGTH = 20;

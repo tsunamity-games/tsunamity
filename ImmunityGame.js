@@ -549,7 +549,7 @@ function chooseEnemy(bacList, virList, helList, hivList, coins, waveNumber){
         candidates.push(Helmint);
     }
     
-    if (waveNumber > 20){
+    if (waveNumber > 30){
         candidates.push(HIV);
     }
     
@@ -654,19 +654,27 @@ const MENU_BUTTONS = [
            MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, texts["menu"]["tutorial"][language], false, "", "tutorial"),
     new Button(MAIN_MENU_RIGHT_PANEL_COLOR, MAIN_MENU_BUTTONS_X, MAIN_MENU_BUTTONS_Y + 2 * (MAIN_MENU_BUTTONS_HEIGHT + SPACE_BETWEEN_MAIN_MENU_BUTTONS),
            MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, texts["menu"]["about"][language], false, "", "about"),
+    new Button(MAIN_MENU_RIGHT_PANEL_COLOR, 
+               MAIN_MENU_BUTTONS_X, 
+               MAIN_MENU_BUTTONS_Y + 3 * (MAIN_MENU_BUTTONS_HEIGHT + SPACE_BETWEEN_MAIN_MENU_BUTTONS),
+               MAIN_MENU_BUTTONS_WIDTH, 
+               MAIN_MENU_BUTTONS_HEIGHT, 
+               texts["menu"]["donate"][language], false, "", "donate")]
+const LANGUAGE_BUTTONS = [
     new LangButton( 
-        (1012/1440)*fieldWidth, 
-        (683.5/1080)*fieldHeight,
+        MAIN_MENU_BUTTONS_X, 
+        MAIN_MENU_BUTTONS_Y + MAIN_MENU_BUTTONS_HEIGHT+(MAIN_MENU_BUTTONS_HEIGHT+SPACE_BETWEEN_MAIN_MENU_BUTTONS)*(MENU_BUTTONS.length-1) + (75.5/1080)*fieldHeight,
         (140/1440)*fieldWidth, 
         (100/1080)*fieldHeight, 
         "Рус", active = false),
     new LangButton( 
         (1172/1440)*fieldWidth, 
-        (683.5/1080)*fieldHeight,
+        MAIN_MENU_BUTTONS_Y + MAIN_MENU_BUTTONS_HEIGHT+
+        (MAIN_MENU_BUTTONS_HEIGHT+SPACE_BETWEEN_MAIN_MENU_BUTTONS)*(MENU_BUTTONS.length-1) + 
+        (75.5/1080)*fieldHeight,
         (140/1440)*fieldWidth, 
         (100/1080)*fieldHeight, 
         "Eng", active = true),
-    
     
 ]
 
@@ -801,21 +809,30 @@ $("#field").click(function(event){
             }
             
             if(MENU_BUTTONS[2].isIntersected(x, y)) {
+                MENU_BUTTONS[0].textLanguageLabel = "back";
                 gameStart = false;
                 gameState = "about";
             }
+            
             if(MENU_BUTTONS[3].isIntersected(x, y)) {
+                MENU_BUTTONS[0].textLanguageLabel = "back";
+                MENU_BUTTONS[1].textLanguageLabel = "bitcoinWallet";
+                gameStart = false;
+                gameState = "donate";
+            }
+            
+            if(LANGUAGE_BUTTONS[0].isIntersected(x, y)) {
                 gameStart = false;
                 language = "rus";
-                MENU_BUTTONS[3].active = true;
-                MENU_BUTTONS[4].active = false;
+                LANGUAGE_BUTTONS[0].active = true;
+                LANGUAGE_BUTTONS[1].active = false;
                 
             }
-            if(MENU_BUTTONS[4].isIntersected(x, y)) {
+            if(LANGUAGE_BUTTONS[1].isIntersected(x, y)) {
                 gameStart = false;
                 language = "eng";
-                MENU_BUTTONS[3].active = false;
-                MENU_BUTTONS[4].active = true;
+                LANGUAGE_BUTTONS[0].active = false;
+                LANGUAGE_BUTTONS[1].active = true;
             }
             
             break;
@@ -825,6 +842,22 @@ $("#field").click(function(event){
                 MENU_BUTTONS[0].textLanguageLabel = "startGame";
             }
             break;
+        case "donate":
+            if(MENU_BUTTONS[0].isIntersected(x, y)) {
+                gameState = "menu";
+                MENU_BUTTONS[0].textLanguageLabel = "startGame";
+                MENU_BUTTONS[1].textLanguageLabel = "tutorial";
+            }
+            if(MENU_BUTTONS[1].isIntersected(x, y)) {
+                navigator.clipboard.writeText(bitcoinAddress).then(() => {
+                    alert(texts["menu"]["copied"][language] + ": " + bitcoinAddress);
+                }).catch(err => {
+                    alert(texts["menu"]["errorCopied"][language] + ": " + bitcoinAddress);
+                });
+    
+            }
+            break;
+            
         default:  // game and tutorial
             // If any of the shops clicked, try to buy cell;
             shops.forEach((shop) => {
@@ -1618,12 +1651,16 @@ function drawMenu() {
     MENU_BUTTONS.forEach((button) => {
         button.draw();
     })
+    LANGUAGE_BUTTONS.forEach((button) => {
+        button.draw();
+    })
+    
     
     ctx.beginPath();
-    ctx.moveTo((1012/1440)*fieldWidth, 
-               (668.5/1080)*fieldHeight);
-    ctx.lineTo((1312/1440)*fieldWidth, 
-               (668.5/1080)*fieldHeight);
+    ctx.moveTo(MAIN_MENU_BUTTONS_X, 
+               MAIN_MENU_BUTTONS_Y + MAIN_MENU_BUTTONS_HEIGHT+(MAIN_MENU_BUTTONS_HEIGHT+SPACE_BETWEEN_MAIN_MENU_BUTTONS)*(MENU_BUTTONS.length-1) + (60/1068)*fieldHeight);
+    ctx.lineTo(MAIN_MENU_BUTTONS_X + MAIN_MENU_BUTTONS_WIDTH, 
+               MAIN_MENU_BUTTONS_Y + MAIN_MENU_BUTTONS_HEIGHT+(MAIN_MENU_BUTTONS_HEIGHT+SPACE_BETWEEN_MAIN_MENU_BUTTONS)*(MENU_BUTTONS.length-1) + (60/1068)*fieldHeight);
     ctx.stroke();
 
 }
@@ -1654,7 +1691,6 @@ function drawAbout(){
                  fieldWidth - 0.61*fieldWidth, 
                  fieldHeight - topMenuHeight);
 
-    MENU_BUTTONS[0].textLanguageLabel = "back";
     MENU_BUTTONS[0].draw();
 
     var authors = ["dmitryBiba", "vladimirShitov", "anastasiaTroshina"];
@@ -1679,6 +1715,30 @@ function drawAbout(){
     writeAuthorInfo();
 }
 
+function drawDonate(){
+    // Top panel
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, fieldWidth, topMenuHeight);
+
+    // Left panel
+    ctx.drawImage(COVER_IMAGE, 0, topMenuHeight, 0.61*fieldWidth, fieldHeight - topMenuHeight);
+    
+    // Right panel
+    ctx.fillStyle = MAIN_MENU_RIGHT_PANEL_COLOR;
+    ctx.fillRect(0.61*fieldWidth, 
+                 topMenuHeight, 
+                 fieldWidth - 0.61*fieldWidth, 
+                 fieldHeight - topMenuHeight);
+
+    MENU_BUTTONS[0].draw();
+    MENU_BUTTONS[1].draw();
+    
+
+    
+    writeAuthorInfo();
+}
+
+
 var game = setInterval(function(){
     switch(gameState) {
         case "game":
@@ -1692,6 +1752,10 @@ var game = setInterval(function(){
             break;
         case "about":
             drawAbout();
+            break;
+        case "donate":
+            drawDonate();
+            break;
         default:
             break;
     }
