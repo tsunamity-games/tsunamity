@@ -849,11 +849,14 @@ $("#field").click(function(event){
                 MENU_BUTTONS[1].textLanguageLabel = "tutorial";
             }
             if(MENU_BUTTONS[1].isIntersected(x, y)) {
-                navigator.clipboard.writeText(bitcoinAddress).then(() => {
-                    alert(texts["menu"]["copied"][language] + ": " + bitcoinAddress);
-                }).catch(err => {
-                    alert(texts["menu"]["errorCopied"][language] + ": " + bitcoinAddress);
-                });
+                unsecuredCopyToClipboard(bitcoinAddress);
+                alert(texts["menu"]["copied"][language] + ": " + bitcoinAddress);
+                // when https is available
+//                navigator.clipboard.writeText(bitcoinAddress).then(() => {
+//                    alert(texts["menu"]["copied"][language] + ": " + bitcoinAddress);
+//                }).catch(err => {
+//                    alert(texts["menu"]["errorCopied"][language] + ": " + bitcoinAddress);
+//                });
     
             }
             break;
