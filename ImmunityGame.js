@@ -1486,7 +1486,9 @@ function playGame(tutorial=false) {
         if (helmint.parts.length > 0){
             if ((helmint.parts[helmint.parts.length - 1].x < playableFieldX+playableFieldWidth)){
                 if (helmint.health <= 0) {
-                      garbagePiles.push(new GarbagePile(helmint.x, helmint.y, helmint.overlay*helmint.parts.length*0.5));
+                    helmint.parts.forEach((part) => {
+                        garbagePiles.push(new GarbagePile(part.x, part.y, part.radius));
+                    })
                     historyObject.helmintesKilled += 1;
                 } else {
                     nextTurnHelmintes.push(helmint);
