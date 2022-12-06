@@ -56,7 +56,7 @@ var texts = {
 
 // Game parameters
 var livesLeft = 10;
-var STARTING_MONEY = 0;
+var STARTING_MONEY = 1000000;
 var chanceToGetAntigen = 0.02;
 var baseIncome = 0.01;
 

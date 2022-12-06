@@ -505,14 +505,14 @@ class THelper extends ImmuneCell {
     }
 
     choosePlace() {
-        const ROWS = 4;
+        const ROWS = 6;
         const COLS = 12;
 
         const gridCellWidth = Math.floor(playableFieldWidth / COLS);
         const gridCellHeight = Math.floor(playableFieldHeight / ROWS);
         
         const col = Math.floor(randomUniform(0, COLS));
-        const row = Math.floor(randomUniform(0, ROWS));
+        const row = Math.floor(randomUniform(1, ROWS));
 
         var place = [playableFieldX + col * gridCellWidth + randomUniform(-10, 10), 
                      playableFieldY + row * gridCellHeight + randomUniform(-10, 10)];
