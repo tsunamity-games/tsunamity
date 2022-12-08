@@ -332,3 +332,20 @@ class LangButton extends Button{
     }
     
 }
+
+class OKButton extends Button{
+    draw(){
+        ctx.strokeStyle = wavesBackColor;
+        roundRect(ctx,
+                  this.x,
+                  this.y,
+                  this.width,
+                  this.height,
+                  6, 6, false, true, 6, 6);
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#E8D9B4";
+        ctx.font = this.height * 0.4 + "px Rubik One"
+        ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
+    }
+}

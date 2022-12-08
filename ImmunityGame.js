@@ -339,7 +339,9 @@ function stopGame(why, tutorialParams = undefined){
         ctx.fillStyle = topMenuColor;
 
         let windowHeight = (tutorialParams.height === undefined) ? TUTORIAL_WINDOW_HEIGHT : tutorialParams.height;
-        ctx.fillRect(tutorialParams.x, tutorialParams.y, TUTORIAL_WINDOW_WIDTH, windowHeight);
+        
+        roundRect(ctx, tutorialParams.x, tutorialParams.y, TUTORIAL_WINDOW_WIDTH, windowHeight, leftRadius=20, rightRadius=20, fill=true, stroke=false);
+//        ctx.fillRect(tutorialParams.x, tutorialParams.y, TUTORIAL_WINDOW_WIDTH, windowHeight);
 
         ctx.fillStyle = wavesBackColor;
         ctx.font = "18px Rubik One";
@@ -350,19 +352,20 @@ function stopGame(why, tutorialParams = undefined){
                     tutorialParams.y + TUTORIAL_WINDOW_TEXT_OFFSET + (i * TUTORIAL_WINDOW_LINE_HEIGHT));
 
         // draw OK button
-        ctx.fillText("OK",
-                     tutorialParams.x + TUTORIAL_WINDOW_WIDTH - TUTORIAL_WINDOW_OK_X_OFFSET,
-                     tutorialParams.y + windowHeight - TUTORIAL_WINDOW_OK_Y_OFFSET);
-
-        ctx.strokeStyle = wavesBackColor;
-        roundRect(ctx,
-                  tutorialParams.x + TUTORIAL_WINDOW_WIDTH - TUTORIAL_WINDOW_BUTTON_X_OFFSET,
-                  tutorialParams.y + windowHeight - TUTORIAL_WINDOW_BUTTON_Y_OFFSET,
-                  48,
-                  45,
-                  6, 6, false, true, 6, 6)
+//        ctx.fillText("OK",
+//                     tutorialParams.x + TUTORIAL_WINDOW_WIDTH - TUTORIAL_WINDOW_OK_X_OFFSET,
+//                     tutorialParams.y + windowHeight - TUTORIAL_WINDOW_OK_Y_OFFSET);
+//
+//        ctx.strokeStyle = wavesBackColor;
+//        roundRect(ctx,
+//                  tutorialParams.okButtonX,
+//                  tutorialParams.okButtonY,
+//                  (48/1440)*fieldWidth,
+//                  (45/1080)*fieldHeight,
+//                  6, 6, false, true, 6, 6)
         // ctx.strokeRect(tutorialParams.x + TUTORIAL_WINDOW_WIDTH - 2 * TUTORIAL_WINDOW_TEXT_OFFSET,
         //                tutorialParams.y + TUTORIAL_WINDOW_HEIGHT - TUTORIAL_WINDOW_TEXT_OFFSET, 50, 50);
+        okButton.draw();
     } else {
         if (why == "Game Over" && !gameOverScreenDrawn){
             drawField(gameOver=true);   
@@ -640,6 +643,7 @@ var fullWaveSize;
 var artObj;
 var tutorialState = 0;
 var waitingForClick = false;
+var okButton;
 var blackScreenDrawn = false;
 var gameState = "menu";
 
@@ -931,7 +935,7 @@ $("#field").click(function(event){
                 BASE_GAME_SPEED = Math.max(1, BASE_GAME_SPEED-0.5);
             }
             
-            if(gameState == "tutorial" && waitingForClick) {
+            if(gameState == "tutorial" && waitingForClick && okButton.isIntersected(x, y)) {
                 tutorialState += 1;
 
                 presetTutorialState(tutorialState);
@@ -1022,6 +1026,8 @@ presetTutorialState = function(tutorialState) {
             break;
         case 10:
             playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[3].x, shops[3].y, 
+                    shops[3].width, shops[3].height, 10);
             chanceToGetAntigen = 0.01;  // Return default
             trainingProbability = 0.3;
 
@@ -1070,13 +1076,24 @@ presetTutorialState = function(tutorialState) {
     }
 };
 
-const TUTORIAL_WINDOW_PARAMS = {x: (fieldWidth - TUTORIAL_WINDOW_WIDTH) / 2, y: (fieldHeight - TUTORIAL_WINDOW_HEIGHT) / 2 + TUTORIAL_WINDOW_Y_OFFSET};
+const TUTORIAL_WINDOW_PARAMS = {
+    x: (fieldWidth - TUTORIAL_WINDOW_WIDTH) / 2, 
+    y: (fieldHeight - TUTORIAL_WINDOW_HEIGHT) / 2 + TUTORIAL_WINDOW_Y_OFFSET,
+    okButtonX: (fieldWidth - TUTORIAL_WINDOW_WIDTH) / 2 + TUTORIAL_WINDOW_WIDTH - TUTORIAL_WINDOW_BUTTON_X_OFFSET, 
+    okButtonY: (fieldHeight - TUTORIAL_WINDOW_HEIGHT) / 2 + TUTORIAL_WINDOW_Y_OFFSET + TUTORIAL_WINDOW_HEIGHT - TUTORIAL_WINDOW_BUTTON_Y_OFFSET
+};
 
 handleTutorialState = function(tutorialState) {
     console.log("Handling state " + tutorialState);
 
     switch(tutorialState) {
         case 0:
+            okButton = new OKButton("", TUTORIAL_WINDOW_PARAMS.okButtonX, TUTORIAL_WINDOW_PARAMS.okButtonY, 
+                                    (48/1440)*fieldWidth,
+                                    (45/1080)*fieldHeight, 
+                                    "OK", 
+                                    isCircle=false, 
+                                    texture="", textLanguageLabel="")
             for(var i=0; i < 5; i++) {
                 playGame(tutorial=true);
             }
@@ -1153,7 +1170,7 @@ handleTutorialState = function(tutorialState) {
         case 10:
             waitingForClick = false;
             text = ["Наступает большая волна бактерий!", "",
-                    "Найми B-лимфоцит — более сильную клетку", "для борьбы с бактериями"];
+                    "Найми несколько B-лимфоцитов", "— более сильных клеткок", "для борьбы с бактериями"];
             stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
