@@ -640,6 +640,7 @@ var fullWaveSize;
 var artObj;
 var tutorialState = 0;
 var waitingForClick = false;
+var blackScreenDrawn = false;
 var gameState = "menu";
 
 // Tutorial vars
@@ -1016,6 +1017,8 @@ presetTutorialState = function(tutorialState) {
             break;
         case 6:
             playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[2].x, shops[2].y, 
+                    shops[2].width, shops[2].height, 10);
             break;
         case 10:
             playGame(tutorial=true);
@@ -1037,6 +1040,13 @@ presetTutorialState = function(tutorialState) {
             currentWave = wave;
         case 25:
             currentAntibioticsBought = historyObject.antibioticsBought;
+            break;
+        case 29:
+            console.log("viruses");
+            viruses.forEach((virus) => {
+                drawBlackScreen(BLACK_SCREEN_ALPHA, virus.host.x, virus.host.y,
+                 virus.host.size, virus.host.size, virus.host.size / 5); 
+            })
             break;
         case 30:
             viruses.push(new Virus("first", VIRUSES_CLASSIFICATION["first"].doublingTime, null));
@@ -1105,6 +1115,7 @@ handleTutorialState = function(tutorialState) {
             break;
         case 6:
             waitingForClick = false;
+            
             text = ["Бактерии наступают!", "", "С ними помогают справиться нейтрофилы.",  "",
                     "Нажми на нейтрофил в костном мозге,", "чтобы купить его"];
             stopGame(text, TUTORIAL_WINDOW_PARAMS);
@@ -1127,7 +1138,6 @@ handleTutorialState = function(tutorialState) {
             if(bacteria[0].health < 10) {
                 chanceToGetAntigen = 1;
                 bacteria[0].health = 0;
-
                 drawBlackScreen(BLACK_SCREEN_ALPHA, spleen.x, spleen.y, spleen.width, spleen.height, 10);
                 tutorialState += 1;
             }
@@ -1218,7 +1228,7 @@ handleTutorialState = function(tutorialState) {
                 bCell = unupgradedBcells[0];
                 drawBlackScreen(BLACK_SCREEN_ALPHA, bCell.x - bCell.radius, bCell.y - bCell.radius,
                                 2 * bCell.radius, 2 * bCell.radius, 5);
-            }
+           tissueCells[50] }
 
             let plasmaticCells = immunityCells.filter(cell => {
                 return (cell instanceof BLymphocyte) && (cell.mode == "plasmatic")
@@ -1303,14 +1313,25 @@ handleTutorialState = function(tutorialState) {
         case 28:
             waitingForClick = false;
             playGame(tutorial=true);
-            if(viruses.length > 0) {
+            if(viruses.filter((virus) => virus.number >= maxVirusesInTissueCell*0.9).length > 0) {
                 tutorialState += 1;
+                presetTutorialState(tutorialState);
+                viruses.forEach((virus) => {
+                    virus.host.draw();
+                    ctx.strokeStyle = "#DC9E00";
+                    ctx.lineWidth = 5;
+                    roundRect(ctx, virus.host.x, virus.host.y,
+                              virus.host.size, virus.host.size, leftRadius=radius, rightRadius=virus.host.size/5, fill=false, stroke=true);
+                    ctx.lineWidth = 1;
+                });
             }
+            
+            
+            
             break;
         case 29:
             waitingForClick = false;
-            text = ["Клетки ткани заражены вирусом!", "", "Покупай натуральных киллеров,",
-                    "чтобы бороться с ними!"]
+            text = ["Клетки ткани заражены вирусом!", "", "Зараженные клетки", "не производят глюкозу,", "поэтому очень важно", "сдерживать вирусную инфекцию.", "Покупай натуральных киллеров,", "чтобы бороться с ней!"]
             stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;

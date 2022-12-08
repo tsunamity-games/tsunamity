@@ -115,10 +115,11 @@ function drawBlackScreen(alpha, highlight_x, highlight_y, highlight_width, highl
     roundRect(ctx, highlight_x, highlight_y, highlight_width, highlight_height,
          leftRadius=radius, rightRadius=radius, fill=true);
     ctx.globalAlpha = 1;
-    ctx.strokeStyle = "#0099ff";
+    ctx.strokeStyle = "#DC9E00";
     ctx.lineWidth = 5;
     roundRect(ctx, highlight_x, highlight_y, highlight_width, highlight_height,
          leftRadius=radius, rightRadius=radius, fill=false, stroke=true);
+    ctx.lineWidth = 1;
     
 }
 
