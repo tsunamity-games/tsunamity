@@ -363,7 +363,7 @@ class MoneyHighlighter{
         this.y = moneyRectangleY;
         this.width = moneyRectangleWidth;
         this.height = moneyRectangleHeight;
-        this.color = "red";
+        this.color = "#CF0000";
         this.lifespan = 0;
         this.alpha = 1;
         this.maxLifespan = 300;
