@@ -285,7 +285,8 @@ function drawField(gameOver=false){
     
     // Draw tissue cells
     ctx.textAlign = "center";
-    ctx.textBaseline = "middle";        
+    ctx.textBaseline = "middle";  
+    ctx.font = "1 " + tissueCellSize * 0.5 + "px Rubik One";
     tissueCells.forEach((cell) => {cell.draw();})
     
     // Draw objects on the field

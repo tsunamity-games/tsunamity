@@ -51,6 +51,8 @@ class Shop extends BodyPart {
             immunityCells.push(cell);
             money -= this.price;
             historyObject.cellsBought[cell.constructor.name] += 1;
+        } else {
+            moneyHighlighter.appear();
         }
         
     }

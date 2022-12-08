@@ -62,22 +62,26 @@ class Antibiotic extends Button {
     }  
     
     activate(){
-        if (this.lastWave != wave && this.available && money >= this.price){
-            money -= this.price;
-            bacteria.filter((bacterium) => bacterium.color === this.color).forEach((bacterium) => {
-                bacterium.health = 1;
-            })
-            this.course += 1;
-            this.course = this.course % ANTIBIOTIC_COURSE_LENGTH;
-            if (this.course === 0){
-                this.lastWave = null;
-                this.texture = bacteriaColors[this.color]["antibioticButtonImage"]["inactive"]
-            } else {
-                this.lastWave = wave;
-                this.texture = bacteriaColors[this.color]["antibioticButtonImage"]["active"]
+        if (this.lastWave != wave && this.available){
+            if (money >= this.price){
+                money -= this.price;
+                bacteria.filter((bacterium) => bacterium.color === this.color).forEach((bacterium) => {
+                    bacterium.health = 1;
+                })
+                this.course += 1;
+                this.course = this.course % ANTIBIOTIC_COURSE_LENGTH;
+                if (this.course === 0){
+                    this.lastWave = null;
+                    this.texture = bacteriaColors[this.color]["antibioticButtonImage"]["inactive"]
+                } else {
+                    this.lastWave = wave;
+                    this.texture = bacteriaColors[this.color]["antibioticButtonImage"]["active"]
+                }
+                historyObject.antibioticsBought += 1;                
             }
-            historyObject.antibioticsBought += 1;
-            
+            else {
+                moneyHighlighter.appear();
+            }
         }
     }
     
@@ -125,6 +129,8 @@ class Vaccine extends Button{
             }
             targetTissueCells.forEach((cell) => cell.vaccine = this.color);
             historyObject.vaccinesBought += 1;       
+        } else {
+            moneyHighlighter.appear();
         }
     }
     
@@ -212,8 +218,7 @@ class Pocket extends Shop{
             immunityCells.push(cell);
             money -= this.price;
             historyObject.cellsBought[cell.constructor.name] += 1;
-
-        }
+        } else {moneyHighlighter.appear();}
     }
 }
 class GameHistory {
@@ -267,13 +272,15 @@ class ART extends Button{
     } 
     
     activate(){
-        if (this.available && money >= this.price){
+        if (money >= this.price){
             money -= this.price;
             this.course = ART_DURATION;
             this.available = false;
             this.texture = ART_ACTIVE_IMAGE;
             historyObject.artBought += 1;
-        }   
+        } else {
+            moneyHighlighter.appear();
+        }
     }
     
     draw(){
@@ -347,5 +354,36 @@ class OKButton extends Button{
         ctx.fillStyle = "#E8D9B4";
         ctx.font = this.height * 0.4 + "px Rubik One"
         ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
+    }
+}
+
+class MoneyHighlighter{
+    constructor(){
+        this.x = moneyRectangleX;
+        this.y = moneyRectangleY;
+        this.width = moneyRectangleWidth;
+        this.height = moneyRectangleHeight;
+        this.color = "red";
+        this.lifespan = 0;
+        this.alpha = 1;
+        this.maxLifespan = 300;
+    }
+    
+    appear(){
+        this.lifespan = this.maxLifespan;
+        this.alpha = 1;
+    }
+    
+    draw(){
+        if (this.lifespan > 0){
+            ctx.strokeStyle = this.color;
+            ctx.lineWidth = 5;
+            ctx.globalAlpha = this.alpha;
+            roundRect(ctx, this.x, this.y, this.width, this.height, leftRadius = 8, rightRadius = 8, fill = false, stroke = true);
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = 1;
+            this.lifespan = Math.max(this.lifespan - BASE_GAME_SPEED, 0); 
+            this.alpha = Math.max(this.lifespan/this.maxLifespan, 0);
+        }
     }
 }
