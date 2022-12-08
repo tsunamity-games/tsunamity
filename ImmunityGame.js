@@ -266,6 +266,7 @@ function drawField(gameOver=false){
     pause.draw();
     speed_up.draw();
     speed_down.draw();
+    moneyHighlighter.draw();
     shops.forEach((shop) => {shop.pockets.forEach((pocket) => {pocket.draw();})})
     
     // Setting the font multiple times apparently hinders performance
@@ -351,20 +352,6 @@ function stopGame(why, tutorialParams = undefined){
                     tutorialParams.x + TUTORIAL_WINDOW_TEXT_OFFSET, 
                     tutorialParams.y + TUTORIAL_WINDOW_TEXT_OFFSET + (i * TUTORIAL_WINDOW_LINE_HEIGHT));
 
-        // draw OK button
-//        ctx.fillText("OK",
-//                     tutorialParams.x + TUTORIAL_WINDOW_WIDTH - TUTORIAL_WINDOW_OK_X_OFFSET,
-//                     tutorialParams.y + windowHeight - TUTORIAL_WINDOW_OK_Y_OFFSET);
-//
-//        ctx.strokeStyle = wavesBackColor;
-//        roundRect(ctx,
-//                  tutorialParams.okButtonX,
-//                  tutorialParams.okButtonY,
-//                  (48/1440)*fieldWidth,
-//                  (45/1080)*fieldHeight,
-//                  6, 6, false, true, 6, 6)
-        // ctx.strokeRect(tutorialParams.x + TUTORIAL_WINDOW_WIDTH - 2 * TUTORIAL_WINDOW_TEXT_OFFSET,
-        //                tutorialParams.y + TUTORIAL_WINDOW_HEIGHT - TUTORIAL_WINDOW_TEXT_OFFSET, 50, 50);
         okButton.draw();
     } else {
         if (why == "Game Over" && !gameOverScreenDrawn){
@@ -623,6 +610,7 @@ var inplayBacteriaColorsIndices;
 var inplayVirusesColorsIndices;
 var bacterialColorProbs;
 var viralColorProbs;
+var moneyHighlighter;
 
 var bacteria;
 var hiv_particles;
@@ -753,6 +741,7 @@ function setupGame(tutorial=false){
     pauseTrue = false;
     gameOverScreenDrawn = false;
     historyObject = new GameHistory();
+    moneyHighlighter = new MoneyHighlighter()
     reset = new ResetButton("red", 
                             fieldWidth*(1321.26/1440), 
                             (topMenuHeight-homeHeight)/2, 
@@ -889,11 +878,14 @@ $("#field").click(function(event){
             // If B or T-lymphocyte is clicked, suggest upgrade
             try{immunityCells.forEach((cell) => {
                 if ((cell instanceof BLymphocyte || cell instanceof TLymphocyte) && cell.mode != "memory"){
-                    if (cell.label.active && cell.label.isIntersected(x, y) && money >= cell.upgradePrice){
+                    if (cell.label.active && cell.label.isIntersected(x, y)){
+                        if (money >= cell.upgradePrice){
                         money -= cell.upgradePrice;
                         cell.upgrade();
+                        } else {
+                            moneyHighlighter.appear();
+                        }
                         throw 'Break';
-
                     }
                     else if (cell.isIntersected(x, y) && cell.label.upgradeAvailable){
                         cell.label.active = true;     
@@ -990,6 +982,8 @@ $("body").keydown(function(event){
                 if (cell.upgradePrice <= money){
                     money -= cell.upgradePrice;
                     cell.upgrade();                    
+                } else {
+                    moneyHighlighter.appear();
                 }
             })
     }       
