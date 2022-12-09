@@ -1249,7 +1249,7 @@ handleTutorialState = function(tutorialState) {
             break;
         case 20:
             waitingForClick = false;
-            text = texts["tutorial"]["22"][language];
+            text = texts["tutorial"]["20"][language];
             stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;

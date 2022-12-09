@@ -261,6 +261,7 @@ class ResetButton extends Button{
     resetGame(){
         gameStart = true;
         gameOverTrue = false;
+        tutorialState = 0;
     }
 }
 class ART extends Button{
