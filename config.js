@@ -348,15 +348,20 @@ var texts = {
                    "купить побольше"]},
         
         44: {eng: ["The tutorial ends now.", 
-                   "A real game starts now", 
+//                   "A real game starts now", 
                    "", 
-                   "Continue defending the organism.", 
-                   "You are doing very well :)"],
+                   "Now try yourself in a real game!"
+//                   "Continue defending the organism.", 
+//                   "You are doing very well :)"
+                  ],
              rus: ["На этом обучение закончено.", 
-                   "Дальше начинается настоящая игра",
+//                   "Дальше начинается настоящая игра",
                    "", 
-                   "Продолжай защищать организм.", 
-                   "У тебя отлично получается!"]},
+//                   "Продолжай защищать организм.", 
+//                   "У тебя отлично получается!"
+                   "Теперь попробуй свои силы", 
+                   "в настоящей игре!"
+                  ]},
     }
 
 }    

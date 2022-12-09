@@ -343,7 +343,6 @@ function stopGame(why, tutorialParams = undefined){
         let windowHeight = (tutorialParams.height === undefined) ? TUTORIAL_WINDOW_HEIGHT : tutorialParams.height;
         
         roundRect(ctx, tutorialParams.x, tutorialParams.y, TUTORIAL_WINDOW_WIDTH, windowHeight, leftRadius=20, rightRadius=20, fill=true, stroke=false);
-//        ctx.fillRect(tutorialParams.x, tutorialParams.y, TUTORIAL_WINDOW_WIDTH, windowHeight);
 
         ctx.fillStyle = wavesBackColor;
         ctx.font = "18px Rubik One";
@@ -1043,9 +1042,8 @@ presetTutorialState = function(tutorialState) {
             currentAntibioticsBought = historyObject.antibioticsBought;
             break;
         case 29:
-            console.log("viruses");
             viruses.forEach((virus) => {
-                drawBlackScreen(BLACK_SCREEN_ALPHA, virus.host.x, virus.host.y,
+                drawBlackScreen(BLACK_SCREEN_ALPHA/viruses.length, virus.host.x, virus.host.y,
                  virus.host.size, virus.host.size, virus.host.size / 5); 
             })
             break;
@@ -1056,8 +1054,20 @@ presetTutorialState = function(tutorialState) {
         case 32:
             currentWave = wave;
             break;
+        case 33:
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[1].x, shops[1].y, shops[1].width, shops[1].height, 10);
+            break;
         case 36:
             currentVaccinesBought = historyObject.vaccinesBought;
+            break;
+        case 39:
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[4].x, shops[4].y, 
+                    shops[4].width, shops[4].height, 10);
+            break;
+        case 41:
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[5].x, shops[5].y, 
+                    shops[5].width, shops[5].height, 10);
             break;
         case 42:
             let length = randomInteger(MIN_HELMINT_LENGTH, MAX_HELMINT_LENGTH);
@@ -1352,6 +1362,9 @@ handleTutorialState = function(tutorialState) {
                 tutorialState += 1;
             }
             playGame(tutorial=true);
+            if (tutorialState > 32){
+                presetTutorialState(tutorialState);
+            }
             break;
         case 33:
             waitingForClick = false;
@@ -1387,19 +1400,24 @@ handleTutorialState = function(tutorialState) {
             break;
         case 37:
             let step37Params = {x: TUTORIAL_WINDOW_PARAMS.x,
-                              y: TUTORIAL_WINDOW_PARAMS.y,
-                              height: 350 / 1068 * fieldHeight}
+                                y: TUTORIAL_WINDOW_PARAMS.y,
+                                height: 350 / 1068 * fieldHeight,
+                               }
+            okButton.y = TUTORIAL_WINDOW_PARAMS.y + 350 / 1068 * fieldHeight - TUTORIAL_WINDOW_BUTTON_Y_OFFSET;
+
             waitingForClick = false;
             text = texts["tutorial"]["37"][language];
             stopGame(text, step37Params);
             waitingForClick = true;
             break;
         case 38:
+            okButton.y = TUTORIAL_WINDOW_PARAMS.okButtonY;
+            
             waitingForClick = false;
             playGame(tutorial=true);
             if(T_LYMPHOCYTE_SHOP.pockets.length > 0) {
                 tutorialState += 1
-                playGame(tutorial=true);
+                presetTutorialState(tutorialState);
             };
             break;
         case 39:
@@ -1407,20 +1425,21 @@ handleTutorialState = function(tutorialState) {
             let step39Params = {x: TUTORIAL_WINDOW_PARAMS.x,
                 y: TUTORIAL_WINDOW_PARAMS.y,
                 height: 350 / 1068 * fieldHeight}
-
+            okButton.y = TUTORIAL_WINDOW_PARAMS.y + 350 / 1068 * fieldHeight - TUTORIAL_WINDOW_BUTTON_Y_OFFSET;
             text = texts["tutorial"]["39"][language];
             stopGame(text, step39Params);
             waitingForClick = true;
             break;
         case 40:
+            okButton.y = TUTORIAL_WINDOW_PARAMS.okButtonY;
             waitingForClick = false;
             playGame(tutorial=true);
             drawBlackScreen(BLACK_SCREEN_ALPHA, shops[4].x, shops[4].y, shops[4].width, shops[4].height, 10);
             
             let helpers = immunityCells.filter((cell) => cell instanceof THelper);
             if(helpers.length > 0) {
-                tutorialState += 1
-                playGame(tutorial=true);
+                tutorialState += 1;
+                presetTutorialState(tutorialState);
             };
             break;
         case 41:
@@ -1455,8 +1474,7 @@ handleTutorialState = function(tutorialState) {
             waitingForClick = true;
             break;
         case 45:
-            waitingForClick = false;
-            tutorialState += 1;
+            gameState = "menu";
             break;
         default:
             playGame(tutorial=true);
