@@ -107,20 +107,21 @@ function roundRect(ctx, x, y, width, height, leftRadius, rightRadius, fill = fal
     }
 
 function drawBlackScreen(alpha, highlight_x, highlight_y, highlight_width, highlight_height, radius) {
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, fieldWidth, fieldHeight);
+    if(!pauseTrue) { // Drawing with pause causes the whole screen to turn black
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, fieldWidth, fieldHeight);
 
-    ctx.fillStyle = "white";
-    roundRect(ctx, highlight_x, highlight_y, highlight_width, highlight_height,
-         leftRadius=radius, rightRadius=radius, fill=true);
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = "#DC9E00";
-    ctx.lineWidth = 5;
-    roundRect(ctx, highlight_x, highlight_y, highlight_width, highlight_height,
-         leftRadius=radius, rightRadius=radius, fill=false, stroke=true);
-    ctx.lineWidth = 1;
-    
+        ctx.fillStyle = "white";
+        roundRect(ctx, highlight_x, highlight_y, highlight_width, highlight_height,
+            leftRadius=radius, rightRadius=radius, fill=true);
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = "#DC9E00";
+        ctx.lineWidth = 5;
+        roundRect(ctx, highlight_x, highlight_y, highlight_width, highlight_height,
+            leftRadius=radius, rightRadius=radius, fill=false, stroke=true);
+        ctx.lineWidth = 1;
+    }
 }
 
 //--------OTHER SUPPORT----------
