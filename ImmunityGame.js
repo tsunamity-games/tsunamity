@@ -638,6 +638,7 @@ var gameState = "menu";
 // Tutorial vars
 var currentAntibioticsBought;
 var currentVaccinesBought;
+var currentARTBought;
 var currentWave;
 
 const MENU_BUTTONS = [
@@ -1076,6 +1077,15 @@ presetTutorialState = function(tutorialState) {
             let delay = Math.round(health*HELMINT_DELAY_HEALTH_MULTIPLIER + randomUniform(-HELMINT_DELAY_NOISE, HELMINT_DELAY_NOISE));
             helmintes.push(new Helmint(-100, randomUniform(playableFieldY + 15, playableFieldHeight - 15), health, health, delay, width, length));
             break;
+        case 45:
+            currentARTBought = historyObject.artBought;
+            console.log("HIV:" + hiv_particles);
+            hiv_particles.push(new HIV(HIV_IMAGE, 6, randomUniform(playableFieldY + 15, playableFieldY+playableFieldHeight-15)));
+            console.log("HIV:" + hiv_particles);    
+            break;
+        case 47:
+            currentWave = wave;
+            break;
         default:
             break;
     }
@@ -1474,8 +1484,34 @@ handleTutorialState = function(tutorialState) {
             waitingForClick = true;
             break;
         case 45:
-            gameState = "menu";
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, antibioticsX - 5, ARTY - 5, 
+                buttonWidth + 10, buttonHeight + 10, 10);
+
+            if(historyObject.artBought > currentARTBought) {
+                tutorialState += 1;
+            }
             break;
+        case 46:
+            text = texts["tutorial"][tutorialState][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 47:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            if(wave > currentWave + 3) {
+                tutorialState += 1;
+            }
+            break;
+        case 48:
+            text = texts["tutorial"][tutorialState][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 49:
+            gameState = "menu";
         default:
             playGame(tutorial=true);
             break;

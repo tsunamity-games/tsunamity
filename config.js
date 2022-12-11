@@ -346,8 +346,32 @@ var texts = {
                    "",
                    "Подсказка: лучше сразу", 
                    "купить побольше"]},
+
+        44: {
+            eng: ["Rarely, the body can become infected by HIV.",
+                  "This virus infects T-helpers,",
+                  "reducing immunity",
+                  "",
+                  "It is almost impossible to be cured from HIV",
+                  "but it can be constrained by periodic using",
+                  "of antiretroviral therapy (A.R.T.)"
+                  ],
+            rus: ["Иногда может случиться неприятность и",
+                  "организм станет заражён ВИЧ. Этот вирус",
+                  "поражает Т-хелперы, снижая иммунитет",
+                  "",
+                  "Вылечиться от ВИЧ почти невозможно,",
+                  "но его можно сдержать, постоянно принимая",
+                  "антиретровирусную терапию"
+                ]
+        },
+
+        46: {
+            eng: ["Great job!", "", "Keep protecting the body"],
+            rus: ["Отличная работа!", "", "Продолжай защищать организм"]
+        },
         
-        44: {eng: ["The tutorial ends now.", 
+        48: {eng: ["You completed the tutorial.", 
 //                   "A real game starts now", 
                    "", 
                    "Now try yourself in a real game!"
