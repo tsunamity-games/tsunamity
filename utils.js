@@ -194,3 +194,18 @@ function unsecuredCopyToClipboard(text) {
   document.body.removeChild(textArea);
 }
 
+// Extract GET params
+function getSearchParameters() {
+    var parameters = window.location.search.substr(1);
+    return parameters != null && parameters != "" ? transformToAssocArray(parameters) : {};
+}
+
+function transformToAssocArray( parameters ) {
+    var params = {};
+    var prmarr = parameters.split("&");
+    for ( var i = 0; i < prmarr.length; i++) {
+        var tmparr = prmarr[i].split("=");
+        params[tmparr[0]] = tmparr[1];
+    }
+    return params;
+}

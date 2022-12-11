@@ -641,6 +641,12 @@ var currentVaccinesBought;
 var currentARTBought;
 var currentWave;
 
+// Try to get language
+let linkParams = getSearchParameters();
+if(linkParams["language"] == "rus") {
+    language = "rus"
+};
+
 const MENU_BUTTONS = [
     new Button(MAIN_MENU_RIGHT_PANEL_COLOR, MAIN_MENU_BUTTONS_X, MAIN_MENU_BUTTONS_Y,
            MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, texts["menu"]["startGame"][language], false, "", "startGame"),
