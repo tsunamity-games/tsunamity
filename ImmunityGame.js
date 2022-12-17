@@ -488,6 +488,9 @@ function formNewWave(waveNumber, oldBac, oldVir, oldHel, oldHIV){
     } else {
         coins = Math.round(25*waveNumber + 0.025*waveNumber**2);
     }
+    if ((gameState == "tutorial") && (26 <= tutorialState) && (tutorialState <= 28)){
+        coins *= 10;
+    }
     if (waveNumber > 3 && randomUniform(0, 1) < PROB_TO_ADD_NEW_COLOR_BACTERIA){
         var newIndex = (inplayBacteriaColorsIndices[inplayBacteriaColorsIndices.length-1] + 1) % BACTERIA_COLORS.length;
         if (!inplayBacteriaColorsIndices.includes(newIndex)){
@@ -532,7 +535,7 @@ function formNewWave(waveNumber, oldBac, oldVir, oldHel, oldHIV){
 
 function chooseEnemy(bacList, virList, helList, hivList, coins, waveNumber){
     var candidates = [Bacterium];
-    if (((waveNumber > 4) && (gameState == "game")) || ((waveNumber > 8) && (gameState == "tutorial"))){
+    if (((waveNumber > 4) && (gameState == "game")) || ((gameState == "tutorial") && (tutorialState >= 28) && (waveNumber > 8))){
         candidates.push(Virus);
     }
     if (waveNumber > 10){
@@ -1046,6 +1049,11 @@ presetTutorialState = function(tutorialState) {
         case 21:
             currentWave = wave;
         case 25:
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA / 2, 
+                            antibioticsX - 5, topAntibioticY - 10, buttonWidth + 10, 
+                            (buttonHeight + spaceBetweenAntibioticButtons)*BACTERIA_COLORS.length, 10);
+
             currentAntibioticsBought = historyObject.antibioticsBought;
             break;
         case 29:
@@ -1302,6 +1310,11 @@ handleTutorialState = function(tutorialState) {
                 tutorialState += 1
             };
             playGame(tutorial=true);
+            if (tutorialState == 24){
+                drawBlackScreen(BLACK_SCREEN_ALPHA, 
+                                B_LYMPHOCYTE_SHOP.x + B_LYMPHOCYTE_SHOP.width*0.0486,
+                                shopY + B_LYMPHOCYTE_SHOP.height - B_LYMPHOCYTE_SHOP.height*0.02, (B_LYMPHOCYTE_SHOP.width*0.9028)/BACTERIA_COLORS.length, 2.65*(B_LYMPHOCYTE_SHOP.width*0.9028)/BACTERIA_COLORS.length, 10)
+            }
             break;
         case 24:
             waitingForClick = false;
@@ -1410,7 +1423,7 @@ handleTutorialState = function(tutorialState) {
             playGame(tutorial=true);
             drawBlackScreen(BLACK_SCREEN_ALPHA / 2, antibioticsX - 5, topVaccineY - 10, buttonWidth + 10, 
                             (buttonHeight + spaceBetweenAntibioticButtons)*BACTERIA_COLORS.length, 10);
-            if(historyObject.vaccinesBought > currentVaccinesBought) {
+            if (immunityCells.filter((cell)=> (cell instanceof TLymphocyte) && (cell.label.upgradeAvailable)).length > 0) {
                 tutorialState += 1;
             }
             break;
