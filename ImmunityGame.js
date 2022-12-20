@@ -821,6 +821,7 @@ $("#field").click(function(event){
             if(MENU_BUTTONS[3].isIntersected(x, y)) {
                 MENU_BUTTONS[0].textLanguageLabel = "back";
                 MENU_BUTTONS[1].textLanguageLabel = "bitcoinWallet";
+                MENU_BUTTONS[2].textLanguageLabel = "kofi";
                 gameStart = false;
                 gameState = "donate";
             }
@@ -851,6 +852,9 @@ $("#field").click(function(event){
                 gameState = "menu";
                 MENU_BUTTONS[0].textLanguageLabel = "startGame";
                 MENU_BUTTONS[1].textLanguageLabel = "tutorial";
+                MENU_BUTTONS[2].textLanguageLabel = "about";
+                
+                
             }
             if(MENU_BUTTONS[1].isIntersected(x, y)) {
                 unsecuredCopyToClipboard(bitcoinAddress);
@@ -861,8 +865,12 @@ $("#field").click(function(event){
 //                }).catch(err => {
 //                    alert(texts["menu"]["errorCopied"][language] + ": " + bitcoinAddress);
 //                });
-    
             }
+            
+            if(MENU_BUTTONS[2].isIntersected(x, y)) {
+                window.open("https://ko-fi.com/tsunamity", "_blank");
+            }
+            
             break;
             
         default:  // game and tutorial
@@ -1805,6 +1813,8 @@ function drawDonate(){
 
     MENU_BUTTONS[0].draw();
     MENU_BUTTONS[1].draw();
+    MENU_BUTTONS[2].draw();
+    
     
 
     

@@ -24,6 +24,7 @@ var texts = {
         anastasiaTroshina: {eng: "Anastasia Troshina", rus: "Анастасия Трошина"},
         donate: {eng: "Donate", rus: "Задонатить"},
         bitcoinWallet: {eng: "Bitcoin Wallet", rus: "Биткоин"},
+        kofi: {eng: "ko-fi", rus: "ko-fi"},
         copied: {eng: "Text copied to clipboard", rus: "Скопировано в буфер обмена"},
         errorCopied: {eng: "Error in copying text", rus: "Ошибка при копировании"}
         
