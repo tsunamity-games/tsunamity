@@ -637,6 +637,8 @@ var waitingForClick = false;
 var okButton;
 var blackScreenDrawn = false;
 var gameState = "menu";
+let secondsPassed;
+let oldTimeStamp;
 
 // Tutorial vars
 var currentAntibioticsBought;
@@ -1824,7 +1826,7 @@ function drawDonate(){
 }
 
 
-var game = setInterval(function(){
+function gameLoop(timeStamp) {
     switch(gameState) {
         case "game":
             playGame();
@@ -1844,7 +1846,22 @@ var game = setInterval(function(){
         default:
             break;
     }
-}, 1);
+    secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+    oldTimeStamp = timeStamp;
+
+    // Calculate fps
+    fps = Math.round(1 / secondsPassed);
+
+    // Draw number to the screen
+    ctx.fillStyle = "#D9D9D9";
+    ctx.font = "14px Rubik One";
+    ctx.textAlign = "left";    
+    ctx.fillText("FPS: " + fps, rightMenuX +rightMenuWidth*(1-0.675)/2 + rightMenuWidth*0.675*0.2, 0.97 * fieldHeight);
+
+    window.requestAnimationFrame(gameLoop);
+};
+
+window.requestAnimationFrame(gameLoop);
 
 function stopAllBacteria() {
     bacteria.forEach((bacterium) => {
