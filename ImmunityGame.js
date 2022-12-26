@@ -742,6 +742,8 @@ function setupGame(tutorial=false){
     wave = 1;
     if(!tutorial) {
         [bacteria, viruses, helmintes, hiv_particles] = formNewWave(wave, bacteria, viruses, helmintes, hiv_particles);
+        immunityCells.push(new Neutrophil(fieldWidth / 2, fieldHeight / 2));
+        immunityCells.push(new NaturalKiller(tissueCells[0].x, tissueCells[0].y));
     } else {
         bacteria.push(new Bacterium("first", 0, fieldHeight / 2, bacteriaRadius, BASE_BACTERIAL_HEALTH, BACTERIUM_PRICE));
     }
