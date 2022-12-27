@@ -119,8 +119,8 @@ class ImmuneCell extends MovingObject {
                 this.xSpeed = 0;
                 this.ySpeed = 0;
             }
-            this.xSpeed += randomUniform(-this.baseSpeed * 2, this.baseSpeed * 2);
-            this.ySpeed += randomUniform(-this.baseSpeed * 2, this.baseSpeed * 2);
+            this.xSpeed += randomUniform(-1, 1);
+            this.ySpeed += randomUniform(-1, 1);
         }
     }
 
