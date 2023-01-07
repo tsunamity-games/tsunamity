@@ -613,7 +613,6 @@ var inplayBacteriaColorsIndices;
 var inplayVirusesColorsIndices;
 var bacterialColorProbs;
 var viralColorProbs;
-var moneyHighlighter;
 
 var bacteria;
 var hiv_particles;
@@ -625,11 +624,7 @@ var gameOverTrue;
 var pauseTrue;
 var pauseScreenDrawn;
 var gameOverScreenDrawn;
-var pause;
 var historyObject;
-var reset;
-var speed_up;
-var speed_down;
 var fullWaveSize;
 var artObj;
 var tutorialState = 0;
@@ -698,6 +693,41 @@ shops = [
 
     
 ];
+
+const moneyHighlighter = new MoneyHighlighter()
+const reset = new ResetButton("red", 
+    fieldWidth*(1321.26/1440), 
+    (topMenuHeight-homeHeight)/2, 
+    topMenuHeight*0.5, 
+    topMenuHeight*0.5, "R", false, RESET_IMAGE);
+const toMainMenu = new Button("white", 
+    fieldWidth*(1370.03/1440), 
+    (topMenuHeight-homeHeight)/2,
+    topMenuHeight*0.5,
+    topMenuHeight*0.5, 
+    "Q", false, HOME_IMAGE);
+const pause = new Button("white",
+    fieldWidth*(1269.03/1440),
+    (topMenuHeight-topMenuHeight*0.5)/2,
+    topMenuHeight*0.5,
+    topMenuHeight*0.5,
+    "Q", false, 
+    PAUSE_IMAGE);
+const speed_up = new Button("white",
+    speedRectangleX + speedRectangleWidth + fieldWidth*0.0042,
+    speedRectangleY + speedRectangleHeight/2 - speedRectangleHeight*0.625/2,
+    wavesRectangleWidth*0.14,
+    speedRectangleHeight*0.625,
+    "", false, 
+    SPEED_UP_IMAGE);
+const speed_down = new Button("white",
+    speedRectangleX - fieldWidth*0.0042 - wavesRectangleWidth*0.14,
+    speedRectangleY + speedRectangleHeight/2 - speedRectangleHeight*0.625/2,
+    wavesRectangleWidth*0.14,
+    speedRectangleHeight*0.625,
+    "", false, 
+    SPEED_DOWN_IMAGE);
+
       
 function setupGame(tutorial=false){
     if (language == "eng"){
@@ -755,40 +785,7 @@ function setupGame(tutorial=false){
     pauseTrue = false;
     gameOverScreenDrawn = false;
     historyObject = new GameHistory();
-    moneyHighlighter = new MoneyHighlighter()
-    reset = new ResetButton("red", 
-                            fieldWidth*(1321.26/1440), 
-                            (topMenuHeight-homeHeight)/2, 
-                            topMenuHeight*0.5, 
-                            topMenuHeight*0.5, "R", false, RESET_IMAGE);
-    toMainMenu = new Button("white", 
-                            fieldWidth*(1370.03/1440), 
-                            (topMenuHeight-homeHeight)/2,
-                            topMenuHeight*0.5,
-                            topMenuHeight*0.5, 
-                            "Q", false, HOME_IMAGE);
-    pause = new Button("white",
-                       fieldWidth*(1269.03/1440),
-                       (topMenuHeight-topMenuHeight*0.5)/2,
-                       topMenuHeight*0.5,
-                       topMenuHeight*0.5,
-                       "Q", false, 
-                       PAUSE_IMAGE);
-    speed_up = new Button("white",
-                       speedRectangleX + speedRectangleWidth + fieldWidth*0.0042,
-                       speedRectangleY + speedRectangleHeight/2 - speedRectangleHeight*0.625/2,
-                       wavesRectangleWidth*0.14,
-                       speedRectangleHeight*0.625,
-                       "", false, 
-                       SPEED_UP_IMAGE);
-    speed_down = new Button("white",
-                       speedRectangleX - fieldWidth*0.0042 - wavesRectangleWidth*0.14,
-                       speedRectangleY + speedRectangleHeight/2 - speedRectangleHeight*0.625/2,
-                       wavesRectangleWidth*0.14,
-                       speedRectangleHeight*0.625,
-                       "", false, 
-                       SPEED_DOWN_IMAGE);
-    
+
     livesLeft = tutorial ? 99 : 10;
     money = tutorial ? 5 : STARTING_MONEY;
 }
