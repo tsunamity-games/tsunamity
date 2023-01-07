@@ -286,7 +286,7 @@ class ART extends Button{
     
     draw(){
         super.draw();
-        this.course = Math.max(this.course - 1*BASE_GAME_SPEED, 0);
+        this.course = Math.max(this.course - gameSpeed, 0);
         if (this.course === 0){
             this.available = true;
             this.texture = ART_IMAGE;
@@ -383,7 +383,7 @@ class MoneyHighlighter{
             roundRect(ctx, this.x, this.y, this.width, this.height, leftRadius = 8, rightRadius = 8, fill = false, stroke = true);
             ctx.lineWidth = 1;
             ctx.globalAlpha = 1;
-            this.lifespan = Math.max(this.lifespan - BASE_GAME_SPEED, 0); 
+            this.lifespan = Math.max(this.lifespan - gameSpeed, 0); 
             this.alpha = Math.max(this.lifespan/this.maxLifespan, 0);
         }
     }

@@ -489,7 +489,12 @@ const speedRectangleX = 0.456*fieldWidth;
 const speedRectangleY = wavesRectangleY;
 let speedRectangleWidth = wavesRectangleWidth;
 const speedRectangleHeight = wavesRectangleHeight;
-var BASE_GAME_SPEED = 3;
+var baseGameSpeed = 3;
+var gameSpeed = 3;
+var displaySpeed = 3;
+var speedStep = 0.5;
+var maxGameSpeed = 10;
+var minGameSpeed = 1;
 
 const PAUSE_IMAGE = new Image();
 PAUSE_IMAGE.src = "./images/pause.png";

@@ -119,7 +119,7 @@ class TissueCell{
     }
     
     draw(){
-        if (this.size < tissueCellSize){this.size = Math.min(this.size + 0.05*BASE_GAME_SPEED, tissueCellSize)};
+        if (this.size < tissueCellSize){this.size = Math.min(this.size + 0.05*gameSpeed, tissueCellSize)};
             
         ctx.drawImage(
             this.texture, 0, 0, 34, 34,

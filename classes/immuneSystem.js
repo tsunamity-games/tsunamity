@@ -77,8 +77,8 @@ class ImmuneCell extends MovingObject {
         this.target = undefined;
         this.realBaseSpeed = baseSpeed;
         this.realDamage = damage;
-        this.baseSpeed = this.realBaseSpeed*BASE_GAME_SPEED;
-        this.damage = this.realDamage*BASE_GAME_SPEED;
+        this.baseSpeed = this.realBaseSpeed * gameSpeed;
+        this.damage = this.realDamage * gameSpeed;
         this.age = 0;
         this.longevity = longevity;
         this.movingout = true;
@@ -89,8 +89,8 @@ class ImmuneCell extends MovingObject {
     }
     
     changeDirection(targetsList, nCandidates=randomTargetNumber) {
-        this.baseSpeed = this.realBaseSpeed*BASE_GAME_SPEED;
-        this.damage = this.realDamage*BASE_GAME_SPEED;
+        this.baseSpeed = this.realBaseSpeed * gameSpeed;
+        this.damage = this.realDamage * gameSpeed;
         if (this.y < playableFieldY + this.radius && this.x < spleen.x) {
             // Get away from shop
             this.xSpeed = randomUniform(-0.5, 0.5);
@@ -145,7 +145,7 @@ class ImmuneCell extends MovingObject {
     }
     live(){
         if (this.y > playableFieldY){
-            this.age += 1*BASE_GAME_SPEED;
+            this.age += gameSpeed;
         }
     }
 }
@@ -325,7 +325,7 @@ class BLymphocyte extends ImmuneCell {
         }
         if (this.mode === "plasmatic"){
             this.y = clip(this.y, playableFieldY+this.radius, playableFieldY+playableFieldHeight-this.radius);
-            this.counter += 1*BASE_GAME_SPEED;
+            this.counter += gameSpeed;
             if (this.counter > ANTIBODY_PRODUCTION_FREQUENCY)
             {
                 this.counter = 0;
@@ -335,13 +335,13 @@ class BLymphocyte extends ImmuneCell {
     }
 
     goToSpleen(){
-        this.baseSpeed = this.realBaseSpeed*BASE_GAME_SPEED;
+        this.baseSpeed = this.realBaseSpeed * gameSpeed;
         if (this.y < (shopY + shopHeight) + (playableFieldY-(shopY + shopHeight))/2) {
             // Get away from shop
             this.xSpeed = 0;
             this.ySpeed = this.baseSpeed * 3;}
         else if (this.y >= shopHeight){
-            this.xSpeed = 0.5*BASE_GAME_SPEED;
+            this.xSpeed = 0.5 * gameSpeed;
             this.ySpeed = 0;
         } else{
             super.changeDirection()
@@ -572,7 +572,7 @@ class THelper extends ImmuneCell {
 
         // Buy the cell once in a cooldown
         if(this.timeFromTheLastPurchase < this.cooldown) {
-            this.timeFromTheLastPurchase += 1*BASE_GAME_SPEED;
+            this.timeFromTheLastPurchase += gameSpeed;
         }
         else {
             this.timeFromTheLastPurchase = 0;

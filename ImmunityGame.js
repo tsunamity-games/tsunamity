@@ -199,10 +199,10 @@ function drawField(gameOver=false){
     ctx.textBaseline = "bottom";
     ctx.textAlign = "center";
     var text;
-    if (BASE_GAME_SPEED != 10){
-        text = texts["game"]["speed"][language] + " " + BASE_GAME_SPEED.toFixed(1);
+    if (displaySpeed != 10){
+        text = texts["game"]["speed"][language] + " " + displaySpeed.toFixed(1);
     } else {
-        text = texts["game"]["speed"][language] + " " + Math.round(BASE_GAME_SPEED);
+        text = texts["game"]["speed"][language] + " " + Math.round(displaySpeed);
     }
     ctx.fillText(text, 
              speedRectangleX+speedRectangleWidth*0.5, speedRectangleY+speedRectangleHeight*0.8);
@@ -925,10 +925,12 @@ function handleGameClick(x, y) {
     }
     
     if(speed_up.isIntersected(x, y)) {
-        BASE_GAME_SPEED = Math.min(10, BASE_GAME_SPEED+0.5);
+        displaySpeed = Math.min(10, displaySpeed+0.5);
+        baseGameSpeed = Math.min(maxGameSpeed * speedUpCoefficient, baseGameSpeed + speedStep * speedUpCoefficient);
     }
     if(speed_down.isIntersected(x, y)) {
-        BASE_GAME_SPEED = Math.max(1, BASE_GAME_SPEED-0.5);
+        displaySpeed = Math.max(1, displaySpeed-0.5);
+        baseGameSpeed = Math.max(minGameSpeed, baseGameSpeed - speedStep * speedUpCoefficient);
     }
     
     if(gameState == "tutorial" && waitingForClick && okButton.isIntersected(x, y)) {
@@ -1707,7 +1709,7 @@ function playGame(tutorial=false) {
         fullWaveSize = bacteria.length;
         checkAntibiotics();
     }
-    money += baseIncome * BASE_GAME_SPEED * tissueCells.filter((cell) => cell.virus == null).length/tissueCells.length;
+    money += baseIncome * gameSpeed * tissueCells.filter((cell) => cell.virus == null).length/tissueCells.length;
         
     
     ctx.lineWidth = 1;
@@ -1823,10 +1825,21 @@ function drawDonate(){
     MENU_BUTTONS[1].draw();
     MENU_BUTTONS[2].draw();
     
-    
-
-    
     writeAuthorInfo();
+}
+
+function adaptGameSpeed(fps) {
+    if(fps < 20) {
+        speedUpCoefficient = 3;
+    } else if(fps < 40) {
+        speedUpCoefficient = 2;
+    } else if(fps < 80) {
+        speedUpCoefficient = 1;
+    } else {
+        speedUpCoefficient = 2 / 3;
+    }
+
+    gameSpeed = baseGameSpeed * speedUpCoefficient;
 }
 
 
@@ -1855,6 +1868,7 @@ function gameLoop(timeStamp) {
 
     // Calculate fps
     fps = Math.round(1 / secondsPassed);
+    adaptGameSpeed(fps);
 
     // Draw number to the screen
     ctx.fillStyle = "#D9D9D9";
