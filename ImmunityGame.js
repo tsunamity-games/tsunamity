@@ -793,6 +793,154 @@ function setupGame(tutorial=false){
     money = tutorial ? 5 : STARTING_MONEY;
 }
 
+function handleMenuClick(x, y) {
+    if(MENU_BUTTONS[0].isIntersected(x, y)) {
+        gameStart = true;
+        setupGame();
+        gameState = "game";
+    }
+    
+    if(MENU_BUTTONS[1].isIntersected(x, y)) {
+        gameStart = true;
+        tutorialState = 0;
+        setupGame(tutorial=true);
+        gameState = "tutorial";
+    }
+    
+    if(MENU_BUTTONS[2].isIntersected(x, y)) {
+        MENU_BUTTONS[0].textLanguageLabel = "back";
+        gameStart = false;
+        gameState = "about";
+    }
+    
+    if(MENU_BUTTONS[3].isIntersected(x, y)) {
+        MENU_BUTTONS[0].textLanguageLabel = "back";
+        MENU_BUTTONS[1].textLanguageLabel = "bitcoinWallet";
+        MENU_BUTTONS[2].textLanguageLabel = "kofi";
+        gameStart = false;
+        gameState = "donate";
+    }
+    
+    if(LANGUAGE_BUTTONS[0].isIntersected(x, y)) {
+        gameStart = false;
+        language = "rus";
+        LANGUAGE_BUTTONS[0].active = true;
+        LANGUAGE_BUTTONS[1].active = false;
+        
+    }
+    if(LANGUAGE_BUTTONS[1].isIntersected(x, y)) {
+        gameStart = false;
+        language = "eng";
+        LANGUAGE_BUTTONS[0].active = false;
+        LANGUAGE_BUTTONS[1].active = true;
+    }
+};
+
+function handleAboutClick(x, y) {
+    if(MENU_BUTTONS[0].isIntersected(x, y)) {
+        gameState = "menu";
+        MENU_BUTTONS[0].textLanguageLabel = "startGame";
+    }
+};
+
+function handleDonateClick(x, y) {
+    if(MENU_BUTTONS[0].isIntersected(x, y)) {
+        gameState = "menu";
+        MENU_BUTTONS[0].textLanguageLabel = "startGame";
+        MENU_BUTTONS[1].textLanguageLabel = "tutorial";
+        MENU_BUTTONS[2].textLanguageLabel = "about";
+        
+        
+    }
+    if(MENU_BUTTONS[1].isIntersected(x, y)) {
+        unsecuredCopyToClipboard(bitcoinAddress);
+        alert(texts["menu"]["copied"][language] + ": " + bitcoinAddress);
+    }
+    
+    if(MENU_BUTTONS[2].isIntersected(x, y)) {
+        window.open("https://ko-fi.com/tsunamity", "_blank");
+    }
+}
+
+function handleGameClick(x, y) {
+    // If any of the shops clicked, try to buy cell;
+    shops.forEach((shop) => {
+        if(shop.isIntersected(x, y)) {
+            shop.buy();
+        }
+        shop.pockets.forEach((pocket) => {
+            if(pocket.isIntersected(x, y)) {
+                pocket.buy();
+            }
+        })
+    })
+    
+    // If any of the buttons are clicked, do their thing
+    buttons.forEach((button)=>{
+        if (button.isIntersected(x, y)){
+            button.activate();
+        }
+    })
+    
+    // If B or T-lymphocyte is clicked, suggest upgrade
+    try{immunityCells.forEach((cell) => {
+        if ((cell instanceof BLymphocyte || cell instanceof TLymphocyte) && cell.mode != "memory"){
+            if (cell.label.active && cell.label.isIntersected(x, y)){
+                if (money >= cell.upgradePrice){
+                money -= cell.upgradePrice;
+                cell.upgrade();
+                } else {
+                    moneyHighlighter.appear();
+                }
+                throw 'Break';
+            }
+            else if (cell.isIntersected(x, y) && cell.label.upgradeAvailable){
+                cell.label.active = true;     
+                throw 'Break';
+
+            } else {
+                cell.label.active = false;
+            }
+        }
+    })} catch (e) {
+        if (e !== 'Break') 
+            throw e;
+    }
+    
+    if (reset.isIntersected(x, y)){
+        reset.resetGame();
+    }
+
+    if(toMainMenu.isIntersected(x, y)) {
+        gameState = "menu";
+    }
+    
+    if(pause.isIntersected(x, y)) {
+        if (pauseTrue){
+            pause.texture = PAUSE_IMAGE;
+        } else {pause.texture = RESUME_IMAGE;}
+        pauseTrue = !pauseTrue;
+        pauseScreenDrawn = false;
+        ctx.fillStyle = topMenuColor;
+        ctx.fillRect(pause.x, pause.y, pause.width, pause.height);
+        pause.draw();
+        
+    }
+    
+    if(speed_up.isIntersected(x, y)) {
+        BASE_GAME_SPEED = Math.min(10, BASE_GAME_SPEED+0.5);
+    }
+    if(speed_down.isIntersected(x, y)) {
+        BASE_GAME_SPEED = Math.max(1, BASE_GAME_SPEED-0.5);
+    }
+    
+    if(gameState == "tutorial" && waitingForClick && okButton.isIntersected(x, y)) {
+        tutorialState += 1;
+
+        presetTutorialState(tutorialState);
+    }
+}
+
 // Gameplay
 $("#field").click(function(event){
     const WIDTH_RATIO = fieldWidth / $("#field").width();
@@ -803,157 +951,16 @@ $("#field").click(function(event){
 
     switch(gameState) {
         case "menu":
-            if(MENU_BUTTONS[0].isIntersected(x, y)) {
-                gameStart = true;
-                setupGame();
-                gameState = "game";
-            }
-            
-            if(MENU_BUTTONS[1].isIntersected(x, y)) {
-                gameStart = true;
-                tutorialState = 0;
-                setupGame(tutorial=true);
-                gameState = "tutorial";
-            }
-            
-            if(MENU_BUTTONS[2].isIntersected(x, y)) {
-                MENU_BUTTONS[0].textLanguageLabel = "back";
-                gameStart = false;
-                gameState = "about";
-            }
-            
-            if(MENU_BUTTONS[3].isIntersected(x, y)) {
-                MENU_BUTTONS[0].textLanguageLabel = "back";
-                MENU_BUTTONS[1].textLanguageLabel = "bitcoinWallet";
-                MENU_BUTTONS[2].textLanguageLabel = "kofi";
-                gameStart = false;
-                gameState = "donate";
-            }
-            
-            if(LANGUAGE_BUTTONS[0].isIntersected(x, y)) {
-                gameStart = false;
-                language = "rus";
-                LANGUAGE_BUTTONS[0].active = true;
-                LANGUAGE_BUTTONS[1].active = false;
-                
-            }
-            if(LANGUAGE_BUTTONS[1].isIntersected(x, y)) {
-                gameStart = false;
-                language = "eng";
-                LANGUAGE_BUTTONS[0].active = false;
-                LANGUAGE_BUTTONS[1].active = true;
-            }
-            
+            handleMenuClick(x, y);
             break;
         case "about":
-            if(MENU_BUTTONS[0].isIntersected(x, y)) {
-                gameState = "menu";
-                MENU_BUTTONS[0].textLanguageLabel = "startGame";
-            }
+            handleAboutClick(x, y);
             break;
         case "donate":
-            if(MENU_BUTTONS[0].isIntersected(x, y)) {
-                gameState = "menu";
-                MENU_BUTTONS[0].textLanguageLabel = "startGame";
-                MENU_BUTTONS[1].textLanguageLabel = "tutorial";
-                MENU_BUTTONS[2].textLanguageLabel = "about";
-                
-                
-            }
-            if(MENU_BUTTONS[1].isIntersected(x, y)) {
-                unsecuredCopyToClipboard(bitcoinAddress);
-                alert(texts["menu"]["copied"][language] + ": " + bitcoinAddress);
-                // when https is available
-//                navigator.clipboard.writeText(bitcoinAddress).then(() => {
-//                    alert(texts["menu"]["copied"][language] + ": " + bitcoinAddress);
-//                }).catch(err => {
-//                    alert(texts["menu"]["errorCopied"][language] + ": " + bitcoinAddress);
-//                });
-            }
-            
-            if(MENU_BUTTONS[2].isIntersected(x, y)) {
-                window.open("https://ko-fi.com/tsunamity", "_blank");
-            }
-            
+            handleDonateClick(x, y);
             break;
-            
         default:  // game and tutorial
-            // If any of the shops clicked, try to buy cell;
-            shops.forEach((shop) => {
-                if(shop.isIntersected(x, y)) {
-                    shop.buy();
-                }
-                shop.pockets.forEach((pocket) => {
-                    if(pocket.isIntersected(x, y)) {
-                        pocket.buy();
-                    }
-                })
-            })
-            
-            // If any of the buttons are clicked, do their thing
-            buttons.forEach((button)=>{
-                if (button.isIntersected(x, y)){
-                    button.activate();
-                }
-            })
-            
-            // If B or T-lymphocyte is clicked, suggest upgrade
-            try{immunityCells.forEach((cell) => {
-                if ((cell instanceof BLymphocyte || cell instanceof TLymphocyte) && cell.mode != "memory"){
-                    if (cell.label.active && cell.label.isIntersected(x, y)){
-                        if (money >= cell.upgradePrice){
-                        money -= cell.upgradePrice;
-                        cell.upgrade();
-                        } else {
-                            moneyHighlighter.appear();
-                        }
-                        throw 'Break';
-                    }
-                    else if (cell.isIntersected(x, y) && cell.label.upgradeAvailable){
-                        cell.label.active = true;     
-                        throw 'Break';
-
-                    } else {
-                        cell.label.active = false;
-                    }
-                }
-            })} catch (e) {
-                if (e !== 'Break') 
-                    throw e;
-            }
-            
-            if (reset.isIntersected(x, y)){
-                reset.resetGame();
-            }
-
-            if(toMainMenu.isIntersected(x, y)) {
-                gameState = "menu";
-            }
-            
-            if(pause.isIntersected(x, y)) {
-                if (pauseTrue){
-                    pause.texture = PAUSE_IMAGE;
-                } else {pause.texture = RESUME_IMAGE;}
-                pauseTrue = !pauseTrue;
-                pauseScreenDrawn = false;
-                ctx.fillStyle = topMenuColor;
-                ctx.fillRect(pause.x, pause.y, pause.width, pause.height);
-                pause.draw();
-                
-            }
-            
-            if(speed_up.isIntersected(x, y)) {
-                BASE_GAME_SPEED = Math.min(10, BASE_GAME_SPEED+0.5);
-            }
-            if(speed_down.isIntersected(x, y)) {
-                BASE_GAME_SPEED = Math.max(1, BASE_GAME_SPEED-0.5);
-            }
-            
-            if(gameState == "tutorial" && waitingForClick && okButton.isIntersected(x, y)) {
-                tutorialState += 1;
-
-                presetTutorialState(tutorialState);
-            }
+            handleGameClick(x, y);
             break;
     }
     
