@@ -264,6 +264,7 @@ function drawField(gameOver=false){
     reset.draw();
     toMainMenu.draw();  
     pause.draw();
+    speed_up.x = speedRectangleX + speedRectangleWidth + fieldWidth*0.0042;
     speed_up.draw();
     speed_down.draw();
     moneyHighlighter.draw();
