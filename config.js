@@ -49,7 +49,7 @@ var texts = {
     },
     cellNames: {
         Neutrophil: {eng:"Neutrophil", rus: "Нейтрофил"},
-        Macrophage: {eng:"Margophage", rus: "Макрофаг"},
+        Macrophage: {eng:"Macrophage", rus: "Макрофаг"},
         Eosinophile: {eng:"Eosinophil", rus: "Эозинофил"},
         NaturalKiller: {eng:"NK cell", rus: "НК клетка"},
         BLymphocyte: {eng:"B cell", rus: "Б клетка"},
