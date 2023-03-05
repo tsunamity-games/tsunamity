@@ -5,6 +5,9 @@ class Button extends BodyPart {
         this.text = text;
         this.isCircle = isCircle;
         this.textLanguageLabel = textLanguageLabel;
+        this.state = "";
+        if (!this.isCircle)
+            this.text_color = "#E8D9B4";
     }
     
     draw(){
@@ -16,6 +19,19 @@ class Button extends BodyPart {
         }
         else {
             
+            if (this.state == "hover"){
+                this.border_color = "#BE983E";
+                this.text_color = "#2C363E";
+                this.color = "#BE983E";
+            } else if (this.state == "down") {
+                this.border_color = "#E8D9B4";
+                this.text_color = "#2C363E";
+                this.color = "#E8D9B4";
+            } else {
+                this.border_color = "#E8D9B4";
+                this.text_color = "#E8D9B4";
+                this.color = "#2C363E";
+            }
             ctx.fillStyle = this.color;
             ctx.globalAlpha = 0.5;
 
@@ -23,13 +39,11 @@ class Button extends BodyPart {
                 circle(this.x+this.width/2, this.y+this.height/2, this.width/2, true);
             }
             else {
-//                ctx.fillRect(this.x, this.y, this.width, this.height);   
-                ctx.strokeStyle = "#E8D9B4";
+                ctx.strokeStyle = this.border_color;
+                ctx.fillStyle = this.color;
                 ctx.lineWidth = 1;
                 ctx.globalAlpha = 1;
-//                ctx.strokeRect(this.x, this.y, this.width, this.height);
-                roundRect(ctx, this.x, this.y, this.width, this.height, 5, 5, false, true);
-
+                roundRect(ctx, this.x, this.y, this.width, this.height, 5, 5, true, true);
             }
 
             ctx.globalAlpha = 1;
@@ -42,7 +56,7 @@ class Button extends BodyPart {
                     ctx.font = this.height * 0.7 + "px Rubik One"
                 }
                 else {
-                    ctx.fillStyle = "#E8D9B4";
+                    ctx.fillStyle = this.text_color;
                     ctx.font = this.height * 0.3 + "px Rubik One"
                 }
 
@@ -318,24 +332,34 @@ class LangButton extends Button{
     constructor(x, y, width, height, text, active) {
         super("black", x, y, width, height, text);
         this.active = active;
+        this.state = "";
     }
     
     draw(){
         ctx.textAlign = "center";
-        ctx.textBaseline = "middle";    
-        ctx.fillStyle = "#E8D9B4";
-        ctx.strokeStyle = "#E8D9B4";
-        if (this.active){
-            roundRect(ctx, this.x, this.y, this.width, this.height,
-                      10, 10, true,false)
-            
-            ctx.fillStyle = "black";
-            ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
+        ctx.textBaseline = "middle"; 
+        if (this.state == "hover"){
+            this.border_color = "#BE983E";
+            this.text_color = "#2C363E";
+            this.color = "#BE983E";
+        } else if (this.state == "down") {
+            this.border_color = "#E8D9B4";
+            this.text_color = "#2C363E";
+            this.color = "#E8D9B4";}
+        else if (this.active){
+            this.color = "#E8D9B4";
+            this.border_color = "#E8D9B4";
+            this.text_color = "black";
         } else {
-            roundRect(ctx, this.x, this.y, this.width, this.height,
-                      10, 10,false,true)
-            ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
+            this.color = "#2C363E";
+            this.border_color = "#E8D9B4";
+            this.text_color = "#E8D9B4";
         }
+        ctx.fillStyle = this.color;
+        ctx.strokeStyle = this.border_color;
+        roundRect(ctx, this.x, this.y, this.width, this.height, 10, 10, true, true);
+        ctx.fillStyle = this.text_color;
+        ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
         
     }
     
@@ -343,16 +367,30 @@ class LangButton extends Button{
 
 class OKButton extends Button{
     draw(){
-        ctx.strokeStyle = wavesBackColor;
+        if (this.state == "hover"){
+            this.border_color = "#BE983E";
+            this.text_color = "#2C363E";
+            this.color = "#BE983E";
+        } else if (this.state == "down") {
+            this.border_color = "#E8D9B4";
+            this.text_color = "#2C363E";
+            this.color = "#E8D9B4";
+        } else {
+            this.color = "#2C363E";
+            this.border_color = wavesBackColor;
+            this.text_color = "#E8D9B4";
+        }
+        ctx.strokeStyle = this.border_color;
+        ctx.fillStyle = this.color;
         roundRect(ctx,
                   this.x,
                   this.y,
                   this.width,
                   this.height,
-                  6, 6, false, true, 6, 6);
+                  6, 6, true, true, 6, 6);
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillStyle = "#E8D9B4";
+        ctx.fillStyle = this.text_color;
         ctx.font = this.height * 0.4 + "px Rubik One"
         ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2);
     }

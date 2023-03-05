@@ -661,6 +661,41 @@ const MENU_BUTTONS = [
                MAIN_MENU_BUTTONS_WIDTH, 
                MAIN_MENU_BUTTONS_HEIGHT, 
                texts["menu"]["donate"][language], false, "", "donate")]
+
+function highlightButton(x, y, how){
+    if (how == "up")
+        how = "hover";
+    let buttons_to_check = MENU_BUTTONS.concat(LANGUAGE_BUTTONS);
+    if (okButton instanceof OKButton)
+        buttons_to_check = buttons_to_check.concat(okButton);
+    buttons_to_check.forEach((button) => {
+        if (button.isIntersected(x, y)){
+            button.state = how;
+        } else{
+            button.state = "";
+        }
+    })
+}
+
+field.addEventListener('mousemove', function(event) {
+    x = WIDTH_RATIO * (event.pageX - field.offsetLeft);
+    y = HEIGHT_RATIO * (event.pageY - field.offsetTop);
+    highlightButton(x, y, "hover");
+  }, false);
+field.addEventListener('mousedown', function(event) {
+    x = WIDTH_RATIO * (event.pageX - field.offsetLeft);
+    y = HEIGHT_RATIO * (event.pageY - field.offsetTop);
+    highlightButton(x, y, "down");
+  }, false);
+field.addEventListener('mouseup', function(event) {
+    x = WIDTH_RATIO * (event.pageX - field.offsetLeft);
+    y = HEIGHT_RATIO * (event.pageY - field.offsetTop);
+    highlightButton(x, y, "up");
+  }, false);
+
+
+
+
 const LANGUAGE_BUTTONS = [
     new LangButton( 
         MAIN_MENU_BUTTONS_X, 
@@ -943,9 +978,6 @@ function handleGameClick(x, y) {
 
 // Gameplay
 $("#field").click(function(event){
-    const WIDTH_RATIO = fieldWidth / $("#field").width();
-    const HEIGHT_RATIO = fieldHeight / $("#field").height();
-
     x = WIDTH_RATIO * (event.pageX - field.offsetLeft);
     y = HEIGHT_RATIO * (event.pageY - field.offsetTop);
 
@@ -1760,6 +1792,7 @@ function drawMenu() {
 function writeAuthorInfo(){
     ctx.textAlign = "left";
     ctx.font = 0.0187*fieldHeight + "px gillsansmt";
+    ctx.fillStyle = "#E8D9B4";
     var text = [texts["menu"]["dmitryBiba"][language] + " & " + texts["menu"]["vladimirShitov"][language], texts["menu"]["authorInfo"][language][0] + texts["menu"]["anastasiaTroshina"][language], texts["menu"]["authorInfo"][language][1]];
     for (var i = 0; i < text.length; i++){
         ctx.fillText(text[i], 

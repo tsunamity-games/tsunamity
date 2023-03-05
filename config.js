@@ -402,11 +402,14 @@ var baseIncome = 0.01;
 const field = document.getElementById("field");
 var ctx = field.getContext("2d");
 
+
 const WIDTH_HEIGHT_RATIO = 1440 / 1068;
 ctx.width = Math.round(field.width * WIDTH_HEIGHT_RATIO);
 
 const fieldWidth = field.width;
 const fieldHeight = field.height;
+const WIDTH_RATIO = fieldWidth / $("#field").width();
+const HEIGHT_RATIO = fieldHeight / $("#field").height();
 
 
 // Main menu
