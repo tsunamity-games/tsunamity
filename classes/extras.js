@@ -20,9 +20,9 @@ class Button extends BodyPart {
         else {
             
             if (this.state == "hover"){
-                this.border_color = "#BE983E";
+                this.border_color = "#9D9885";
                 this.text_color = "#2C363E";
-                this.color = "#BE983E";
+                this.color = "#9D9885";
             } else if (this.state == "down") {
                 this.border_color = "#E8D9B4";
                 this.text_color = "#2C363E";
@@ -339,9 +339,9 @@ class LangButton extends Button{
         ctx.textAlign = "center";
         ctx.textBaseline = "middle"; 
         if (this.state == "hover"){
-            this.border_color = "#BE983E";
+            this.border_color = "#9D9885";
             this.text_color = "#2C363E";
-            this.color = "#BE983E";
+            this.color = "#9D9885";
         } else if (this.state == "down") {
             this.border_color = "#E8D9B4";
             this.text_color = "#2C363E";
@@ -368,9 +368,9 @@ class LangButton extends Button{
 class OKButton extends Button{
     draw(){
         if (this.state == "hover"){
-            this.border_color = "#BE983E";
+            this.border_color = "#9D9885";
             this.text_color = "#2C363E";
-            this.color = "#BE983E";
+            this.color = "#9D9885";
         } else if (this.state == "down") {
             this.border_color = "#E8D9B4";
             this.text_color = "#2C363E";

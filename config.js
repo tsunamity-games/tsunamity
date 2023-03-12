@@ -21,7 +21,7 @@ var texts = {
         contacts: {eng: "Contacts", rus:"Контакты"},
         dmitryBiba: {eng: "Dmitry Biba", rus: "Дмитрий Биба"},
         vladimirShitov: {eng: "Vladimir Shitov", rus: "Владимир Шитов"},
-        anastasiaTroshina: {eng: "Anastasia Troshina", rus: "Анастасия Трошина"},
+        anastasiaTroshina: {eng: "Anastasia Troshina", rus: "Анастасии Трошиной"},
         donate: {eng: "Donate", rus: "Задонатить"},
         bitcoinWallet: {eng: "Bitcoin Wallet", rus: "Биткоин"},
         kofi: {eng: "ko-fi", rus: "ko-fi"},

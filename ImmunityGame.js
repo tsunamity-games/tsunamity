@@ -1769,9 +1769,7 @@ function drawMenu() {
                  fieldWidth - 0.61*fieldWidth, 
                  fieldHeight - topMenuHeight);
     
-    ctx.fillStyle = "#E8D9B4";
-    writeAuthorInfo();
-
+    
     MENU_BUTTONS.forEach((button) => {
         button.draw();
     })
@@ -1779,7 +1777,9 @@ function drawMenu() {
         button.draw();
     })
     
-    
+    ctx.fillStyle = "#E8D9B4";
+    ctx.strokeStyle = "#E8D9B4";
+    writeAuthorInfo();
     ctx.beginPath();
     ctx.moveTo(MAIN_MENU_BUTTONS_X, 
                MAIN_MENU_BUTTONS_Y + MAIN_MENU_BUTTONS_HEIGHT+(MAIN_MENU_BUTTONS_HEIGHT+SPACE_BETWEEN_MAIN_MENU_BUTTONS)*(MENU_BUTTONS.length-1) + (60/1068)*fieldHeight);
