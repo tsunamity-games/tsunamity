@@ -199,10 +199,10 @@ function drawField(gameOver=false){
     ctx.textBaseline = "bottom";
     ctx.textAlign = "center";
     var text;
-    if (BASE_GAME_SPEED != 10){
-        text = texts["game"]["speed"][language] + " " + BASE_GAME_SPEED.toFixed(1);
+    if (displaySpeed != 10){
+        text = texts["game"]["speed"][language] + " " + displaySpeed.toFixed(1);
     } else {
-        text = texts["game"]["speed"][language] + " " + Math.round(BASE_GAME_SPEED);
+        text = texts["game"]["speed"][language] + " " + Math.round(displaySpeed);
     }
     ctx.fillText(text, 
              speedRectangleX+speedRectangleWidth*0.5, speedRectangleY+speedRectangleHeight*0.8);
@@ -264,8 +264,10 @@ function drawField(gameOver=false){
     reset.draw();
     toMainMenu.draw();  
     pause.draw();
+    speed_up.x = speedRectangleX + speedRectangleWidth + fieldWidth*0.0042;
     speed_up.draw();
     speed_down.draw();
+    moneyHighlighter.draw();
     shops.forEach((shop) => {shop.pockets.forEach((pocket) => {pocket.draw();})})
     
     // Setting the font multiple times apparently hinders performance
@@ -284,7 +286,8 @@ function drawField(gameOver=false){
     
     // Draw tissue cells
     ctx.textAlign = "center";
-    ctx.textBaseline = "middle";        
+    ctx.textBaseline = "middle";  
+    ctx.font = "1 " + tissueCellSize * 0.5 + "px Rubik One";
     tissueCells.forEach((cell) => {cell.draw();})
     
     // Draw objects on the field
@@ -332,23 +335,25 @@ function addTissueCells(tissueCellsList){
     return tissueCellsList;
 }
 
-function stopGame(why){
+function stopGame(why, tutorialParams = undefined){
     if(why instanceof Array) {  // Tutorial's text is a list of strings
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        ctx.textAlign = "left";
 
-        ctx.drawImage(
-            SCROLL_IMAGE, 
-            fieldWidth*0.35, 
-            fieldHeight*0.3, 
-            fieldWidth*0.3, 
-            fieldHeight*0.63);
+        ctx.fillStyle = topMenuColor;
 
-        ctx.fillStyle = "black";
+        let windowHeight = (tutorialParams.height === undefined) ? TUTORIAL_WINDOW_HEIGHT : tutorialParams.height;
+        
+        roundRect(ctx, tutorialParams.x, tutorialParams.y, TUTORIAL_WINDOW_WIDTH, windowHeight, leftRadius=20, rightRadius=20, fill=true, stroke=false);
 
-        ctx.font = "22px Rubik One";
+        ctx.fillStyle = wavesBackColor;
+        ctx.font = "18px Rubik One";
         for (var i = 0; i < why.length; i++)
-                ctx.fillText(why[i], fieldWidth/2, fieldHeight/2 + ((i-3)*29));        
+                ctx.fillText(
+                    why[i],
+                    tutorialParams.x + TUTORIAL_WINDOW_TEXT_OFFSET, 
+                    tutorialParams.y + TUTORIAL_WINDOW_TEXT_OFFSET + (i * TUTORIAL_WINDOW_LINE_HEIGHT));
+
+        okButton.draw();
     } else {
         if (why == "Game Over" && !gameOverScreenDrawn){
             drawField(gameOver=true);   
@@ -484,6 +489,9 @@ function formNewWave(waveNumber, oldBac, oldVir, oldHel, oldHIV){
     } else {
         coins = Math.round(25*waveNumber + 0.025*waveNumber**2);
     }
+    if ((gameState == "tutorial") && (26 <= tutorialState) && (tutorialState <= 28)){
+        coins *= 10;
+    }
     if (waveNumber > 3 && randomUniform(0, 1) < PROB_TO_ADD_NEW_COLOR_BACTERIA){
         var newIndex = (inplayBacteriaColorsIndices[inplayBacteriaColorsIndices.length-1] + 1) % BACTERIA_COLORS.length;
         if (!inplayBacteriaColorsIndices.includes(newIndex)){
@@ -528,14 +536,14 @@ function formNewWave(waveNumber, oldBac, oldVir, oldHel, oldHIV){
 
 function chooseEnemy(bacList, virList, helList, hivList, coins, waveNumber){
     var candidates = [Bacterium];
-    if (waveNumber > 4){
+    if (((waveNumber > 4) && (gameState == "game")) || ((gameState == "tutorial") && (tutorialState >= 28) && (waveNumber > 8))){
         candidates.push(Virus);
     }
     if (waveNumber > 10){
         candidates.push(Helmint);
     }
     
-    if (waveNumber > 20){
+    if (waveNumber > 30){
         candidates.push(HIV);
     }
     
@@ -602,7 +610,6 @@ var antibodies;
 var shops;
 var buttons;
 var spleen;
-var tissuecells;
 var inplayBacteriaColorsIndices;
 var inplayVirusesColorsIndices;
 var bacterialColorProbs;
@@ -618,16 +625,28 @@ var gameOverTrue;
 var pauseTrue;
 var pauseScreenDrawn;
 var gameOverScreenDrawn;
-var pause;
 var historyObject;
-var reset;
-var speed_up;
-var speed_down;
 var fullWaveSize;
 var artObj;
 var tutorialState = 0;
 var waitingForClick = false;
+var okButton;
+var blackScreenDrawn = false;
 var gameState = "menu";
+let secondsPassed;
+let oldTimeStamp;
+
+// Tutorial vars
+var currentAntibioticsBought;
+var currentVaccinesBought;
+var currentARTBought;
+var currentWave;
+
+// Try to get language
+let linkParams = getSearchParameters();
+if(linkParams["language"] == "rus") {
+    language = "rus"
+};
 
 const MENU_BUTTONS = [
     new Button(MAIN_MENU_RIGHT_PANEL_COLOR, MAIN_MENU_BUTTONS_X, MAIN_MENU_BUTTONS_Y,
@@ -636,19 +655,62 @@ const MENU_BUTTONS = [
            MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, texts["menu"]["tutorial"][language], false, "", "tutorial"),
     new Button(MAIN_MENU_RIGHT_PANEL_COLOR, MAIN_MENU_BUTTONS_X, MAIN_MENU_BUTTONS_Y + 2 * (MAIN_MENU_BUTTONS_HEIGHT + SPACE_BETWEEN_MAIN_MENU_BUTTONS),
            MAIN_MENU_BUTTONS_WIDTH, MAIN_MENU_BUTTONS_HEIGHT, texts["menu"]["about"][language], false, "", "about"),
+    new Button(MAIN_MENU_RIGHT_PANEL_COLOR, 
+               MAIN_MENU_BUTTONS_X, 
+               MAIN_MENU_BUTTONS_Y + 3 * (MAIN_MENU_BUTTONS_HEIGHT + SPACE_BETWEEN_MAIN_MENU_BUTTONS),
+               MAIN_MENU_BUTTONS_WIDTH, 
+               MAIN_MENU_BUTTONS_HEIGHT, 
+               texts["menu"]["donate"][language], false, "", "donate")]
+
+function highlightButton(x, y, how){
+    if (how == "up")
+        how = "hover";
+    let buttons_to_check = MENU_BUTTONS.concat(LANGUAGE_BUTTONS);
+    if (okButton instanceof OKButton)
+        buttons_to_check = buttons_to_check.concat(okButton);
+    buttons_to_check.forEach((button) => {
+        if (button.isIntersected(x, y)){
+            button.state = how;
+        } else{
+            button.state = "";
+        }
+    })
+}
+
+field.addEventListener('mousemove', function(event) {
+    x = WIDTH_RATIO * (event.pageX - field.offsetLeft);
+    y = HEIGHT_RATIO * (event.pageY - field.offsetTop);
+    highlightButton(x, y, "hover");
+  }, false);
+field.addEventListener('mousedown', function(event) {
+    x = WIDTH_RATIO * (event.pageX - field.offsetLeft);
+    y = HEIGHT_RATIO * (event.pageY - field.offsetTop);
+    highlightButton(x, y, "down");
+  }, false);
+field.addEventListener('mouseup', function(event) {
+    x = WIDTH_RATIO * (event.pageX - field.offsetLeft);
+    y = HEIGHT_RATIO * (event.pageY - field.offsetTop);
+    highlightButton(x, y, "up");
+  }, false);
+
+
+
+
+const LANGUAGE_BUTTONS = [
     new LangButton( 
-        (1012/1440)*fieldWidth, 
-        (683.5/1080)*fieldHeight,
+        MAIN_MENU_BUTTONS_X, 
+        MAIN_MENU_BUTTONS_Y + MAIN_MENU_BUTTONS_HEIGHT+(MAIN_MENU_BUTTONS_HEIGHT+SPACE_BETWEEN_MAIN_MENU_BUTTONS)*(MENU_BUTTONS.length-1) + (75.5/1080)*fieldHeight,
         (140/1440)*fieldWidth, 
         (100/1080)*fieldHeight, 
         "Рус", active = false),
     new LangButton( 
         (1172/1440)*fieldWidth, 
-        (683.5/1080)*fieldHeight,
+        MAIN_MENU_BUTTONS_Y + MAIN_MENU_BUTTONS_HEIGHT+
+        (MAIN_MENU_BUTTONS_HEIGHT+SPACE_BETWEEN_MAIN_MENU_BUTTONS)*(MENU_BUTTONS.length-1) + 
+        (75.5/1080)*fieldHeight,
         (140/1440)*fieldWidth, 
         (100/1080)*fieldHeight, 
         "Eng", active = true),
-    
     
 ]
 
@@ -667,6 +729,41 @@ shops = [
 
     
 ];
+
+const moneyHighlighter = new MoneyHighlighter()
+const reset = new ResetButton("red", 
+    fieldWidth*(1321.26/1440), 
+    (topMenuHeight-homeHeight)/2, 
+    topMenuHeight*0.5, 
+    topMenuHeight*0.5, "R", false, RESET_IMAGE);
+const toMainMenu = new Button("white", 
+    fieldWidth*(1370.03/1440), 
+    (topMenuHeight-homeHeight)/2,
+    topMenuHeight*0.5,
+    topMenuHeight*0.5, 
+    "Q", false, HOME_IMAGE);
+const pause = new Button("white",
+    fieldWidth*(1269.03/1440),
+    (topMenuHeight-topMenuHeight*0.5)/2,
+    topMenuHeight*0.5,
+    topMenuHeight*0.5,
+    "Q", false, 
+    PAUSE_IMAGE);
+const speed_up = new Button("white",
+    speedRectangleX + speedRectangleWidth + fieldWidth*0.0042,
+    speedRectangleY + speedRectangleHeight/2 - speedRectangleHeight*0.625/2,
+    wavesRectangleWidth*0.14,
+    speedRectangleHeight*0.625,
+    "", false, 
+    SPEED_UP_IMAGE);
+const speed_down = new Button("white",
+    speedRectangleX - fieldWidth*0.0042 - wavesRectangleWidth*0.14,
+    speedRectangleY + speedRectangleHeight/2 - speedRectangleHeight*0.625/2,
+    wavesRectangleWidth*0.14,
+    speedRectangleHeight*0.625,
+    "", false, 
+    SPEED_DOWN_IMAGE);
+
       
 function setupGame(tutorial=false){
     if (language == "eng"){
@@ -713,6 +810,8 @@ function setupGame(tutorial=false){
     wave = 1;
     if(!tutorial) {
         [bacteria, viruses, helmintes, hiv_particles] = formNewWave(wave, bacteria, viruses, helmintes, hiv_particles);
+        immunityCells.push(new Neutrophil(fieldWidth / 2, fieldHeight / 2));
+        immunityCells.push(new NaturalKiller(tissueCells[0].x, tissueCells[0].y));
     } else {
         bacteria.push(new Bacterium("first", 0, fieldHeight / 2, bacteriaRadius, BASE_BACTERIAL_HEALTH, BACTERIUM_PRICE));
     }
@@ -722,159 +821,178 @@ function setupGame(tutorial=false){
     pauseTrue = false;
     gameOverScreenDrawn = false;
     historyObject = new GameHistory();
-    reset = new ResetButton("red", 
-                            fieldWidth*(1321.26/1440), 
-                            (topMenuHeight-homeHeight)/2, 
-                            topMenuHeight*0.5, 
-                            topMenuHeight*0.5, "R", false, RESET_IMAGE);
-    toMainMenu = new Button("white", 
-                            fieldWidth*(1370.03/1440), 
-                            (topMenuHeight-homeHeight)/2,
-                            topMenuHeight*0.5,
-                            topMenuHeight*0.5, 
-                            "Q", false, HOME_IMAGE);
-    pause = new Button("white",
-                       fieldWidth*(1269.03/1440),
-                       (topMenuHeight-topMenuHeight*0.5)/2,
-                       topMenuHeight*0.5,
-                       topMenuHeight*0.5,
-                       "Q", false, 
-                       PAUSE_IMAGE);
-    speed_up = new Button("white",
-                       speedRectangleX + speedRectangleWidth + fieldWidth*0.0042,
-                       speedRectangleY + speedRectangleHeight/2 - speedRectangleHeight*0.625/2,
-                       wavesRectangleWidth*0.14,
-                       speedRectangleHeight*0.625,
-                       "", false, 
-                       SPEED_UP_IMAGE);
-    speed_down = new Button("white",
-                       speedRectangleX - fieldWidth*0.0042 - wavesRectangleWidth*0.14,
-                       speedRectangleY + speedRectangleHeight/2 - speedRectangleHeight*0.625/2,
-                       wavesRectangleWidth*0.14,
-                       speedRectangleHeight*0.625,
-                       "", false, 
-                       SPEED_DOWN_IMAGE);
+
+    livesLeft = tutorial ? 99 : 10;
+    money = tutorial ? 5 : STARTING_MONEY;
+}
+
+function handleMenuClick(x, y) {
+    if(MENU_BUTTONS[0].isIntersected(x, y)) {
+        gameStart = true;
+        setupGame();
+        gameState = "game";
+    }
     
-    livesLeft = 10;
-    money = STARTING_MONEY;
+    if(MENU_BUTTONS[1].isIntersected(x, y)) {
+        gameStart = true;
+        tutorialState = 0;
+        setupGame(tutorial=true);
+        gameState = "tutorial";
+    }
+    
+    if(MENU_BUTTONS[2].isIntersected(x, y)) {
+        MENU_BUTTONS[0].textLanguageLabel = "back";
+        gameStart = false;
+        gameState = "about";
+    }
+    
+    if(MENU_BUTTONS[3].isIntersected(x, y)) {
+        MENU_BUTTONS[0].textLanguageLabel = "back";
+        MENU_BUTTONS[1].textLanguageLabel = "bitcoinWallet";
+        MENU_BUTTONS[2].textLanguageLabel = "kofi";
+        gameStart = false;
+        gameState = "donate";
+    }
+    
+    if(LANGUAGE_BUTTONS[0].isIntersected(x, y)) {
+        gameStart = false;
+        language = "rus";
+        LANGUAGE_BUTTONS[0].active = true;
+        LANGUAGE_BUTTONS[1].active = false;
+        
+    }
+    if(LANGUAGE_BUTTONS[1].isIntersected(x, y)) {
+        gameStart = false;
+        language = "eng";
+        LANGUAGE_BUTTONS[0].active = false;
+        LANGUAGE_BUTTONS[1].active = true;
+    }
+};
+
+function handleAboutClick(x, y) {
+    if(MENU_BUTTONS[0].isIntersected(x, y)) {
+        gameState = "menu";
+        MENU_BUTTONS[0].textLanguageLabel = "startGame";
+    }
+};
+
+function handleDonateClick(x, y) {
+    if(MENU_BUTTONS[0].isIntersected(x, y)) {
+        gameState = "menu";
+        MENU_BUTTONS[0].textLanguageLabel = "startGame";
+        MENU_BUTTONS[1].textLanguageLabel = "tutorial";
+        MENU_BUTTONS[2].textLanguageLabel = "about";
+        
+        
+    }
+    if(MENU_BUTTONS[1].isIntersected(x, y)) {
+        unsecuredCopyToClipboard(bitcoinAddress);
+        alert(texts["menu"]["copied"][language] + ": " + bitcoinAddress);
+    }
+    
+    if(MENU_BUTTONS[2].isIntersected(x, y)) {
+        window.open("https://ko-fi.com/tsunamity", "_blank");
+    }
+}
+
+function handleGameClick(x, y) {
+    // If any of the shops clicked, try to buy cell;
+    shops.forEach((shop) => {
+        if(shop.isIntersected(x, y)) {
+            shop.buy();
+        }
+        shop.pockets.forEach((pocket) => {
+            if(pocket.isIntersected(x, y)) {
+                pocket.buy();
+            }
+        })
+    })
+    
+    // If any of the buttons are clicked, do their thing
+    buttons.forEach((button)=>{
+        if (button.isIntersected(x, y)){
+            button.activate();
+        }
+    })
+    
+    // If B or T-lymphocyte is clicked, suggest upgrade
+    try{immunityCells.forEach((cell) => {
+        if ((cell instanceof BLymphocyte || cell instanceof TLymphocyte) && cell.mode != "memory"){
+            if (cell.label.active && cell.label.isIntersected(x, y)){
+                if (money >= cell.upgradePrice){
+                money -= cell.upgradePrice;
+                cell.upgrade();
+                } else {
+                    moneyHighlighter.appear();
+                }
+                throw 'Break';
+            }
+            else if (cell.isIntersected(x, y) && cell.label.upgradeAvailable){
+                cell.label.active = true;     
+                throw 'Break';
+
+            } else {
+                cell.label.active = false;
+            }
+        }
+    })} catch (e) {
+        if (e !== 'Break') 
+            throw e;
+    }
+    
+    if (reset.isIntersected(x, y)){
+        reset.resetGame();
+    }
+
+    if(toMainMenu.isIntersected(x, y)) {
+        gameState = "menu";
+    }
+    
+    if(pause.isIntersected(x, y)) {
+        if (pauseTrue){
+            pause.texture = PAUSE_IMAGE;
+        } else {pause.texture = RESUME_IMAGE;}
+        pauseTrue = !pauseTrue;
+        pauseScreenDrawn = false;
+        ctx.fillStyle = topMenuColor;
+        ctx.fillRect(pause.x, pause.y, pause.width, pause.height);
+        pause.draw();
+        
+    }
+    
+    if(speed_up.isIntersected(x, y)) {
+        displaySpeed = Math.min(10, displaySpeed+0.5);
+        baseGameSpeed = Math.min(maxGameSpeed * speedUpCoefficient, baseGameSpeed + speedStep * speedUpCoefficient);
+    }
+    if(speed_down.isIntersected(x, y)) {
+        displaySpeed = Math.max(1, displaySpeed-0.5);
+        baseGameSpeed = Math.max(minGameSpeed, baseGameSpeed - speedStep * speedUpCoefficient);
+    }
+    
+    if(gameState == "tutorial" && waitingForClick && okButton.isIntersected(x, y)) {
+        tutorialState += 1;
+
+        presetTutorialState(tutorialState);
+    }
 }
 
 // Gameplay
 $("#field").click(function(event){
-    const WIDTH_RATIO = fieldWidth / $("#field").width();
-    const HEIGHT_RATIO = fieldHeight / $("#field").height();
-
     x = WIDTH_RATIO * (event.pageX - field.offsetLeft);
     y = HEIGHT_RATIO * (event.pageY - field.offsetTop);
 
     switch(gameState) {
         case "menu":
-            if(MENU_BUTTONS[0].isIntersected(x, y)) {
-                gameStart = true;
-                setupGame();
-                gameState = "game";
-            }
-            
-            if(MENU_BUTTONS[1].isIntersected(x, y)) {
-                gameStart = true;
-                setupGame(tutorial=true);
-                gameState = "tutorial";
-            }
-            
-            if(MENU_BUTTONS[2].isIntersected(x, y)) {
-                gameStart = false;
-                gameState = "about";
-            }
-            if(MENU_BUTTONS[3].isIntersected(x, y)) {
-                gameStart = false;
-                language = "rus";
-                MENU_BUTTONS[3].active = true;
-                MENU_BUTTONS[4].active = false;
-                
-            }
-            if(MENU_BUTTONS[4].isIntersected(x, y)) {
-                gameStart = false;
-                language = "eng";
-                MENU_BUTTONS[3].active = false;
-                MENU_BUTTONS[4].active = true;
-            }
-            
+            handleMenuClick(x, y);
             break;
         case "about":
-            if(MENU_BUTTONS[0].isIntersected(x, y)) {
-                gameState = "menu";
-                MENU_BUTTONS[0].textLanguageLabel = "startGame";
-            }
+            handleAboutClick(x, y);
+            break;
+        case "donate":
+            handleDonateClick(x, y);
             break;
         default:  // game and tutorial
-            // If any of the shops clicked, try to buy cell;
-            shops.forEach((shop) => {
-                if(shop.isIntersected(x, y)) {
-                    shop.buy();
-                }
-                shop.pockets.forEach((pocket) => {
-                    if(pocket.isIntersected(x, y)) {
-                        pocket.buy();
-                    }
-                })
-            })
-            
-            // If any of the buttons are clicked, do their thing
-            buttons.forEach((button)=>{
-                if (button.isIntersected(x, y)){
-                    button.activate();
-                }
-            })
-            
-            // If B or T-lymphocyte is clicked, suggest upgrade
-            try{immunityCells.forEach((cell) => {
-                if ((cell instanceof BLymphocyte || cell instanceof TLymphocyte) && cell.mode != "memory"){
-                    if (cell.label.active && cell.label.isIntersected(x, y) && money >= cell.upgradePrice){
-                        money -= cell.upgradePrice;
-                        cell.upgrade();
-                        throw 'Break';
-
-                    }
-                    else if (cell.isIntersected(x, y) && cell.label.upgradeAvailable){
-                        cell.label.active = true;     
-                        throw 'Break';
-
-                    } else {
-                        cell.label.active = false;
-                    }
-                }
-            })} catch (e) {
-                if (e !== 'Break') 
-                    throw e;
-            }
-            
-            if (reset.isIntersected(x, y)){
-                reset.resetGame();
-            }
-
-            if(toMainMenu.isIntersected(x, y)) {
-                gameState = "menu";
-            }
-            
-            if(pause.isIntersected(x, y)) {
-                if (pauseTrue){
-                    pause.texture = PAUSE_IMAGE;
-                } else {pause.texture = RESUME_IMAGE;}
-                pauseTrue = !pauseTrue;
-                pauseScreenDrawn = false;
-                 
-            }
-            
-            if(speed_up.isIntersected(x, y)) {
-                BASE_GAME_SPEED = Math.min(10, BASE_GAME_SPEED+0.5);
-            }
-            if(speed_down.isIntersected(x, y)) {
-                BASE_GAME_SPEED = Math.max(1, BASE_GAME_SPEED-0.5);
-            }
-            
-            if(gameState == "tutorial" && waitingForClick) {
-                tutorialState += 1;
-            }
+            handleGameClick(x, y);
             break;
     }
     
@@ -925,6 +1043,8 @@ $("body").keydown(function(event){
                 if (cell.upgradePrice <= money){
                     money -= cell.upgradePrice;
                     cell.upgrade();                    
+                } else {
+                    moneyHighlighter.appear();
                 }
             })
     }       
@@ -933,26 +1053,537 @@ $("body").keydown(function(event){
 
 gameStart = true;
 
+presetTutorialState = function(tutorialState) {
+    console.log("Presetting state " + tutorialState);
+    switch(tutorialState) {
+        case 2:
+            drawBlackScreen(BLACK_SCREEN_ALPHA, tissueCells[50].x, tissueCells[50].y,
+                 tissueCells[50].size, tissueCells[50].size, tissueCells[50].size / 5);
+            break;
+        case 3:
+            playGame(tutorial=true);
+            let lastShop = shops[shops.length-1];
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[0].x - 10, shops[0].y, 
+                lastShop.x + lastShop.width - 10, lastShop.height, 10)
+            break;
+        case 4:
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, moneyRectangleX, moneyRectangleY, moneyRectangleWidth, moneyRectangleHeight, 10)
+            break;
+        case 5:
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, fieldWidth*0.02, (topMenuHeight-lifesSize)/2, lifesSize*1.1, lifesSize, 10);
+            break;
+        case 6:
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[2].x, shops[2].y, 
+                    shops[2].width, shops[2].height, 10);
+            break;
+        case 10:
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[3].x, shops[3].y, 
+                    shops[3].width, shops[3].height, 10);
+            chanceToGetAntigen = 0.01;  // Return default
+            trainingProbability = 0.3;
+
+            // Make a wave a little bit easier (not kill player too quickly)
+            bacteria.forEach((bacterium) => {
+                bacterium.baseSpeed /= 2;
+            });
+            break;
+        case 13:
+            trainingProbability = 0.01; // Restore default
+            break;
+        case 20:
+            drawBlackScreen(BLACK_SCREEN_ALPHA, speedRectangleX, speedRectangleY, speedRectangleWidth, speedRectangleHeight, 10);
+            break;
+        case 21:
+            currentWave = wave;
+        case 25:
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA / 2, 
+                            antibioticsX - 5, topAntibioticY - 10, buttonWidth + 10, 
+                            (buttonHeight + spaceBetweenAntibioticButtons)*BACTERIA_COLORS.length, 10);
+
+            currentAntibioticsBought = historyObject.antibioticsBought;
+            break;
+        case 29:
+            viruses.forEach((virus) => {
+                drawBlackScreen(BLACK_SCREEN_ALPHA/viruses.length, virus.host.x, virus.host.y,
+                 virus.host.size, virus.host.size, virus.host.size / 5); 
+            })
+            break;
+        case 30:
+            viruses.push(new Virus("first", VIRUSES_CLASSIFICATION["first"].doublingTime, null));
+            viruses.push(new Virus("first", VIRUSES_CLASSIFICATION["second"].doublingTime, null));
+            break;
+        case 32:
+            currentWave = wave;
+            break;
+        case 33:
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[1].x, shops[1].y, shops[1].width, shops[1].height, 10);
+            break;
+        case 36:
+            currentVaccinesBought = historyObject.vaccinesBought;
+            break;
+        case 39:
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[4].x, shops[4].y, 
+                    shops[4].width, shops[4].height, 10);
+            break;
+        case 41:
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[5].x, shops[5].y, 
+                    shops[5].width, shops[5].height, 10);
+            break;
+        case 42:
+            let length = randomInteger(MIN_HELMINT_LENGTH, MAX_HELMINT_LENGTH);
+            let width = randomInteger(MIN_HELMINT_LENGTH*HELMINT_WIDTH_MIN_LENGTH_MULTIPLIER, length*HELMINT_WIDTH_LENGTH_MULTIPLIER);
+            let health = length*width*HELMINT_HEALTH_LENGTH_WIDTH_MULTIPLIER;
+            let delay = Math.round(health*HELMINT_DELAY_HEALTH_MULTIPLIER + randomUniform(-HELMINT_DELAY_NOISE, HELMINT_DELAY_NOISE));
+            helmintes.push(new Helmint(-100, randomUniform(playableFieldY + 15, playableFieldHeight - 15), health, health, delay, width, length));
+            break;
+        case 45:
+            currentARTBought = historyObject.artBought;
+            console.log("HIV:" + hiv_particles);
+            hiv_particles.push(new HIV(HIV_IMAGE, 6, randomUniform(playableFieldY + 15, playableFieldY+playableFieldHeight-15)));
+            console.log("HIV:" + hiv_particles);    
+            break;
+        case 47:
+            currentWave = wave;
+            break;
+        default:
+            break;
+    }
+};
+
+const TUTORIAL_WINDOW_PARAMS = {
+    x: (fieldWidth - TUTORIAL_WINDOW_WIDTH) / 2, 
+    y: (fieldHeight - TUTORIAL_WINDOW_HEIGHT) / 2 + TUTORIAL_WINDOW_Y_OFFSET,
+    okButtonX: (fieldWidth - TUTORIAL_WINDOW_WIDTH) / 2 + TUTORIAL_WINDOW_WIDTH - TUTORIAL_WINDOW_BUTTON_X_OFFSET, 
+    okButtonY: (fieldHeight - TUTORIAL_WINDOW_HEIGHT) / 2 + TUTORIAL_WINDOW_Y_OFFSET + TUTORIAL_WINDOW_HEIGHT - TUTORIAL_WINDOW_BUTTON_Y_OFFSET
+};
+
 handleTutorialState = function(tutorialState) {
     console.log("Handling state " + tutorialState);
+
     switch(tutorialState) {
         case 0:
+            okButton = new OKButton("", TUTORIAL_WINDOW_PARAMS.okButtonX, TUTORIAL_WINDOW_PARAMS.okButtonY, 
+                                    (48/1440)*fieldWidth,
+                                    (45/1080)*fieldHeight, 
+                                    "OK", 
+                                    isCircle=false, 
+                                    texture="", textLanguageLabel="")
             for(var i=0; i < 5; i++) {
                 playGame(tutorial=true);
             }
             tutorialState += 1;
             break;
         case 1:
-            text = ["Почувствуй себя", "в роли иммунной системы!", "Защищай организм", "от болезней",
-                    "", "", "Кликни в любое место", "чтобы продолжить"];
-            stopGame(text);
+            text = texts["tutorial"]["1"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
             waitingForClick = true;
             break;
 
         case 2:
             waitingForClick = false;
-            text = ["Ничоси, работает"];
-            stopGame(text);
+            text = texts["tutorial"]["2"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 3:  // Skipping step: remove black screen and draw the field, then go to the next state immediately
+            waitingForClick = false;
+            text = texts["tutorial"]["3"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 4:
+            waitingForClick = false;
+            text = texts["tutorial"]["4"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 5:
+            waitingForClick = false;
+            text = texts["tutorial"]["5"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 6:
+            waitingForClick = false;
+            
+            text = texts["tutorial"]["6"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 7:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[2].x, shops[2].y, 
+                shops[2].width, shops[2].height, 10)
+
+            let neutrophils = immunityCells.filter((cell) => cell instanceof Neutrophil);
+            if(neutrophils.length > 0) {
+                tutorialState += 1
+            };
+            break;
+        case 8:
+            playGame(tutorial=true);
+
+            if(bacteria[0].health < 10) {
+                chanceToGetAntigen = 1;
+                bacteria[0].health = 0;
+                drawBlackScreen(BLACK_SCREEN_ALPHA, spleen.x, spleen.y, spleen.width, spleen.height, 10);
+                tutorialState += 1;
+            }
+
+            break;
+        case 9:
+            waitingForClick = false;
+            text = texts["tutorial"]["9"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 10:
+            waitingForClick = false;
+            text = texts["tutorial"]["10"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 11:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[3].x, shops[3].y, shops[3].width, shops[3].height, 10);
+            
+            let bCells = immunityCells.filter((cell) => cell instanceof BLymphocyte);
+            if(bCells.length > 0) {
+                tutorialState += 1
+                playGame(tutorial=true);
+            };
+            break;
+        case 12:
+            waitingForClick = false;
+            text = texts["tutorial"]["12"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 13:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            if(bacteria.length < 5) {
+                immunityCells[0].age = immunityCells[0].longevity;  // Kill one of the cells
+                tutorialState += 1;
+            };
+            break;
+        case 14:
+            waitingForClick = false;
+            text = texts["tutorial"]["14"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 15:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[6].x, shops[6].y, shops[6].width, shops[6].height, 10);
+            
+            let macrophages = immunityCells.filter((cell) => cell instanceof Macrophage);
+            if(macrophages.length > 0) {
+                tutorialState += 1
+                playGame(tutorial=true);
+            };
+            break;
+        case 16:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            
+            if(garbagePiles.length == 0) {
+                tutorialState += 1
+            };
+            break;
+        case 17:
+            waitingForClick = false;6
+            text = texts["tutorial"]["17"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 18:
+            waitingForClick = false;
+
+            let unupgradedBcells = immunityCells.filter((cell) => cell instanceof BLymphocyte);
+
+            if(unupgradedBcells.length > 0) {
+                bCell = unupgradedBcells[0];
+                drawBlackScreen(BLACK_SCREEN_ALPHA, bCell.x - bCell.radius, bCell.y - bCell.radius,
+                                2 * bCell.radius, 2 * bCell.radius, 5);
+           tissueCells[50] }
+
+            let plasmaticCells = immunityCells.filter(cell => {
+                return (cell instanceof BLymphocyte) && (cell.mode == "plasmatic")
+            })
+            if(plasmaticCells.length > 0) {
+                tutorialState += 1
+            };
+
+            playGame(tutorial=true);
+            break;
+        case 19:
+            waitingForClick = false;
+            text = texts["tutorial"]["19"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 20:
+            waitingForClick = false;
+            text = texts["tutorial"]["20"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 21:
+            waitingForClick = false;
+            if(wave - currentWave > 1) {
+                tutorialState += 1;
+            }
+            playGame(tutorial=true);
+            break;
+        case 22:
+            waitingForClick = false;
+            text = texts["tutorial"]["22"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 23:
+            waitingForClick = false;
+
+            let memoryBCells = immunityCells.filter(cell => {
+                return (cell instanceof BLymphocyte) && (cell.mode == "memory")
+            })
+            if(memoryBCells.length > 0) {
+                tutorialState += 1
+            };
+            playGame(tutorial=true);
+            if (tutorialState == 24){
+                drawBlackScreen(BLACK_SCREEN_ALPHA, 
+                                B_LYMPHOCYTE_SHOP.x + B_LYMPHOCYTE_SHOP.width*0.0486,
+                                shopY + B_LYMPHOCYTE_SHOP.height - B_LYMPHOCYTE_SHOP.height*0.02, (B_LYMPHOCYTE_SHOP.width*0.9028)/BACTERIA_COLORS.length, 2.65*(B_LYMPHOCYTE_SHOP.width*0.9028)/BACTERIA_COLORS.length, 10)
+            }
+            break;
+        case 24:
+            waitingForClick = false;
+            text = texts["tutorial"]["24"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 25:
+            waitingForClick = false;
+            text = texts["tutorial"]["25"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 26:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA / 2, antibioticsX - 5, topAntibioticY - 10, buttonWidth + 10, 
+                            (buttonHeight + spaceBetweenAntibioticButtons)*BACTERIA_COLORS.length, 10);
+            if(historyObject.antibioticsBought > currentAntibioticsBought) {
+                tutorialState += 1;
+            }
+            break;
+        case 27:
+            waitingForClick = false;
+            text = texts["tutorial"]["27"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 28:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            if(viruses.filter((virus) => virus.number >= maxVirusesInTissueCell*0.9).length > 0) {
+                tutorialState += 1;
+                presetTutorialState(tutorialState);
+                viruses.forEach((virus) => {
+                    virus.host.draw();
+                    ctx.strokeStyle = "#DC9E00";
+                    ctx.lineWidth = 5;
+                    roundRect(ctx, virus.host.x, virus.host.y,
+                              virus.host.size, virus.host.size, leftRadius=radius, rightRadius=virus.host.size/5, fill=false, stroke=true);
+                    ctx.lineWidth = 1;
+                });
+            }
+            
+            
+            
+            break;
+        case 29:
+            waitingForClick = false;
+            text = texts["tutorial"]["29"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 30:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[0].x, shops[0].y, shops[0].width, shops[0].height, 10);
+            
+            let naturalKillers = immunityCells.filter((cell) => cell instanceof NaturalKiller);
+            if(naturalKillers.length > 0) {
+                tutorialState += 1
+                playGame(tutorial=true);
+            };
+            break;
+        case 31:
+            waitingForClick = false;
+            text = texts["tutorial"]["31"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 32:
+            waitingForClick = false;
+            if(wave - currentWave > 1) {
+                tutorialState += 1;
+            }
+            playGame(tutorial=true);
+            if (tutorialState > 32){
+                presetTutorialState(tutorialState);
+            }
+            break;
+        case 33:
+            waitingForClick = false;
+            text = texts["tutorial"]["33"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 34:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[1].x, shops[1].y, shops[1].width, shops[1].height, 10);
+            
+            let tCells = immunityCells.filter((cell) => cell instanceof TLymphocyte);
+            if(tCells.length > 0) {
+                tutorialState += 1
+                playGame(tutorial=true);
+            };
+            break;
+        case 35:
+            waitingForClick = false;
+            text = texts["tutorial"]["35"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 36:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA / 2, antibioticsX - 5, topVaccineY - 10, buttonWidth + 10, 
+                            (buttonHeight + spaceBetweenAntibioticButtons)*BACTERIA_COLORS.length, 10);
+            if (immunityCells.filter((cell)=> (cell instanceof TLymphocyte) && (cell.label.upgradeAvailable)).length > 0) {
+                tutorialState += 1;
+            }
+            break;
+        case 37:
+            let step37Params = {x: TUTORIAL_WINDOW_PARAMS.x,
+                                y: TUTORIAL_WINDOW_PARAMS.y,
+                                height: 350 / 1068 * fieldHeight,
+                               }
+            okButton.y = TUTORIAL_WINDOW_PARAMS.y + 350 / 1068 * fieldHeight - TUTORIAL_WINDOW_BUTTON_Y_OFFSET;
+
+            waitingForClick = false;
+            text = texts["tutorial"]["37"][language];
+            stopGame(text, step37Params);
+            waitingForClick = true;
+            break;
+        case 38:
+            okButton.y = TUTORIAL_WINDOW_PARAMS.okButtonY;
+            
+            waitingForClick = false;
+            playGame(tutorial=true);
+            if(T_LYMPHOCYTE_SHOP.pockets.length > 0) {
+                tutorialState += 1
+                presetTutorialState(tutorialState);
+            };
+            break;
+        case 39:
+            waitingForClick = false;
+            let step39Params = {x: TUTORIAL_WINDOW_PARAMS.x,
+                y: TUTORIAL_WINDOW_PARAMS.y,
+                height: 350 / 1068 * fieldHeight}
+            okButton.y = TUTORIAL_WINDOW_PARAMS.y + 350 / 1068 * fieldHeight - TUTORIAL_WINDOW_BUTTON_Y_OFFSET;
+            text = texts["tutorial"]["39"][language];
+            stopGame(text, step39Params);
+            waitingForClick = true;
+            break;
+        case 40:
+            okButton.y = TUTORIAL_WINDOW_PARAMS.okButtonY;
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[4].x, shops[4].y, shops[4].width, shops[4].height, 10);
+            
+            let helpers = immunityCells.filter((cell) => cell instanceof THelper);
+            if(helpers.length > 0) {
+                tutorialState += 1;
+                presetTutorialState(tutorialState);
+            };
+            break;
+        case 41:
+            waitingForClick = false;
+            text = texts["tutorial"]["41"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 42:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, shops[5].x, shops[5].y, shops[5].width, shops[5].height, 10);
+            
+            let eosinophiles = immunityCells.filter((cell) => cell instanceof Eosinophile);
+            if(eosinophiles.length > 0) {
+                tutorialState += 1
+                playGame(tutorial=true);
+            };
+            break;
+        case 43:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            if(helmintes.length == 0) {
+                tutorialState += 1
+                playGame(tutorial=true);
+            };
+            break;
+        case 44:
+            waitingForClick = false;
+            text = texts["tutorial"]["44"][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 45:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            drawBlackScreen(BLACK_SCREEN_ALPHA, antibioticsX - 5, ARTY - 5, 
+                buttonWidth + 10, buttonHeight + 10, 10);
+
+            if(historyObject.artBought > currentARTBought) {
+                tutorialState += 1;
+            }
+            break;
+        case 46:
+            text = texts["tutorial"][tutorialState][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 47:
+            waitingForClick = false;
+            playGame(tutorial=true);
+            if(wave > currentWave + 3) {
+                tutorialState += 1;
+            }
+            break;
+        case 48:
+            text = texts["tutorial"][tutorialState][language];
+            stopGame(text, TUTORIAL_WINDOW_PARAMS);
+            waitingForClick = true;
+            break;
+        case 49:
+            gameState = "menu";
+        default:
+            playGame(tutorial=true);
             break;
         
     }
@@ -1012,7 +1643,9 @@ function playGame(tutorial=false) {
         if (helmint.parts.length > 0){
             if ((helmint.parts[helmint.parts.length - 1].x < playableFieldX+playableFieldWidth)){
                 if (helmint.health <= 0) {
-                      garbagePiles.push(new GarbagePile(helmint.x, helmint.y, helmint.overlay*helmint.parts.length*0.5));
+                    helmint.parts.forEach((part) => {
+                        garbagePiles.push(new GarbagePile(part.x, part.y, part.radius));
+                    })
                     historyObject.helmintesKilled += 1;
                 } else {
                     nextTurnHelmintes.push(helmint);
@@ -1080,7 +1713,7 @@ function playGame(tutorial=false) {
             immunityCells = immunityCells.filter((cell)=>cell.age < cell.longevity);
         })
     }
-    antibodies = antibodies.filter((antibody) => antibody.age < antibody.longevity && (antibody.attached == null || antibody.attached.health > 0));
+    antibodies = antibodies.filter((antibody) => antibody.age < antibody.longevity && (antibody.attached == null));
     antibodies.forEach((antibody) => {
         antibody.move();
     })
@@ -1109,7 +1742,7 @@ function playGame(tutorial=false) {
         fullWaveSize = bacteria.length;
         checkAntibiotics();
     }
-    money += baseIncome * BASE_GAME_SPEED * tissueCells.filter((cell) => cell.virus == null).length/tissueCells.length;
+    money += baseIncome * gameSpeed * tissueCells.filter((cell) => cell.virus == null).length/tissueCells.length;
         
     
     ctx.lineWidth = 1;
@@ -1136,18 +1769,22 @@ function drawMenu() {
                  fieldWidth - 0.61*fieldWidth, 
                  fieldHeight - topMenuHeight);
     
-    ctx.fillStyle = "#E8D9B4";
-    writeAuthorInfo();
-
+    
     MENU_BUTTONS.forEach((button) => {
         button.draw();
     })
+    LANGUAGE_BUTTONS.forEach((button) => {
+        button.draw();
+    })
     
+    ctx.fillStyle = "#E8D9B4";
+    ctx.strokeStyle = "#E8D9B4";
+    writeAuthorInfo();
     ctx.beginPath();
-    ctx.moveTo((1012/1440)*fieldWidth, 
-               (668.5/1080)*fieldHeight);
-    ctx.lineTo((1312/1440)*fieldWidth, 
-               (668.5/1080)*fieldHeight);
+    ctx.moveTo(MAIN_MENU_BUTTONS_X, 
+               MAIN_MENU_BUTTONS_Y + MAIN_MENU_BUTTONS_HEIGHT+(MAIN_MENU_BUTTONS_HEIGHT+SPACE_BETWEEN_MAIN_MENU_BUTTONS)*(MENU_BUTTONS.length-1) + (60/1068)*fieldHeight);
+    ctx.lineTo(MAIN_MENU_BUTTONS_X + MAIN_MENU_BUTTONS_WIDTH, 
+               MAIN_MENU_BUTTONS_Y + MAIN_MENU_BUTTONS_HEIGHT+(MAIN_MENU_BUTTONS_HEIGHT+SPACE_BETWEEN_MAIN_MENU_BUTTONS)*(MENU_BUTTONS.length-1) + (60/1068)*fieldHeight);
     ctx.stroke();
 
 }
@@ -1155,6 +1792,7 @@ function drawMenu() {
 function writeAuthorInfo(){
     ctx.textAlign = "left";
     ctx.font = 0.0187*fieldHeight + "px gillsansmt";
+    ctx.fillStyle = "#E8D9B4";
     var text = [texts["menu"]["dmitryBiba"][language] + " & " + texts["menu"]["vladimirShitov"][language], texts["menu"]["authorInfo"][language][0] + texts["menu"]["anastasiaTroshina"][language], texts["menu"]["authorInfo"][language][1]];
     for (var i = 0; i < text.length; i++){
         ctx.fillText(text[i], 
@@ -1178,7 +1816,6 @@ function drawAbout(){
                  fieldWidth - 0.61*fieldWidth, 
                  fieldHeight - topMenuHeight);
 
-    MENU_BUTTONS[0].textLanguageLabel = "back";
     MENU_BUTTONS[0].draw();
 
     var authors = ["dmitryBiba", "vladimirShitov", "anastasiaTroshina"];
@@ -1203,7 +1840,44 @@ function drawAbout(){
     writeAuthorInfo();
 }
 
-var game = setInterval(function(){
+function drawDonate(){
+    // Top panel
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, fieldWidth, topMenuHeight);
+
+    // Left panel
+    ctx.drawImage(COVER_IMAGE, 0, topMenuHeight, 0.61*fieldWidth, fieldHeight - topMenuHeight);
+    
+    // Right panel
+    ctx.fillStyle = MAIN_MENU_RIGHT_PANEL_COLOR;
+    ctx.fillRect(0.61*fieldWidth, 
+                 topMenuHeight, 
+                 fieldWidth - 0.61*fieldWidth, 
+                 fieldHeight - topMenuHeight);
+
+    MENU_BUTTONS[0].draw();
+    MENU_BUTTONS[1].draw();
+    MENU_BUTTONS[2].draw();
+    
+    writeAuthorInfo();
+}
+
+function adaptGameSpeed(fps) {
+    if(fps < 20) {
+        speedUpCoefficient = 3;
+    } else if(fps < 40) {
+        speedUpCoefficient = 2;
+    } else if(fps < 80) {
+        speedUpCoefficient = 1;
+    } else {
+        speedUpCoefficient = 2 / 3;
+    }
+
+    gameSpeed = baseGameSpeed * speedUpCoefficient;
+}
+
+
+function gameLoop(timeStamp) {
     switch(gameState) {
         case "game":
             playGame();
@@ -1216,10 +1890,30 @@ var game = setInterval(function(){
             break;
         case "about":
             drawAbout();
+            break;
+        case "donate":
+            drawDonate();
+            break;
         default:
             break;
     }
-}, 1);
+    secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+    oldTimeStamp = timeStamp;
+
+    // Calculate fps
+    fps = Math.round(1 / secondsPassed);
+    adaptGameSpeed(fps);
+
+    // Draw number to the screen
+    ctx.fillStyle = "#D9D9D9";
+    ctx.font = "14px Rubik One";
+    ctx.textAlign = "left";    
+    ctx.fillText("FPS: " + fps, rightMenuX +rightMenuWidth*(1-0.675)/2 + rightMenuWidth*0.675*0.2, 0.97 * fieldHeight);
+
+    window.requestAnimationFrame(gameLoop);
+};
+
+window.requestAnimationFrame(gameLoop);
 
 function stopAllBacteria() {
     bacteria.forEach((bacterium) => {

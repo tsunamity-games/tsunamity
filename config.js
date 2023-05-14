@@ -1,3 +1,6 @@
+// Donate
+const bitcoinAddress = "17CfQMZd5zz1fYX4SqFwMdgqpYnAAv9owj";
+
 // Game texts
 var language = "eng";
 var contacts = {
@@ -13,12 +16,17 @@ var texts = {
         back: {eng: "Back", rus: "Назад"},
         testerTeam: {eng: "Tester team", rus: "Тестировщики"},
         testerList: {eng: ["Andrey Biba", "Olesya Biba", "Roman Soldatov"], rus: ["Андрей Биба", "Олеся Биба", "Роман Солдатов"]},
-        authorInfo: {eng: ["Design by", "BioMolText 2022"], 
-                     rus: ["Дизайн от", "Био/Мол/Текст-2022"]},
+        authorInfo: {eng: ["Design by ", "BioMolText 2022"], 
+                     rus: ["Дизайн от ", "Био/Мол/Текст-2022"]},
         contacts: {eng: "Contacts", rus:"Контакты"},
         dmitryBiba: {eng: "Dmitry Biba", rus: "Дмитрий Биба"},
         vladimirShitov: {eng: "Vladimir Shitov", rus: "Владимир Шитов"},
-        anastasiaTroshina: {eng: "Anastasia Troshina", rus: "Анастасия Трошина"}
+        anastasiaTroshina: {eng: "Anastasia Troshina", rus: "Анастасии Трошиной"},
+        donate: {eng: "Donate", rus: "Задонатить"},
+        bitcoinWallet: {eng: "Bitcoin Wallet", rus: "Биткоин"},
+        kofi: {eng: "ko-fi", rus: "ko-fi"},
+        copied: {eng: "Text copied to clipboard", rus: "Скопировано в буфер обмена"},
+        errorCopied: {eng: "Error in copying text", rus: "Ошибка при копировании"}
         
     },
     game:{
@@ -41,7 +49,7 @@ var texts = {
     },
     cellNames: {
         Neutrophil: {eng:"Neutrophil", rus: "Нейтрофил"},
-        Macrophage: {eng:"Margophage", rus: "Макрофаг"},
+        Macrophage: {eng:"Macrophage", rus: "Макрофаг"},
         Eosinophile: {eng:"Eosinophil", rus: "Эозинофил"},
         NaturalKiller: {eng:"NK cell", rus: "НК клетка"},
         BLymphocyte: {eng:"B cell", rus: "Б клетка"},
@@ -50,6 +58,336 @@ var texts = {
         TLymphocyte: {eng:"T Killer", rus: "Т киллер"},
         TMemory: {eng: "Memory T cell", rus: "Т клетка памяти"},
         THelper: {eng:"T Helper", rus: "Т хелпер"}
+    },
+    tutorial: {
+        1: {eng: ["Welcome to Tsunamity!", 
+                  "Defend the organism from pathogens"], 
+            rus: ["Почувствуй себя в роли иммунной системы!", 
+                  "Защищай организм от болезней"]},
+        
+        2: {eng: ["This is a tissue cell", 
+                  "", 
+                  "Tissue cells produce glucose needed", 
+                  "for the production of immunity cells."], 
+            rus: ["Это одна из клеток ткани", 
+                  "", 
+                  "Они производят глюкозу, которая", 
+                  "нужна для покупки иммунных клеток"]},
+        
+        3: {eng: ["This is bone marrow", 
+                  "", 
+                  "You can buy immunity cells",
+                  "needed for defense here"],
+            rus: ["Это костный мозг", 
+                  "", 
+                  "Здесь можно покупать иммунные клетки", 
+                  "для защиты организма"]},
+        
+        4: {eng: ["To buy immunity cells you need", 
+                  "enough glucose", 
+                  "", 
+                  "The price of each cell is written", 
+                  "in the bone marrow"],
+            rus: ["Для покупки иммунных клеток нужно иметь", 
+                  "достаточно глюкозы", 
+                  "",
+                  "Цена каждой клетки написана в костном", "мозге"]},
+        
+        5: {eng: ["Watch the HP!", 
+                  "", 
+                  "Enemies decrease your health when", 
+                  "they reach the right side", 
+                  "of the screen.", 
+                  "However, each wave you survive", 
+                  "adds 1 to your HP"],
+            rus: ["Следи за здоровьем!", 
+                  "", 
+                  "Враги отнимают его, когда доходят", 
+                  "до правого конца экрана.", 
+                  "Зато с каждой новой волной", 
+                  "здоровье увеличивается на 1."]},
+        
+        6: {eng: ["Bacteria are attacking!", 
+                  "", 
+                  "Neutrophils help dealing with them.",
+                  "",
+                  "Click on the neutrophil", 
+                  "in the bone marrow to buy it."],
+            rus: ["Бактерии наступают!", 
+                  "", 
+                  "С ними помогают справиться нейтрофилы.",  
+                  "",
+                  "Нажми на нейтрофил в костном мозге,", 
+                  "чтобы купить его"]},
+        
+        9: {eng: ["This is the Spleen", 
+                  "",
+                  "Antigens (parts of bacteria) go", 
+                  "there sometimes", 
+                  "They are needed to train B-lymphocytes."], 
+            rus: ["Это — селезёнка", 
+                  "", 
+                  "Сюда после смерти бактерий иногда",  
+                  "попадают антигены", 
+                  "Они нужны для тренировки B-лимфоцитов"]},
+        
+        10: {eng: ["A huge wave of bacteria is coming!", 
+                   "", 
+                   "Buy several B-lymphocytes, stronger",
+                   "immune cells to fight the bacteria"], 
+             rus: ["Наступает большая волна бактерий!", "",
+                    "Найми несколько B-лимфоцитов", 
+                   "— более сильных клеткок", 
+                   "для борьбы с бактериями"]},
+        
+        12: {eng: ["", "B-lymphocytes need time and antigens", 
+                   "to train", 
+                   "After training they can attack", 
+                   "a single bacteria type very efficiently"],
+             rus: ["B-лимфоцитам нужно время и антигены", 
+                   "для тренировки", 
+                   "",
+                   "После этого они могут эффективно атаковать", 
+                   "один вид бактерий"]},
+        
+        14: {eng: ["Immune cells sometimes die.",
+                   "",
+                   "Their remains hinder the ability",
+                   "of other immune cells to move.",
+                   "Buy macrophages to get rid", 
+                   "of the dead cells!"],
+             rus: ["Отличная работа! Но время жизни одной из", 
+                   "иммунных клеток подошло к концу", 
+                   "", 
+                   "Остатки мешают двигаться другим", 
+                   "иммунным клеткам. Покупай макрофаги,", 
+                   "чтобы убирать мёртвые клетки!"]},
+        
+        17: {eng: ["After B-lymphocytes meet the enemy", 
+                   "they can be upgraded", 
+                   "",
+                   "Click on a B-lymphocyte, and then on", 
+                   "the upgrade window or hit the 'U' button", 
+                   "to get a Plasmatic cell"],
+             rus: ["После того как B-лимфоциты встретятся",
+                   "с врагом, их можно улучшить", 
+                   "",
+                   "Нажми на B-лимфоцит, а затем на окно",
+                   "улучшения или на клавишу U, чтобы", 
+                   "получить плазматическую клетку"]},
+        
+        19: {eng: ["Plasmatic cells produce antibodies", 
+                   "Antibodies slow down bacteria", 
+                   "", 
+                   "Continue defending the organism!", 
+                   "Don't hesitate to buy more cells"],
+             rus: ["Плазматическая клетка производит", 
+                   "антитела. Они замедляют бактерий", 
+                   "", 
+                   "Продолжай защищать организм!", 
+                   "Не стесняйся покупать больше клеток"]},
+        
+        20: {eng: ["Game speed can always be changed", 
+                   "on a top panel"],
+             rus: ["Скорость игры всегда можно изменить", 
+                   "на панели сверху"]},
+        
+        22: {eng: ["Plasmatic cells can be upgraded", 
+                   "to a memory cell to buy B-lymphocytes", 
+                   "against specific bacteria types", 
+                   "", 
+                   "Upgrade a plasmatic cell!"], 
+             rus: ["Плазматическую клетку можно улучшить", 
+                   "до клетки памяти, чтобы сразу нанимать", 
+                   "нужные B-лимфоциты", 
+                   "",
+                    "Улучши плазматическую клетку!"]},
+        
+        24: {eng: ["Now you can buy a B-lymphocyte",
+                   "against pink bacteria in the bone marrow", 
+                   "as long as the memory cell lives!"], 
+             rus: ["Теперь в костном мозге можно", 
+                   "в любой момент купить B-лимфоцит против", 
+                   "розовых бактерий пока клетка памяти жива!"]},
+        
+        25: {eng: ["A huge wave of bacteria is coming!", 
+                   "", 
+                   "Antibiotics will help you dealing with it",
+                   "", 
+                   "Buy an antibiotic against a specific", 
+                   "infection in the right panel"], 
+             rus: ["Впереди огромная волна бактерий!", 
+                   "Справиться с ней помогут антибиотики", 
+                   "", 
+                   "Покупай антибиотик против нужной", 
+                   "инфекции в панели справа"]},
+        
+        27: {eng: ["Now all the bacteria  are weakened",
+                   "and the immune cells will easily", 
+                   "get rid of them", 
+                   "After using an antibiotic make sure", 
+                   "to finish the course! Otherwise the", 
+                   "bacteria will get resistant to it.", 
+                   "Use the antibiotic for the next 3 waves."],
+             rus: ["Теперь бактерии ослабли и иммунные клетки", 
+                   "легко справятся с ними", 
+                   "",
+                   "При использовании антибиотика обязательно", 
+                   "пропей курс до конца! Иначе он может стать",
+                   "бесполезным. Используй антибиотик", 
+                   "3 следующих волны подряд"]},
+        
+        29: {eng: ["Some of your tissue cells got", 
+                   "infected with a virus!",
+                   "",
+                   "It is important to contain viral infection", 
+                   "as infected cells do not produce glucose.",
+                   "Buy natural killers to fight it!"
+                  ],
+             rus: ["Клетки ткани заражены вирусом!", 
+                   "", 
+                   "Зараженные клетки", 
+                   "не производят глюкозу,", 
+                   "поэтому очень важно", 
+                   "сдерживать вирусную инфекцию.", 
+                   "Покупай натуральных киллеров,", 
+                   "чтобы бороться с ней!"]},
+        
+        31: {eng: ["Natural Killers move randomly", 
+                   "between tissue cells checking them", 
+                   "", 
+                   "If a natural killer notices that", 
+                   "a cell is infected with a virus,", 
+                   "it will kill it."], 
+             rus: ["Натуральные киллеры случайно двигаются", 
+                   "между клетками ткани, проверяя их", 
+                   "",
+                   "Если натуральный киллер обнаружит,", 
+                   "что клетка заражена вирусом, он её убьёт"]},
+        
+        33: {eng: ["A serious viral infection can only be",
+                   "contained with the help of T-killers!", 
+                   "", 
+                   "Buy a T-killer in the bone marrow"],
+             rus: ["С мощной вирусной инфекцией", 
+                   "не справиться без Т-киллеров!", 
+                   "",
+                   "Найми Т-киллера в костном мозге"]},
+        
+        35: {eng: ["T-killers produce their copies when", 
+                   "they meet a cell with a specific antigen", 
+                   "Specificity of a T-killer (indicated",
+                   " by its color) is determined randomly", 
+                   "", 
+                   "Buy a suitable vaccine to", 
+                   "increase the probability of a", 
+                   "specific T-killer emergence"], 
+             rus: ["Т-киллеры производят свои копии, когда", 
+                   "встречают клетку с определённым",
+                   "антигеном. Специфичность Т-киллера",
+                   "(обозначена его цветом) определяется", 
+                   "случайно", 
+                   "",
+                   "Покупай подходящую вакцину, чтобы", 
+                   "повысить вероятность появления", 
+                   "нужного Т-киллера"]},
+        
+        37: {eng: ["After a T-killer met a virus or a vaccine", 
+                   "it can be upgraded to a memory cell.", 
+                   "After that you will be able", 
+                   "to buy specific T-killers in", 
+                   "the bone marrow", 
+                   "", 
+                   "Upgrade a T-killer to a memory cell", 
+                   "Click on a T-killer that met the enemy", 
+                   "and click on the table", 
+                   "or hit the 'U' button"], 
+             rus: ["После встречи Т-киллера с вирусом или", 
+                   "вакциной его можно улучшить до клетки",
+                   "памяти. После этого можно будет покупать", 
+                   "Т-киллеров против конкретных вирусов",
+                   "",
+                   "Улучши Т-киллера до Т-клетки памяти!",
+                   "Для этого кликни на Т-киллера,",
+                   "встретившегося с врагом",
+                   "и нажми на табличку или на кнопку U"]},
+        
+        39: {eng: ["Good job!", 
+                   "Now you can buy specific T-killers",
+                   "in the bone marrow", 
+                   "", 
+                   "T-helpers are expensive, but", 
+                   "you will get the returns on", 
+                   "the investment with time", 
+                   "as they automatically produce", 
+                   "B-cells or T-killers for free", 
+                   "", 
+                   "Buy a T-helper in the bone marrow"], 
+             rus: ["Прекрасно сыграно!", 
+                   "Теперь в костном мозге можно сразу", 
+                   "покупать Т-киллеров против этого вируса", 
+                   "",
+                   "Т-хелперы помогут защищать организм,",
+                   "автоматически покупая B-лимфоциты", 
+                   "или Т-киллеры", 
+                   "",
+                   "Найми Т-хелпера в костном мозге!"]},
+        
+        41: {eng: ["The organism now is under protection!", 
+                   "", 
+                   "Buy eosinophies to fight helminthes", 
+                   "", 
+                   "",
+                   "Tip: it's better to buy many of them", 
+                   "right away."],
+             rus: ["Организм под надёжной защитой!", 
+                   "Но впереди новые угрозы", 
+                   "",
+                   "Покупай эозинофилы, чтобы бороться", 
+                   "с гельминтами", 
+                   "",
+                   "Подсказка: лучше сразу", 
+                   "купить побольше"]},
+
+        44: {
+            eng: ["Rarely, the body can become infected by HIV.",
+                  "This virus infects T-helpers,",
+                  "reducing immunity",
+                  "",
+                  "It is almost impossible to be cured from HIV",
+                  "but it can be constrained by periodic using",
+                  "of antiretroviral therapy (A.R.T.)"
+                  ],
+            rus: ["Иногда может случиться неприятность и",
+                  "организм станет заражён ВИЧ. Этот вирус",
+                  "поражает Т-хелперы, снижая иммунитет",
+                  "",
+                  "Вылечиться от ВИЧ почти невозможно,",
+                  "но его можно сдержать, постоянно принимая",
+                  "антиретровирусную терапию"
+                ]
+        },
+
+        46: {
+            eng: ["Great job!", "", "Keep protecting the body"],
+            rus: ["Отличная работа!", "", "Продолжай защищать организм"]
+        },
+        
+        48: {eng: ["You completed the tutorial.", 
+//                   "A real game starts now", 
+                   "", 
+                   "Now try yourself in a real game!"
+//                   "Continue defending the organism.", 
+//                   "You are doing very well :)"
+                  ],
+             rus: ["На этом обучение закончено.", 
+//                   "Дальше начинается настоящая игра",
+                   "", 
+//                   "Продолжай защищать организм.", 
+//                   "У тебя отлично получается!"
+                   "Теперь попробуй свои силы", 
+                   "в настоящей игре!"
+                  ]},
     }
 
 }    
@@ -64,11 +402,14 @@ var baseIncome = 0.01;
 const field = document.getElementById("field");
 var ctx = field.getContext("2d");
 
+
 const WIDTH_HEIGHT_RATIO = 1440 / 1068;
 ctx.width = Math.round(field.width * WIDTH_HEIGHT_RATIO);
 
 const fieldWidth = field.width;
 const fieldHeight = field.height;
+const WIDTH_RATIO = fieldWidth / $("#field").width();
+const HEIGHT_RATIO = fieldHeight / $("#field").height();
 
 
 // Main menu
@@ -78,6 +419,7 @@ const MAIN_MENU_BUTTONS_X =  1012 / 1440 * fieldWidth;
 const MAIN_MENU_BUTTONS_Y =  0.172 * fieldHeight;
 const MAIN_MENU_BUTTONS_WIDTH = 300 / 1440 * fieldWidth;
 const MAIN_MENU_BUTTONS_HEIGHT = 100 / 1068 * fieldHeight;
+
 const SPACE_BETWEEN_MAIN_MENU_BUTTONS = 50 / 1068 * fieldHeight;
 const COVER_IMAGE = new Image();
 COVER_IMAGE.src = "./images/coverImage.png";
@@ -89,6 +431,17 @@ const playableFieldWidth = 0.86*fieldWidth;
 const playableFieldBorderColor = "#422D0D"
 const tissueCellsLeftOffset = 0.007263922*playableFieldWidth;
 const tissueCellsUpOffset = 0.017452*playableFieldHeight;
+
+const TUTORIAL_WINDOW_WIDTH = 500 / 1440 * fieldWidth;
+const TUTORIAL_WINDOW_HEIGHT = 250 / 1068 * fieldHeight;
+const TUTORIAL_WINDOW_Y_OFFSET = 100 / 1068 * fieldHeight;
+const TUTORIAL_WINDOW_TEXT_OFFSET = 30 / 1440 * fieldWidth;
+const TUTORIAL_WINDOW_LINE_HEIGHT = 25 / 1068 * fieldHeight;
+const TUTORIAL_WINDOW_OK_X_OFFSET = 60 / 1440 * fieldWidth;
+const TUTORIAL_WINDOW_OK_Y_OFFSET = 47 / 1068 * fieldHeight;
+const TUTORIAL_WINDOW_BUTTON_X_OFFSET = 70 / 1440 * fieldWidth;
+const TUTORIAL_WINDOW_BUTTON_Y_OFFSET = 70 / 1068 * fieldHeight;
+
 
 // Top menu
 const topMenuColor = "#142029";
@@ -139,7 +492,12 @@ const speedRectangleX = 0.456*fieldWidth;
 const speedRectangleY = wavesRectangleY;
 let speedRectangleWidth = wavesRectangleWidth;
 const speedRectangleHeight = wavesRectangleHeight;
-var BASE_GAME_SPEED = 1;
+var baseGameSpeed = 3;
+var gameSpeed = 3;
+var displaySpeed = 3;
+var speedStep = 0.5;
+var maxGameSpeed = 10;
+var minGameSpeed = 1;
 
 const PAUSE_IMAGE = new Image();
 PAUSE_IMAGE.src = "./images/pause.png";
@@ -311,8 +669,31 @@ const shopWidth =  0.085417*fieldWidth;
 const shopHeight = 0.16*fieldHeight;
 const spaceBetweenShops = 0.0125*fieldWidth;
 const xLeftOffset = playableFieldX;
+
 const priceHeight = shopHeight*0.125
- var ShopColors = {
+
+const wavesFillingOpacity = 0.6;
+
+const AUTHORS_INFO = ["Dmitry Biba & Vladimir Shitov",
+                      "Design by Anastasia Troshina",
+                      "BioMolText 2022"];
+
+// Tutorial
+BLACK_SCREEN_ALPHA = 0.5;
+
+// fieldwidth = 1440 
+// fieldheight = 1068
+
+const SCROLL_IMAGE = new Image();
+SCROLL_IMAGE.src = "./images/scroll.png";
+
+const LYMPHOCYTES_IMAGES = new Map();  // Map from color to image of lymphocytes
+const BACTERIA_IMAGES = new Map();  // Map from color to image of bacteria
+
+const HELMINTH_IMAGE = new Image();
+HELMINTH_IMAGE.src = "./images/helminth.png";
+
+var ShopColors = {
     blue:{
         pocketImageV: FIRST_POCKET_V,        
         colorCode: "#005FA4",
@@ -344,6 +725,9 @@ const ANIMATED_IMAGE_HEIGHT = 100;
 const STATIC_IMAGE_WIDTH = 200;
 const STATIC_IMAGE_HEIGHT = 200;
 
+const LYMPHOCYTES_DEFAULT_IMAGE = new Image();
+LYMPHOCYTES_DEFAULT_IMAGE.src = "./images/lymphocyte_test.png";
+
 const GARBAGE_IMAGE_1 = new Image();
 GARBAGE_IMAGE_1.src = "./images/garbage_1.png";
 const GARBAGE_IMAGE_2 = new Image();
@@ -352,11 +736,6 @@ const GARBAGE_IMAGE_3 = new Image();
 GARBAGE_IMAGE_3.src = "./images/garbage_3.png";
 const GARBAGE_IMAGES = [GARBAGE_IMAGE_1, GARBAGE_IMAGE_2, GARBAGE_IMAGE_3];
 var garbagePileSlowingCoefficient = 0.4;
-
-const HELMINTH_IMAGE = new Image();
-HELMINTH_IMAGE.src = "./images/helminth.png";
-
-
 
 const PAUSE_SCREEN = new Image();
 PAUSE_SCREEN.src = "./images/pause_screen.png";
@@ -400,8 +779,6 @@ var EdgeCellX;
 const tissueCellDeathRate = 0.000001;
 
 // Immune cells
-const LYMPHOCYTES_DEFAULT_IMAGE = new Image();
-LYMPHOCYTES_DEFAULT_IMAGE.src = "./images/lymphocyte_test.png";
 const FIRST_LYMPHOCYTE = new Image();
 FIRST_LYMPHOCYTE.src = "./images/Blymphocytes_first.png";
 const SECOND_LYMPHOCYTE = new Image();
@@ -495,29 +872,32 @@ var TLYMPHOCYTE_DAMAGE = 1;
 //      Lymphocytes
 const randomTargetNumber = 5;
 const TlymphocyteReproductionNumber = 5;
+var trainingProbability = 0.01;
 
 // Helper
 var HELPER_BUYING_COOLDOWN = 30000;
 const HELPER_DISCOUNT_RATE = 1;
 const HELPER_DAMAGE_INCREASE = 1.1;
 
-// Upgrade
-const UPGRADE_FIRST = new Image();
-UPGRADE_FIRST.src = "./images/upgrade_first.png";
-const UPGRADE_FIRST_SIZE = 0.022*fieldHeight;
 
 const UPGRADE_PLASMATIC = new Image();
 UPGRADE_PLASMATIC.src = "./images/upgrade_plasmatic.png";
 const UPGRADE_MEMORY = new Image();
 UPGRADE_MEMORY.src = "./images/upgrade_memory.png";
 
-const UPGRADE_LABEL_HEIGHT = 0.037*fieldHeight;
-const UPGRADE_LABEL_WIDTH = 0.069*fieldWidth;
-
 // Antibodies
 ANTIBODY_LONGEVITY = 10000;
 ANTIBODY_PRODUCTION_FREQUENCY = 50;
-ANTIBODY_SLOWING_COEFFICIENT = 0.5;
+ANTIBODY_SLOWING_COEFFICIENT = 0.7;
+
+
+// Upgrade
+const UPGRADE_FIRST = new Image();
+UPGRADE_FIRST.src = "./images/upgrade_first.png";
+const UPGRADE_FIRST_SIZE = 0.022*fieldHeight;
+
+const UPGRADE_LABEL_HEIGHT = 0.037*fieldHeight;
+const UPGRADE_LABEL_WIDTH = 0.069*fieldWidth;
 
 
 
@@ -643,7 +1023,7 @@ const mutationProbability = 0.1;
 var BACTERIUM_PRICE = 1; 
 var VIRUS_PRICE = 25;
 var HELMINT_PRICE = 50;
-var HIV_PRICE = 30;
+var HIV_PRICE = 60;
 var ENEMY_PROB_DIST = [1/BACTERIUM_PRICE, 1/VIRUS_PRICE, 1/HELMINT_PRICE, 1/HIV_PRICE];
 var MIN_HELMINT_LENGTH = 4;
 var MAX_HELMINT_LENGTH = 20;

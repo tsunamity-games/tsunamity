@@ -106,6 +106,24 @@ function roundRect(ctx, x, y, width, height, leftRadius, rightRadius, fill = fal
       }
     }
 
+function drawBlackScreen(alpha, highlight_x, highlight_y, highlight_width, highlight_height, radius) {
+    if(!pauseTrue) { // Drawing with pause causes the whole screen to turn black
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, fieldWidth, fieldHeight);
+
+        ctx.fillStyle = "white";
+        roundRect(ctx, highlight_x, highlight_y, highlight_width, highlight_height,
+            leftRadius=radius, rightRadius=radius, fill=true);
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = "#DC9E00";
+        ctx.lineWidth = 5;
+        roundRect(ctx, highlight_x, highlight_y, highlight_width, highlight_height,
+            leftRadius=radius, rightRadius=radius, fill=false, stroke=true);
+        ctx.lineWidth = 1;
+    }
+}
+
 //--------OTHER SUPPORT----------
 function clip(x, min, max) {
     return Math.min(Math.max(min, x), max);
@@ -162,4 +180,32 @@ function tissueCellsDistance(c1, c2){
     return (Math.abs(c1.x - c2.x) + Math.abs(c1.y-c2.y))/(tissueCellSize + spaceBetweenTissueCellsHorizontal);
 }
 
+function unsecuredCopyToClipboard(text) {
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    document.execCommand('copy');
+  } catch (err) {
+    console.error('Unable to copy to clipboard', err);
+  }
+  document.body.removeChild(textArea);
+}
 
+// Extract GET params
+function getSearchParameters() {
+    var parameters = window.location.search.substr(1);
+    return parameters != null && parameters != "" ? transformToAssocArray(parameters) : {};
+}
+
+function transformToAssocArray( parameters ) {
+    var params = {};
+    var prmarr = parameters.split("&");
+    for ( var i = 0; i < prmarr.length; i++) {
+        var tmparr = prmarr[i].split("=");
+        params[tmparr[0]] = tmparr[1];
+    }
+    return params;
+}

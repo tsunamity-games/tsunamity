@@ -61,14 +61,11 @@ class Antibody {
             this.y = clip(this.y, playableFieldY, playableFieldY+playableFieldHeight);
             bacteria.forEach((bacterium) =>{
                 if (bacterium.color === this.color && doCirclesIntersect(bacterium.x, bacterium.y, bacterium.radius, this.x, this.y, 5)){
-                    this.attached = bacterium;
-                    this.attached.baseSpeed *=ANTIBODY_SLOWING_COEFFICIENT;
+                    bacterium.nAntibodies++;
+                    this.attached = true;
                 } 
-        });
-        } else {
-            this.x = this.attached.x + randomUniform(-this.attached.radius, this.attached.radius);
-            this.y = Math.sqrt(Math.pow(this.attached.radius, 2) - Math.pow(this.x, 2))*randomChoice([1, -1]);
-        }
+            })
+        } 
     }
     
 }
@@ -80,12 +77,11 @@ class ImmuneCell extends MovingObject {
         this.target = undefined;
         this.realBaseSpeed = baseSpeed;
         this.realDamage = damage;
-        this.baseSpeed = this.realBaseSpeed*BASE_GAME_SPEED;
-        this.damage = this.realDamage*BASE_GAME_SPEED;
+        this.baseSpeed = this.realBaseSpeed * gameSpeed;
+        this.damage = this.realDamage * gameSpeed;
         this.age = 0;
         this.longevity = longevity;
         this.movingout = true;
-//        this.iteration = 0;
     }
     
     isIntersected(x, y) {
@@ -93,8 +89,8 @@ class ImmuneCell extends MovingObject {
     }
     
     changeDirection(targetsList, nCandidates=randomTargetNumber) {
-        this.baseSpeed = this.realBaseSpeed*BASE_GAME_SPEED;
-        this.damage = this.realDamage*BASE_GAME_SPEED;
+        this.baseSpeed = this.realBaseSpeed * gameSpeed;
+        this.damage = this.realDamage * gameSpeed;
         if (this.y < playableFieldY + this.radius && this.x < spleen.x) {
             // Get away from shop
             this.xSpeed = randomUniform(-0.5, 0.5);
@@ -123,8 +119,8 @@ class ImmuneCell extends MovingObject {
                 this.xSpeed = 0;
                 this.ySpeed = 0;
             }
-            this.xSpeed += randomUniform(-this.baseSpeed * 2, this.baseSpeed * 2);
-            this.ySpeed += randomUniform(-this.baseSpeed * 2, this.baseSpeed * 2);
+            this.xSpeed += randomUniform(-1, 1);
+            this.ySpeed += randomUniform(-1, 1);
         }
     }
 
@@ -149,7 +145,7 @@ class ImmuneCell extends MovingObject {
     }
     live(){
         if (this.y > playableFieldY){
-            this.age += 1*BASE_GAME_SPEED;
+            this.age += gameSpeed;
         }
     }
 }
@@ -280,7 +276,6 @@ class BLymphocyte extends ImmuneCell {
         }
         this.mode = mode;
         this.shootingRadius = 40;
-//        this.iteration = 0;
         this.color = color;
         this.label = new Label(this);
         this.killed = false;
@@ -330,7 +325,7 @@ class BLymphocyte extends ImmuneCell {
         }
         if (this.mode === "plasmatic"){
             this.y = clip(this.y, playableFieldY+this.radius, playableFieldY+playableFieldHeight-this.radius);
-            this.counter += 1*BASE_GAME_SPEED;
+            this.counter += gameSpeed;
             if (this.counter > ANTIBODY_PRODUCTION_FREQUENCY)
             {
                 this.counter = 0;
@@ -340,13 +335,13 @@ class BLymphocyte extends ImmuneCell {
     }
 
     goToSpleen(){
-        this.baseSpeed = this.realBaseSpeed*BASE_GAME_SPEED;
+        this.baseSpeed = this.realBaseSpeed * gameSpeed;
         if (this.y < (shopY + shopHeight) + (playableFieldY-(shopY + shopHeight))/2) {
             // Get away from shop
             this.xSpeed = 0;
             this.ySpeed = this.baseSpeed * 3;}
         else if (this.y >= shopHeight){
-            this.xSpeed = 0.5*BASE_GAME_SPEED;
+            this.xSpeed = 0.5 * gameSpeed;
             this.ySpeed = 0;
         } else{
             super.changeDirection()
@@ -363,7 +358,7 @@ class BLymphocyte extends ImmuneCell {
                 super.changeDirection(spleen.sections, spleen.sections.length);
             }
             if (this.target != null && doCirclesIntersect(this.x, this.y, this.radius, this.target.x, this.target.y, this.target.size/2)){
-                if (this.target.antigen != null && doCirclesIntersect(this.target.x, this.target.y, this.target.size/2, this.target.antigen.x, this.target.antigen.y, this.target.antigen.radius) && randomUniform(0, 1) < 0.01){
+                if (this.target.antigen != null && doCirclesIntersect(this.target.x, this.target.y, this.target.size/2, this.target.antigen.x, this.target.antigen.y, this.target.antigen.radius) && randomUniform(0, 1) < trainingProbability){
                     this.texture = bacteriaColors[this.target.antigen.color]["lymphocyteImage"];
                     this.color = this.target.antigen.color;
                     this.mode = "mature";
@@ -414,6 +409,10 @@ class BLymphocyte extends ImmuneCell {
             ctx.globalAlpha = 1;
             super.draw();
         }
+    }
+    
+    isIntersected(x, y) {
+        return Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2) < Math.pow(this.shootingRadius, 2);
     }
 }
 class TLymphocyte extends ImmuneCell {
@@ -506,14 +505,14 @@ class THelper extends ImmuneCell {
     }
 
     choosePlace() {
-        const ROWS = 4;
+        const ROWS = 6;
         const COLS = 12;
 
         const gridCellWidth = Math.floor(playableFieldWidth / COLS);
         const gridCellHeight = Math.floor(playableFieldHeight / ROWS);
         
         const col = Math.floor(randomUniform(0, COLS));
-        const row = Math.floor(randomUniform(0, ROWS));
+        const row = Math.floor(randomUniform(1, ROWS));
 
         var place = [playableFieldX + col * gridCellWidth + randomUniform(-10, 10), 
                      playableFieldY + row * gridCellHeight + randomUniform(-10, 10)];
@@ -573,7 +572,7 @@ class THelper extends ImmuneCell {
 
         // Buy the cell once in a cooldown
         if(this.timeFromTheLastPurchase < this.cooldown) {
-            this.timeFromTheLastPurchase += 1*BASE_GAME_SPEED;
+            this.timeFromTheLastPurchase += gameSpeed;
         }
         else {
             this.timeFromTheLastPurchase = 0;

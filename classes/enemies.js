@@ -19,7 +19,7 @@ class Virus{
     grow(){
 
         this.host.health -= 0.001*this.number;
-        this.timeToDouble += 1*BASE_GAME_SPEED;
+        this.timeToDouble += 1*gameSpeed;
         if (this.timeToDouble >= this.doublingTime){
             this.timeToDouble = 0;
             var spreadDisease
@@ -64,8 +64,9 @@ class Bacterium extends MovingObject {
         this.mode = "enemy";
         this.spleenSection;
         this.realBaseSpeed = BACTERIUM_BASE_SPEED;
-        this.baseSpeed = BACTERIUM_BASE_SPEED*BASE_GAME_SPEED;
+        this.baseSpeed = BACTERIUM_BASE_SPEED * gameSpeed;
         this.angle = randomUniform(0, 2*Math.PI);
+        this.nAntibodies = 0;
     }
 
 
@@ -84,13 +85,20 @@ class Bacterium extends MovingObject {
     }
 
     changeDirection() {
-        this.baseSpeed = BACTERIUM_BASE_SPEED*BASE_GAME_SPEED;
+        this.baseSpeed = BACTERIUM_BASE_SPEED * gameSpeed * Math.pow(ANTIBODY_SLOWING_COEFFICIENT, this.nAntibodies);
         if (this.mode === "enemy"){
             this.xSpeed = randomUniform(-1+this.baseSpeed, 1+this.baseSpeed); 
             this.ySpeed = randomUniform(-1, 1);            
         } else if (this.mode === "antigen"){
-            [this.xSpeed, this.ySpeed] = moveTo(this.x, this.y, this.spleenSection.x, this.spleenSection.y, 1*BASE_GAME_SPEED);
-            if (doCirclesIntersect(this.x, this.y, 0.1, this.spleenSection.x, this.spleenSection.y, 2));
+            if (doCirclesIntersect(this.x, this.y, 0.1, this.spleenSection.x, this.spleenSection.y, gameSpeed)){
+                this.ySpeed /= 10;
+                this.xSpeed /= 10;
+            } else if (doCirclesIntersect(this.x, this.y, 0.1, this.spleenSection.x, this.spleenSection.y, 1)) {
+                this.xSpeed = 0; 
+                this.ySpeed = 0;
+            } else {
+                [this.xSpeed, this.ySpeed] = moveTo(this.x, this.y, this.spleenSection.x, this.spleenSection.y, gameSpeed);
+            }
         }
     }
 
@@ -191,7 +199,7 @@ class Helmint {
     }
     
     move(){
-        this.movingtime += 1*BASE_GAME_SPEED;
+        this.movingtime += gameSpeed;
         if (this.movingtime >= this.delay){
             this.movingtime = 0;
             var segment = this.parts.pop();
@@ -250,12 +258,13 @@ class IntracellularPathogen extends MovingObject {
             if (artObj.available){
                 coef = 1;
             } else {coef = ART_SLOWING_COEFFICIENT};
-            this.xSpeed = randomUniform(-this.baseSpeed*BASE_GAME_SPEED*coef, (this.baseSpeed*BASE_GAME_SPEED+0.08)*coef);
-            this.ySpeed = randomUniform(-this.baseSpeed*BASE_GAME_SPEED*coef, this.baseSpeed*BASE_GAME_SPEED*coef);
+            this.xSpeed = randomUniform(-this.baseSpeed * gameSpeed * coef, (this.baseSpeed * gameSpeed + 0.08) * coef);
+            this.ySpeed = randomUniform(-this.baseSpeed * gameSpeed * coef, this.baseSpeed * gameSpeed * coef);
         }
     }
 
     move() {
+        
         if(this.target == null) {
             // Mess around
             super.move();
@@ -300,7 +309,7 @@ class HIV extends IntracellularPathogen {
             this.target.age += HIV_DAMAGE;
             
             // Double sometimes
-            if(randomUniform(0, 1)*BASE_GAME_SPEED < this.doublingProbability) {
+            if(randomUniform(0, 1) * gameSpeed < this.doublingProbability) {
                 hiv_particles.push(new HIV(HIV_IMAGE, this.target.x, this.target.y));
                 console.log("HIV doubled, total number of particles: " + hiv_particles.length);
             }
@@ -309,7 +318,7 @@ class HIV extends IntracellularPathogen {
                 this.target = null;
             }
         } else {
-            this.age += 1*BASE_GAME_SPEED;
+            this.age += gameSpeed;
         }
     }
 }
